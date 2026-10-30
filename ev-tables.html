@@ -264,7 +264,7 @@ function bars(id, data, xkey, ylabel){
   const m = MET[id]||'raw', c = col(grp);
   const labels = data.map(r=>String(r[xkey]));
   const ds = [{label:MNAME(id), data:data.map(r=>r[m]), backgroundColor:c, borderRadius:4, maxBarThickness:46}];
-  mk(id, {type:'bar', data:{labels, datasets:ds}, options:baseOpts(ylabel, {plugins:{tooltip:{callbacks:{label:(c)=>c.dataset.label+': '+c.parsed.y.toFixed(2)+'  (' + fmt(data[c.dataIndex]['роздач']/1000) + ' тис. роздач)'}}}}), plugins:[zeroLine()]});
+  mk(id, {type:'bar', data:{labels, datasets:ds}, options:baseOpts(ylabel, {plugins:{legend:{display:false}, tooltip:{callbacks:{label:(c)=>c.dataset.label+': '+c.parsed.y.toFixed(2)+'  (' + fmt(data[c.dataIndex]['роздач']/1000) + ' тис. роздач)'}}}}), plugins:[zeroLine()]});
 }
 function tableHTML(df, idx, cols, valkey, fmtf){
   const rws = [...new Set(df.map(r=>String(r[idx])))], cls = [...new Set(df.map(r=>String(r[cols])))];
