@@ -87,7 +87,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);f
 <div class="wrap"><header class="top">
   <div class="kicker">Претенденти</div>
   <h1>Гравці<br>EVO і REVO</h1>
-  <p class="lead" id="lead">Ранг і ABI рангу, дистанція за рік, найбільший занос і один факт зі статистики кожного гравця. Враховуються лише турніри, зіграні у складі команди.</p>
+  <p class="lead" id="lead"></p>
 </header></div>
 
 <div class="bar"><div class="wrap">
@@ -162,7 +162,7 @@ function card(p) {
   return `<article class="ncard${pending ? ' pending' : ''}" style="--stage:${colorOf(p)}">
     <div class="who"><div class="avatar">${av}</div><div><div class="nick">${esc(p.nick)}</div><div class="role"><b>${labelOf(p)}</b>${p.rank != null ? ` · ранг ${p.rank}${p.abi ? ` · ABI $${p.abi}` : ''}` : ''}</div></div></div>
     <dl class="stats">
-      <div><dt>Дистанція</dt><dd>${pending ? '—' : fmt(p.distance)} <small>${pending ? '' : 'турн.'}</small></dd></div>
+      <div><dt>Дистанція</dt><dd>${pending ? '—' : fmt(p.distance)} <small>${pending ? '' : 'ентрі'}</small></dd></div>
       <div style="grid-column:span 2"><dt>Найбільший занос</dt><dd>${esc(p.bestCash || '—')}</dd></div>
     </dl>
     <p class="fact">${pending ? 'Дані з\'являться після перерахунку за повний рік' : esc(p.fact || '—')}</p>
@@ -170,7 +170,7 @@ function card(p) {
 }
 function table(list) {
   const th = (k, t, num) => `<th class="${num ? 'num' : ''}" data-k="${k}"${state.sort === k ? ' aria-sort="' + (state.dir === -1 ? 'descending' : 'ascending') + '"' : ''}>${t}${state.sort === k ? (state.dir === -1 ? ' ↓' : ' ↑') : ''}</th>`;
-  return `<div class="tbl-wrap"><table><thead><tr>${th('nick', 'Гравець')}<th>Етап</th>${th('rank', 'Ранг', 1)}<th class="num">ABI</th>${th('distance', 'Дистанція', 1)}${th('bestCashUsd', 'Занос', 1)}<th>Факт</th></tr></thead><tbody>${
+  return `<div class="tbl-wrap"><table><thead><tr>${th('nick', 'Гравець')}<th>Етап</th>${th('rank', 'Ранг', 1)}<th class="num">ABI</th>${th('distance', 'Ентрі', 1)}${th('bestCashUsd', 'Занос', 1)}<th>Факт</th></tr></thead><tbody>${
     list.map(p => `<tr style="--stage:${colorOf(p)}"><td><span class="dot"></span>${esc(p.nick)}</td><td>${labelOf(p)}</td><td class="num">${p.rank ?? '—'}</td><td class="num">${p.abi ? '$' + p.abi : '—'}</td><td class="num">${p.distance ? fmt(p.distance) : '—'}</td><td class="num">${esc(p.bestCash || '—')}</td><td class="fact-c">${esc(p.fact || '')}</td></tr>`).join('')
   }</tbody></table></div>`;
 }
@@ -189,7 +189,7 @@ stageButtons(); seg('#team', 'team'); seg('#view', 'view');
 
 fetch('players.json', { cache: 'no-cache' }).then(r => r.json()).then(d => {
   ALL = d.players || [];
-  if (d.minDistance) $('#lead').insertAdjacentHTML('beforeend', ` На сторінці — гравці з дистанцією від ${fmt(d.minDistance)} турнірів за рік.`);
+  $('#lead').textContent = `Гравці від ${fmt(d.minDistance || 1000)} ентрі за рік. Ентрі й дистанція — лише в складі команди.`;
   if (d.asOf) { const [y, m, dd] = d.asOf.split('-').map(Number);
     $('#foot').insertAdjacentHTML('afterbegin', `Дані станом на ${dd} ${MONTHS[m - 1]} ${y}; фінальні — після завершення Року EVO 30 листопада. `); }
   render();
