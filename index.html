@@ -860,7 +860,7 @@ document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click
 /* --- номінанти --- */
 const SUITS = ['♠', '♥', '♦', '♣'];
 const arrow = a => Array.isArray(a) ? `${esc(a[0])} → ${esc(a[1])}` : esc(a ?? '—');
-const STAGE_COLORS = ['#2ecc71', '#1f8b4c', '#e07bbf', '#ff1fb8', '#e8c46a']; // етапи I–V (ранги 1–4, 5–8, 9–12, 13–16, 17+), як ролі в Discord; V — золото
+const STAGE_COLORS = ['#2ecc71', '#1f8b4c', '#9e1b42', '#ff1fb8', '#e8c46a']; // етапи I–V (ранги 1–4, 5–8, 9–12, 13–16, 17+): I, II, IV — як ролі в Discord, III — бургунді, V — золото
 const STAGE_ROMAN = ['I', 'II', 'III', 'IV', 'V'];
 const stageOf = r => Math.min(5, Math.max(1, Math.ceil(Number(r) / 4) || 1));
 function nomineeCard(x, i, example) {
