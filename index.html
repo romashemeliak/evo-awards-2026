@@ -90,7 +90,7 @@ section{padding:clamp(56px,9vw,110px) 0;position:relative}
 .road{--n:5;--pos:0;position:relative;display:grid;grid-template-columns:repeat(var(--n),1fr);gap:0;margin-top:clamp(44px,6vw,72px);padding-top:6px}
 .road-track{position:absolute;left:calc(50% / var(--n));right:calc(50% / var(--n));top:13px;height:4px;border-radius:2px;background:var(--line)}
 .road-track i{position:absolute;inset:0 auto 0 0;width:calc(var(--pos) * 100%);border-radius:2px;background:linear-gradient(90deg,var(--red-dim),var(--red))}
-.mile{position:relative;text-align:center;padding:0 8px}
+.mile{position:relative;text-align:center;padding:0 6px;min-width:0}
 .mile .dot{display:block;width:18px;height:18px;margin:0 auto;border-radius:50%;background:var(--bg);border:3px solid var(--line);position:relative;z-index:1}
 .mile.done .dot{background:var(--red-dim);border-color:var(--red-dim)}
 .mile.now .dot{background:var(--red);border-color:var(--red);box-shadow:0 0 0 6px rgba(227,38,43,.2)}
@@ -543,11 +543,12 @@ const SHOW_NOMINEES = false;
 /* Шлях до ефіру. date — початок етапу (YYYY-MM-DD), until — кінець, якщо етап триває кілька днів.
    Дати, окрім кінця періоду і ефіру, — робоча чернетка. */
 const MILESTONES = [
-  { date:'2026-11-02', until:'2026-11-08', title:'Блок голосування 1', text:'Призи і учасники вечора' },
-  { date:'2026-11-09', until:'2026-11-15', title:'Блок голосування 2', text:'Ком\'юніті номінації та афтерпаті' },
-  { date:'2026-11-16', until:'2026-11-22', title:'Результати', text:'Презентація: які номінації будуть на ефірі' },
-  { date:'2026-11-23', until:'2026-11-29', title:'Nomination Week', text:'Висуваємо претендентів у номінаціях' },
-  { date:'2026-12-01', title:'Шортлист', text:'Рік EVO 2026 завершено — претенденти в усіх номінаціях' },
+  { date:'2026-11-02', until:'2026-11-08', title:'Блок 1', text:'Нагорода' },
+  { date:'2026-11-09', until:'2026-11-15', title:'Блок 2', text:'Ком\'юніті номінації' },
+  { date:'2026-11-16', until:'2026-11-22', title:'Блок 3', text:'Результати і Nomination Week' },
+  { date:'2026-11-23', until:'2026-11-29', title:'Блок 4', text:'Голосування за переможців' },
+  { date:'2026-12-01', until:'2026-12-06', title:'Блок 5', text:'Учасники вечора і шортлист' },
+  { date:'2026-12-07', until:'2026-12-13', title:'Блок 6', text:'Афтерпаті' },
   { date:'2026-12-22', title:'EVO Awards', text:'Нагородження, ігри, афтерпаті', final:true },
 ];
 
@@ -555,27 +556,28 @@ const MILESTONES = [
    Поки ID порожній, замість форми показується заглушка.
    У кожній формі Tally створи приховане поле "nick" — сторінка підставить туди нік.
    status: 'open' | 'soon' | 'closed'. deadline — ISO або null.
-   kind:'results' — не голосування, а презентація результатів: форми немає, показується поле results. */
+   results — HTML з підсумками попереднього блоку, показується над формою з дати opens.
+   kind:'results' — картка без форми, лише з полем results. */
 const POLLS = [
   { id:'prizes', opens:'2026-10-30', closes:'2026-11-08', title:'Якою має бути нагорода', tally:'kbbVLo',
     text:'Кубок чи щось практичне — вирішуємо разом, що отримають переможці 2026.',
     asks:['Кубок, практичне чи обидва','Що саме з практичного','Свій варіант'] },
-  { id:'guests', opens:'2026-10-30', closes:'2026-11-08', title:'Учасники вечора', tally:'Eqq49B',
-    text:'Камерний вечір лише для EVO чи також для близьких — як глядачів.',
-    asks:['Формат для гостей','Чи запросив би когось'] },
   { id:'noms', opens:'2026-11-09', closes:'2026-11-15', title:'Ком\'юніті номінації: які залишаємо', tally:'',
     text:'Обери до 7 номінацій, які мають бути на ефірі, або запропонуй свою.',
     asks:['До 7 номінацій','Своя номінація'] },
-  { id:'afterparty', opens:'2026-11-09', closes:'2026-11-15', title:'Афтерпаті: що робимо після ефіру', tally:'',
+  { id:'nominate', opens:'2026-11-16', closes:'2026-11-22', title:'Результати і Nomination Week', tally:'',
+    text:'Які ком\'юніті номінації будуть на ефірі — і висуваємо претендентів у кожній з них.',
+    results:'', // HTML з результатами Блоку 2; показується над формою з дати opens
+    asks:['Претенденти','Коротко — чому'] },
+  { id:'final', opens:'2026-11-23', closes:'2026-11-29', title:'Голосування за переможців', tally:'',
+    text:'Обираємо переможців ком\'юніті номінацій серед претендентів шортлисту.',
+    asks:['Переможець у кожній номінації'] },
+  { id:'guests', opens:'2026-12-01', closes:'2026-12-06', title:'Учасники вечора', tally:'Eqq49B',
+    text:'Камерний вечір лише для EVO чи також для близьких — як глядачів.',
+    asks:['Формат для гостей','Чи запросив би когось'] },
+  { id:'afterparty', opens:'2026-12-07', closes:'2026-12-13', title:'Афтерпаті: що робимо після ефіру', tally:'',
     text:'Обери, що тобі цікаво, — під це будуть кімнати на афтерпаті.',
     asks:['Тімбілдинг «Вгадай, хто це»','Настільні ігри онлайн','Кіберспорт','Просто поспілкуватися','Свій варіант'] },
-  { id:'noms-final', kind:'results', opens:'2026-11-16', closes:'2026-11-22', title:'Результати: номінації на ефірі', tally:'',
-    text:'Презентація результатів Блоку 2: які ком\'юніті номінації будуть на ефірі.',
-    results:'', // HTML з результатами; поки порожньо — показується анонс
-    asks:[] },
-  { id:'nominate', opens:'2026-11-23', closes:'2026-11-29', title:'Nomination Week: претенденти', tally:'',
-    text:'Висуваємо претендентів у ком\'юніті номінаціях — найсильніші пройдуть у шортлист.',
-    asks:['Претенденти','Коротко — чому'] },
 ];
 
 /* Три ключові блоки ефіру — без таймінгу. */
@@ -587,7 +589,7 @@ const BLOCKS = [
   { part:'Частина II', title:'Афтерпаті', accent:'#3d8bff', suit:'♠',
     text:'Неформальна частина: тематичні кімнати, ігри й спілкування.',
     cta:['afterparty','Обрати формат афтерпаті →'],
-    items:[['Тематичні кімнати','кожен обирає, куди піти'],['Ігри','тімбілдинг, настільні, кіберспорт'],['Просто поговорити','з тими, кого зазвичай бачиш лише в Discord'],['Формат','обираєте ви в Блоці голосування 2']] },
+    items:[['Тематичні кімнати','кожен обирає, куди піти'],['Ігри','тімбілдинг, настільні, кіберспорт'],['Просто поговорити','з тими, кого зазвичай бачиш лише в Discord'],['Формат','обираєте ви в Блоці голосування 6']] },
 ];
 
 const PLATFORMS = [
@@ -761,6 +763,7 @@ POLLS.forEach((p, i) => {
       <span class="meta">${hasVoted(p.id) && p.kind !== 'results' ? '<span class="chip done">✓ Ти проголосував</span>' : `<span class="chip ${cls}">${lbl}</span>`}<span class="dl">${dLabel(p.opens).split(' ')[0]}–${dLabel(p.closes)}</span></span>
     </button>
     <div class="poll-body" id="pb-${p.id}">
+      ${p.kind !== 'results' && p.results && p.status !== 'soon' ? `<div class="results-slot">${p.results}</div>` : ''}
       <div class="slot"></div>
     </div>`;
   const head = card.querySelector('.poll-head');
