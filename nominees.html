@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Претенденти · EVO Awards 2026</title>
+<meta name="description" content="EVO Awards 2026 — претенденти: ранг, дистанція за рік, найбільший занос і цікавий факт кожного гравця.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0b;--bg-2:#131315;--card:#17171a;--line:#2a2a2e;--text:#f3f0ea;--muted:#9c9890;--red:#e3262b;--red-dim:#7a1517;--gold:#e8c46a;--radius:14px;--pad:clamp(16px,4vw,40px);color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.55 Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+h1,h2,h3{font-family:Unbounded,Manrope,sans-serif;margin:0;letter-spacing:-.01em}
+.wrap{max-width:1180px;margin:0 auto;padding:0 var(--pad)}
+.nav{position:sticky;top:0;z-index:20;background:rgba(10,10,11,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:16px}
+.logo{font:900 15px/1 Unbounded,sans-serif;text-decoration:none;white-space:nowrap}
+.logo b{color:var(--red)}
+.back{font-size:14px;font-weight:700;color:var(--muted);text-decoration:none;white-space:nowrap}
+.back:hover{color:var(--text)}
+header.top{padding:clamp(40px,7vw,80px) 0 24px}
+.kicker{font:700 12px/1 Manrope,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.kicker::before{content:"";width:22px;height:2px;background:var(--red)}
+h1{font-size:clamp(30px,6vw,60px);font-weight:900;text-transform:uppercase;line-height:1}
+.lead{color:var(--muted);max-width:680px;margin:16px 0 0;font-size:16px}
+
+/* toolbar */
+.bar{position:sticky;top:60px;z-index:10;background:rgba(10,10,11,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:14px 0}
+.bar .wrap{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.search{flex:1 1 220px;min-width:0;background:var(--bg-2);border:1px solid var(--line);border-radius:10px;color:var(--text);font:500 15px Manrope,sans-serif;padding:11px 14px}
+.search:focus{outline:2px solid var(--red);outline-offset:1px}
+.seg{display:flex;gap:4px;padding:4px;background:var(--bg-2);border:1px solid var(--line);border-radius:10px}
+.seg button{font:700 13px Manrope,sans-serif;background:none;border:0;color:var(--muted);padding:8px 12px;border-radius:7px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed=true]{background:var(--red);color:#fff}
+.stages{display:flex;flex-wrap:wrap;gap:6px}
+.stages button{display:inline-flex;align-items:center;gap:7px;font:700 12px Manrope,sans-serif;background:var(--bg-2);border:1px solid var(--line);color:#cfcac2;padding:7px 11px;border-radius:999px;cursor:pointer}
+.stages button i{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.stages button[aria-pressed=true]{border-color:var(--c);color:#fff;background:color-mix(in srgb,var(--c) 18%,var(--bg-2))}
+select{background:var(--bg-2);border:1px solid var(--line);border-radius:10px;color:var(--text);font:700 13px Manrope,sans-serif;padding:10px 12px}
+.count{font-size:13px;color:var(--muted);margin-left:auto;white-space:nowrap}
+.view{display:flex;gap:4px}
+
+/* grid */
+main{padding:24px 0 80px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.ncard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 16px 14px;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.ncard::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--stage)}
+.who{display:flex;align-items:center;gap:12px}
+.avatar{width:42px;height:42px;border-radius:50%;background:#1f1f23;box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--stage);display:grid;place-items:center;font:900 16px/1 Unbounded,sans-serif;flex:none;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.nick{font:700 15px/1.2 Unbounded,sans-serif;word-break:break-word}
+.role{font-size:12px;color:var(--muted);margin-top:2px}
+.role b{color:var(--stage);font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 0;padding:0}
+.stats div{background:rgba(255,255,255,.03);border-radius:9px;padding:8px 9px;min-width:0}
+.stats dt{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stats dd{margin:3px 0 0;font:700 14px/1.2 Unbounded,sans-serif;white-space:nowrap}
+.stats dd small{font:500 11px Manrope,sans-serif;color:var(--muted)}
+.fact{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:13.5px;color:#d9d5ce;line-height:1.45}
+.fact::before{content:"★ ";color:var(--gold)}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:50px 0}
+.pending .stats dd,.pending .fact{color:var(--muted)}
+
+/* table view */
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:10px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{font:700 11px/1 Manrope,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);cursor:pointer;background:var(--bg-2)}
+th[aria-sort]{color:var(--text)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+td.fact-c{white-space:normal;color:#cfcac2;min-width:260px}
+tr:hover td{background:rgba(255,255,255,.02)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--stage);margin-right:8px;vertical-align:middle}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius)}
+@media(max-width:700px){.count{margin-left:0;flex-basis:100%}.bar{position:static}}
+footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="logo" href="./">EVO <b>AWARDS</b> 2026</a>
+  <a class="back" href="./#nominees">← На головну</a>
+</div></header>
+
+<div class="wrap"><header class="top">
+  <div class="kicker">Претенденти</div>
+  <h1>Гравці<br>EVO і REVO</h1>
+  <p class="lead" id="lead">Ранг і ABI рангу, дистанція за рік, найбільший занос і один факт зі статистики кожного гравця. Враховуються лише турніри, зіграні у складі команди.</p>
+</header></div>
+
+<div class="bar"><div class="wrap">
+  <input class="search" id="q" type="search" placeholder="Пошук за ніком" autocomplete="off">
+  <div class="seg" id="team" role="group" aria-label="Команда">
+    <button data-v="all" aria-pressed="true">Усі</button><button data-v="EVO" aria-pressed="false">EVO</button><button data-v="REVO" aria-pressed="false">REVO</button>
+  </div>
+  <div class="stages" id="stages" role="group" aria-label="Етап"></div>
+  <select id="sort" aria-label="Сортування">
+    <option value="rank">За рангом</option>
+    <option value="distance">За дистанцією</option>
+    <option value="bestCashUsd">За заносом</option>
+    <option value="nick">За ніком</option>
+  </select>
+  <div class="seg view" id="view" role="group" aria-label="Вигляд">
+    <button data-v="cards" aria-pressed="true">Картки</button><button data-v="table" aria-pressed="false">Таблиця</button>
+  </div>
+  <span class="count" id="count"></span>
+</div></div>
+
+<main><div class="wrap"><div id="out"></div></div></main>
+
+<footer><div class="wrap" id="foot">© 2026 Еволюція · <a href="https://evopoker.pro/">evopoker.pro</a></div></footer>
+
+<script>
+/* Дані — players.json поруч зі сторінкою (генерує scripts/awards_2026/player_cards.py). */
+const STAGE_COLORS = ['#2ecc71', '#1f8b4c', '#9e1b42', '#ff1fb8', '#e8c46a'];
+const STAGE_ROMAN = ['I', 'II', 'III', 'IV', 'V'];
+const REVO_COLOR = '#8a8a92';
+const MONTHS = ['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'];
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = n => Number(n || 0).toLocaleString('uk-UA');
+const stageOf = p => p.team === 'REVO' ? 0 : p.rank == null ? null : Math.min(5, Math.max(1, Math.ceil(p.rank / 4) || 1));
+const colorOf = p => { const s = stageOf(p); return s === 0 ? REVO_COLOR : s ? STAGE_COLORS[s - 1] : 'var(--line)'; };
+const labelOf = p => { const s = stageOf(p); return s === 0 ? 'REVO' : s ? STAGE_ROMAN[s - 1] + ' етап' : 'EVO'; };
+
+let ALL = [], state = { q: '', team: 'all', stages: new Set(), sort: 'rank', view: 'cards', dir: -1 };
+try { const s = JSON.parse(localStorage.getItem('evo_nominees_view') || '{}'); if (s.view) state.view = s.view; if (s.sort) state.sort = s.sort; } catch (e) {}
+const save = () => { try { localStorage.setItem('evo_nominees_view', JSON.stringify({ view: state.view, sort: state.sort })); } catch (e) {} };
+
+function stageButtons() {
+  const opts = [...STAGE_ROMAN.map((r, i) => ({ v: String(i + 1), t: r, c: STAGE_COLORS[i] })), { v: '0', t: 'REVO', c: REVO_COLOR }];
+  $('#stages').innerHTML = opts.map(o => `<button data-v="${o.v}" aria-pressed="false" style="--c:${o.c}"><i></i>${o.t}</button>`).join('');
+  $('#stages').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return;
+    state.stages.has(b.dataset.v) ? state.stages.delete(b.dataset.v) : state.stages.add(b.dataset.v);
+    b.setAttribute('aria-pressed', state.stages.has(b.dataset.v)); render(); });
+}
+function seg(id, key) {
+  const box = $(id);
+  box.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === state[key]));
+  box.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; state[key] = b.dataset.v;
+    box.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); save(); render(); });
+}
+function sorted(list) {
+  const k = state.sort, d = k === 'nick' ? 1 : state.dir;
+  return [...list].sort((a, b) => {
+    if (k === 'nick') return a.nick.localeCompare(b.nick, 'uk', { sensitivity: 'base' }) * (state.dir === 1 ? -1 : 1);
+    const av = a[k] ?? -1, bv = b[k] ?? -1;
+    return (bv - av) * (d === -1 ? 1 : -1) || a.nick.localeCompare(b.nick, 'uk');
+  });
+}
+function filtered() {
+  const q = state.q.trim().toLowerCase();
+  return ALL.filter(p => (state.team === 'all' || p.team === state.team)
+    && (!state.stages.size || state.stages.has(String(stageOf(p))))
+    && (!q || p.nick.toLowerCase().includes(q)));
+}
+function card(p) {
+  const av = p.avatar ? `<img src="${esc(p.avatar)}" alt="" loading="lazy">` : esc((p.nick || '?')[0].toUpperCase());
+  const pending = !p.distance;
+  return `<article class="ncard${pending ? ' pending' : ''}" style="--stage:${colorOf(p)}">
+    <div class="who"><div class="avatar">${av}</div><div><div class="nick">${esc(p.nick)}</div><div class="role"><b>${labelOf(p)}</b>${p.rank != null ? ` · ранг ${p.rank}${p.abi ? ` · ABI $${p.abi}` : ''}` : ''}</div></div></div>
+    <dl class="stats">
+      <div><dt>Дистанція</dt><dd>${pending ? '—' : fmt(p.distance)} <small>${pending ? '' : 'турн.'}</small></dd></div>
+      <div style="grid-column:span 2"><dt>Найбільший занос</dt><dd>${esc(p.bestCash || '—')}</dd></div>
+    </dl>
+    <p class="fact">${pending ? 'Дані з\'являться після перерахунку за повний рік' : esc(p.fact || '—')}</p>
+  </article>`;
+}
+function table(list) {
+  const th = (k, t, num) => `<th class="${num ? 'num' : ''}" data-k="${k}"${state.sort === k ? ' aria-sort="' + (state.dir === -1 ? 'descending' : 'ascending') + '"' : ''}>${t}${state.sort === k ? (state.dir === -1 ? ' ↓' : ' ↑') : ''}</th>`;
+  return `<div class="tbl-wrap"><table><thead><tr>${th('nick', 'Гравець')}<th>Етап</th>${th('rank', 'Ранг', 1)}<th class="num">ABI</th>${th('distance', 'Дистанція', 1)}${th('bestCashUsd', 'Занос', 1)}<th>Факт</th></tr></thead><tbody>${
+    list.map(p => `<tr style="--stage:${colorOf(p)}"><td><span class="dot"></span>${esc(p.nick)}</td><td>${labelOf(p)}</td><td class="num">${p.rank ?? '—'}</td><td class="num">${p.abi ? '$' + p.abi : '—'}</td><td class="num">${p.distance ? fmt(p.distance) : '—'}</td><td class="num">${esc(p.bestCash || '—')}</td><td class="fact-c">${esc(p.fact || '')}</td></tr>`).join('')
+  }</tbody></table></div>`;
+}
+function render() {
+  const list = sorted(filtered());
+  $('#count').textContent = `${list.length} з ${ALL.length}`;
+  $('#sort').value = state.sort;
+  $('#out').innerHTML = !list.length ? '<div class="grid"><p class="empty">Нікого не знайдено.</p></div>'
+    : state.view === 'table' ? table(list) : `<div class="grid">${list.map(card).join('')}</div>`;
+  $('#out').querySelectorAll('th[data-k]').forEach(t => t.addEventListener('click', () => {
+    state.dir = state.sort === t.dataset.k ? -state.dir : -1; state.sort = t.dataset.k; save(); render(); }));
+}
+$('#q').addEventListener('input', e => { state.q = e.target.value; render(); });
+$('#sort').addEventListener('change', e => { state.sort = e.target.value; state.dir = -1; save(); render(); });
+stageButtons(); seg('#team', 'team'); seg('#view', 'view');
+
+fetch('players.json', { cache: 'no-cache' }).then(r => r.json()).then(d => {
+  ALL = d.players || [];
+  if (d.asOf) { const [y, m, dd] = d.asOf.split('-').map(Number);
+    $('#foot').insertAdjacentHTML('afterbegin', `Дані станом на ${dd} ${MONTHS[m - 1]} ${y}; фінальні — після завершення Року EVO 30 листопада. `); }
+  render();
+}).catch(() => { $('#out').innerHTML = '<div class="grid"><p class="empty">Не вдалося завантажити дані.</p></div>'; });
+</script>
+</body>
+</html>

@@ -881,7 +881,8 @@ if (SHOW_NOMINEES && groups.length) {
 } else {
   $('#nominees-body').innerHTML = `<div class="locked">
     <div><p class="msg">Претенденти будуть оголошені наприкінці листопада, коли завершиться Рік EVO 2026.</p>
-      <div class="stage-legend">${STAGE_COLORS.map((c, i) => `<span><i style="background:${c}"></i>${STAGE_ROMAN[i]} етап</span>`).join('')}</div></div>
+      <div class="stage-legend">${STAGE_COLORS.map((c, i) => `<span><i style="background:${c}"></i>${STAGE_ROMAN[i]} етап</span>`).join('')}</div>
+      <a class="btn" href="nominees.html" style="margin-top:24px">Усі претенденти →</a></div>
     ${nomineeCard({ nick:'Нікнейм', rank:'—', abi:'', distance:'—', bestCash:'—', fact:'Цікавий факт зі статистики гравця' }, 0, true)}
   </div>`;
 }
