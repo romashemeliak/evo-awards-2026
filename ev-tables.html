@@ -189,7 +189,7 @@ summary{cursor:pointer;color:var(--text2)}
 <div>
 <div class="out">
 <div><b id="o_ev">—</b><span>очікуваний EV, bb/100</span></div>
-<div><b id="o_dev">—</b><span>проти типового режиму групи</span></div>
+<div><b id="o_dev">—</b><span>проти типового режиму (7 ст., 5 год, 5 днів, 18:00)</span></div>
 <div><b id="o_evh">—</b><span>EV за годину гри, bb</span></div>
 <div><b id="o_sess">—</b><span>довжина сесії з дограванням, год</span></div>
 <div><b id="o_hands">—</b><span>роздач на місяць</span></div>
@@ -325,8 +325,8 @@ function calc(){
   const base = T['S7_group_base'].find(r=>r.group===g);
   const tail = (CM[g]||CM['усі']).tail_med_h;
   const sess = reg + tail;
-  const midHour = kh + sess/2;
-  const dev = b('tab_b', tabB(tab)) + b('rs_b', rsB(reg)) + b('days_b', daysB(days)) + b('kh_b', khB(Math.round(midHour)));
+  const f = (t, r, d, k, tl) => b('tab_b', tabB(t)) + b('rs_b', rsB(r)) + b('days_b', daysB(d)) + b('kh_b', khB(Math.round(k + (r + tl)/2)));
+  const dev = f(tab, reg, days, kh, tail) - f(7, 5, 5, 18, tail);   // проти типового режиму: 7 столів, 5 год реєстрацій, 5 днів, старт о 18:00
   const ev = base.EV_raw + dev;
   const hph = T['S4_ev_per_hour'].find(r=>r.group===g && r.tab===Math.min(tab,13)) || T['S4_ev_per_hour'].find(r=>r.group==='усі' && r.tab===Math.min(tab,13));
   const handsPerHour = hph ? hph['роздач_за_год'] : tab*58;
@@ -339,7 +339,7 @@ function calc(){
   document.getElementById('o_dev').textContent = (dev>=0?'+':'')+dev.toFixed(1)+' bb/100';
   document.getElementById('o_evh').textContent = evh.toFixed(0);
   document.getElementById('o_sess').textContent = sess.toFixed(1);
-  document.getElementById('o_hands').textContent = Math.round(handsMonth/100)*100 .toLocaleString ? (Math.round(handsMonth/100)*100).toLocaleString('uk-UA') : Math.round(handsMonth);
+  document.getElementById('o_hands').textContent = (Math.round(handsMonth/100)*100).toLocaleString('uk-UA');
   document.getElementById('o_ent').textContent = Math.round(entMonth);
   const okn = entMonth >= norm;
   document.getElementById('o_norm').innerHTML = (okn?'<span class="ok">виконується</span>':'<span class="no">не виконується</span>') + ' <span class="note">('+norm+')</span>';
