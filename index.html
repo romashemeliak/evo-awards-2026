@@ -130,8 +130,8 @@ section{padding:clamp(56px,9vw,110px) 0;position:relative}
 .poll.expanded .poll-body{display:block}
 .poll ul.asks{margin:16px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:8px}
 .poll ul.asks li{font-size:13px;padding:6px 10px;border-radius:8px;background:var(--bg);color:#cfcac2}
-.form-slot{margin-top:18px;border-radius:12px;overflow:hidden;background:#fff}
-.form-slot iframe{display:block;width:100%;border:0;min-height:420px}
+.form-slot{margin-top:18px;padding:clamp(14px,2.4vw,26px);border-radius:var(--radius);border:1px solid var(--line);background:var(--bg-2)}
+.form-slot iframe{display:block;width:100%;border:0;min-height:420px;background:transparent;color-scheme:normal}
 .form-empty{margin-top:18px;border:1px dashed var(--line);border-radius:12px;padding:26px;text-align:center;color:var(--muted);font-size:14px}
 .poll-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
 @media(max-width:600px){.poll-head{grid-template-columns:1fr auto}.poll-head .idx{display:none}.poll-head .meta .dl{display:none}}
@@ -694,7 +694,7 @@ nickInput.value = store('evo_awards_nick') || '';
 const normNick = v => v.trim().replace(/^@+/, '').replace(/\s+/g, '').toLowerCase();
 function formUrl(p, embed) {
   const q = new URLSearchParams({ nick: normNick(nickInput.value), source: 'awards-page' });
-  if (embed) { q.set('hideTitle', '1'); q.set('dynamicHeight', '1'); q.set('alignLeft', '1'); }
+  if (embed) { q.set('hideTitle', '1'); q.set('dynamicHeight', '1'); q.set('alignLeft', '1'); q.set('transparentBackground', '1'); }
   return `https://tally.so/${embed ? 'embed' : 'r'}/${encodeURIComponent(p.tally)}?${q}`;
 }
 const STATUS = { open:['open','Відкрито'], soon:['soon','Скоро'], closed:['done','Завершено'] };
@@ -741,7 +741,6 @@ POLLS.forEach((p, i) => {
       <span class="meta">${hasVoted(p.id) ? '<span class="chip done">✓ Ти проголосував</span>' : `<span class="chip ${cls}">${lbl}</span>`}<span class="dl">${dLabel(p.opens).split(' ')[0]}–${dLabel(p.closes)}</span></span>
     </button>
     <div class="poll-body" id="pb-${p.id}">
-      <ul class="asks">${p.asks.map(a => `<li>${esc(a)}</li>`).join('')}</ul>
       <div class="slot"></div>
     </div>`;
   const head = card.querySelector('.poll-head');
