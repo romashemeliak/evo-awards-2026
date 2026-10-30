@@ -639,7 +639,7 @@ const INFORMAL = [
 
 /* Номінанти — заповнюється після шортлисту.
    Формат: { 'Назва номінації': [ {nick, avatar, rank, abi, distance, bestCash, fact} ] }
-   rank — поточний ранг (1–16, етап рахується автоматично), abi — ABI рангу, avatar — URL або порожньо. */
+   rank — поточний ранг (1–16, етап рахується автоматично), abi — фактичний ABI за рік, avatar — URL або порожньо. */
 const NOMINEES = {};
 
 /* ====================================================================== */
@@ -858,7 +858,7 @@ document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click
 /* --- номінанти --- */
 const SUITS = ['♠', '♥', '♦', '♣'];
 const arrow = a => Array.isArray(a) ? `${esc(a[0])} → ${esc(a[1])}` : esc(a ?? '—');
-const STAGE_COLORS = ['#2ecc71', '#1f8b4c', '#9e1b42', '#ff1fb8', '#e8c46a']; // етапи I–V (ранги 1–4, 5–8, 9–12, 13–16, 17+): I, II, IV — як ролі в Discord, III — бургунді, V — золото
+const STAGE_COLORS = ['#2ecc71', '#1f8b4c', '#e07bbf', '#ff1fb8', '#9e1b42']; // етапи I–V (ранги 1–4, 5–8, 9–12, 13–16, 17+): I–IV — як ролі в Discord, V — бургунді
 const STAGE_ROMAN = ['I', 'II', 'III', 'IV', 'V'];
 const stageOf = r => Math.min(5, Math.max(1, Math.ceil(Number(r) / 4) || 1));
 function nomineeCard(x, i, example) {
@@ -867,8 +867,9 @@ function nomineeCard(x, i, example) {
   return `<article class="ncard${example ? ' example' : ''}" data-suit="${SUITS[i % 4]}" style="--stage:${col}">
     <div class="who"><div class="avatar">${av}</div><div><div class="nick-name">${esc(x.nick)}</div><div class="role">${example ? 'Етап — колір обідка' : STAGE_ROMAN[st - 1] + ' етап'}</div></div></div>
     <dl class="stats">
-      <div style="grid-column:1/-1"><dt>Ранг</dt><dd>${esc(x.rank ?? '—')} <small>(ABI ${x.abi ? '$' + esc(x.abi) : '—'})</small></dd></div>
-      <div><dt>Дистанція за рік</dt><dd>${esc(x.distance ?? '—')} <small>турн.</small></dd></div>
+      <div><dt>Ранг</dt><dd>${esc(x.rank ?? '—')}</dd></div>
+      <div><dt>Ентрі за рік</dt><dd>${esc(x.distance ?? '—')}</dd></div>
+      <div><dt>ABI за рік</dt><dd>${x.abi ? '$' + esc(x.abi) : '—'}</dd></div>
       <div><dt>Найбільший занос</dt><dd>${esc(x.bestCash ?? '—')}</dd></div>
     </dl>
     ${x.fact ? `<p class="fact">${esc(x.fact)}</p>` : ''}
