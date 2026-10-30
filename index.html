@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EVO Awards 2026</title>
+<meta name="description" content="EVO Awards 2026 — підсумки року школи Еволюція: голосування, програма ефіру, номінації та номінанти.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0b;
+  --bg-2:#131315;
+  --card:#17171a;
+  --line:#2a2a2e;
+  --text:#f3f0ea;
+  --muted:#9c9890;
+  --red:#e3262b;
+  --red-dim:#7a1517;
+  --green:#3fd06b;
+  --blue:#3d8bff;
+  --gold:#e8c46a;
+  --radius:14px;
+  --pad:clamp(16px,4vw,40px);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.55 Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+h1,h2,h3,.display{font-family:Unbounded,Manrope,sans-serif;letter-spacing:-.01em;margin:0}
+h2{font-size:clamp(26px,4.6vw,46px);font-weight:900;text-transform:uppercase;line-height:1.05}
+h3{font-size:18px;font-weight:700;line-height:1.25}
+p{margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding:0 var(--pad)}
+section{padding:clamp(56px,9vw,110px) 0;position:relative}
+.kicker{font:700 12px/1 Manrope,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.kicker::before{content:"";width:22px;height:2px;background:var(--red)}
+.lead{color:var(--muted);max-width:640px;margin-top:16px;font-size:17px}
+.brush{display:block;width:min(360px,70%);height:22px;margin-top:18px}
+.chip{display:inline-flex;align-items:center;gap:6px;font:700 11px/1 Manrope,sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.chip.open{border-color:var(--red);color:#fff;background:rgba(227,38,43,.14)}
+.chip.open::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--red);animation:pulse 1.6s infinite}
+.chip.soon{border-style:dashed}
+.chip.done{color:var(--green);border-color:rgba(63,208,107,.5)}
+@keyframes pulse{50%{opacity:.25}}
+.btn{display:inline-flex;align-items:center;gap:8px;font:700 14px/1 Manrope,sans-serif;text-decoration:none;padding:14px 20px;border-radius:10px;border:1px solid var(--red);background:var(--red);color:#fff;cursor:pointer;transition:transform .15s,background .15s}
+.btn:hover{transform:translateY(-1px);background:#f23439}
+.btn.ghost{background:transparent;border-color:var(--line);color:var(--text)}
+.btn.ghost:hover{border-color:var(--text);background:transparent}
+.btn[disabled]{opacity:.4;cursor:not-allowed;transform:none}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:20;background:rgba(10,10,11,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;height:60px;gap:16px}
+.logo{font:900 15px/1 Unbounded,sans-serif;text-decoration:none;letter-spacing:.02em;white-space:nowrap}
+.logo b{color:var(--red)}
+.nav-date{margin:0 auto;display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid var(--line);font:700 13px/1 Manrope,sans-serif;color:var(--text);white-space:nowrap}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(63,208,107,.6);animation:live 1.8s infinite}
+@keyframes live{0%{box-shadow:0 0 0 0 rgba(63,208,107,.55)}70%{box-shadow:0 0 0 7px rgba(63,208,107,0)}100%{box-shadow:0 0 0 0 rgba(63,208,107,0)}}
+@media(prefers-reduced-motion:reduce){.live-dot{animation:none}}
+.nav ul{display:flex;gap:22px;list-style:none;margin:0;padding:0;overflow-x:auto;scrollbar-width:none}
+.nav ul::-webkit-scrollbar{display:none}
+.nav ul a{font-size:14px;font-weight:500;color:var(--muted);text-decoration:none;white-space:nowrap}
+.nav ul a:hover{color:var(--text)}
+@media(max-width:760px){.nav ul{display:none}.nav-date{margin:0 0 0 auto}}
+
+/* hero */
+.hero{padding-top:clamp(48px,8vw,96px);padding-bottom:clamp(48px,7vw,80px);overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:40px;align-items:end}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr}}
+.hero h1{font-size:clamp(46px,10.5vw,136px);font-weight:900;line-height:.9;text-transform:uppercase}
+.hero h1 .yr{display:block;color:transparent;-webkit-text-stroke:2px var(--red);text-stroke:2px var(--red)}
+.hero .sub{margin-top:26px;font-size:clamp(17px,2vw,20px);max-width:560px;color:#d9d5ce}
+.hero .sub strong{color:#fff}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.suits{position:absolute;right:-30px;top:30px;font:900 clamp(120px,22vw,300px)/1 Unbounded,sans-serif;color:var(--red);opacity:.08;pointer-events:none;letter-spacing:-.1em;user-select:none}
+.countdown{position:relative;overflow:hidden;text-align:center;padding:28px 24px 26px;border-radius:20px;border:1px solid rgba(227,38,43,.28);background:radial-gradient(120% 90% at 50% 0%,rgba(227,38,43,.16),transparent 60%),var(--card)}
+.countdown::after{content:"♠";position:absolute;right:-18px;bottom:-46px;font:900 150px/1 Unbounded,sans-serif;color:var(--red);opacity:.06;pointer-events:none}
+.countdown .label{font:700 11px/1 Manrope,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.countdown .what{display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line);font-size:14px;font-weight:700}
+.countdown .what::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--red)}
+.cd-none{margin-top:14px;font:700 20px/1.2 Unbounded,sans-serif}
+
+/* road to the event */
+.cd-big{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:14px}
+.cd-big b{font:900 clamp(72px,9vw,112px)/.9 Unbounded,sans-serif;color:var(--text);letter-spacing:-.04em}
+.cd-big span{font:700 14px/1 Manrope,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--red)}
+.road{--n:5;--pos:0;position:relative;display:grid;grid-template-columns:repeat(var(--n),1fr);gap:0;margin-top:clamp(44px,6vw,72px);padding-top:6px}
+.road-track{position:absolute;left:calc(50% / var(--n));right:calc(50% / var(--n));top:13px;height:4px;border-radius:2px;background:var(--line)}
+.road-track i{position:absolute;inset:0 auto 0 0;width:calc(var(--pos) * 100%);border-radius:2px;background:linear-gradient(90deg,var(--red-dim),var(--red))}
+.mile{position:relative;text-align:center;padding:0 8px}
+.mile .dot{display:block;width:18px;height:18px;margin:0 auto;border-radius:50%;background:var(--bg);border:3px solid var(--line);position:relative;z-index:1}
+.mile.done .dot{background:var(--red-dim);border-color:var(--red-dim)}
+.mile.now .dot{background:var(--red);border-color:var(--red);box-shadow:0 0 0 6px rgba(227,38,43,.2)}
+.mile.final .dot{width:26px;height:26px;margin-top:-4px;border-color:var(--gold);background:var(--gold);box-shadow:0 0 0 6px rgba(232,196,106,.15)}
+.mile .when{display:inline-block;margin-top:14px;font:700 11px/1 Manrope,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.mile.now .when{color:var(--red)}
+.mile.final .when{color:var(--gold)}
+.mile h3{font-size:16px;margin-top:8px}
+.mile .date{display:block;margin-top:4px;font-size:13px;color:#cfcac2}
+.mile p{margin-top:6px;font-size:13px;color:var(--muted)}
+.mile.done h3,.mile.done .date{color:var(--muted)}
+@media(max-width:760px){
+  .road{grid-template-columns:1fr;gap:22px;padding-left:34px}
+  .road-track{left:15px;right:auto;top:8px;bottom:8px;width:4px;height:auto}
+  .road-track i{inset:0 0 auto 0;width:100%;height:calc(var(--pos) * 100%)}
+  .mile{text-align:left;padding:0}
+  .mile .dot{position:absolute;left:-28px;top:0;margin:0}
+  .mile.final .dot{left:-32px;margin:0}
+  .mile .when{margin-top:0}
+}
+
+/* polls */
+.nick{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;margin-top:34px;padding:18px 20px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg-2)}
+.nick label{font-weight:700}
+.nick input{flex:1 1 220px;min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:10px;color:var(--text);font:500 16px Manrope,sans-serif;padding:12px 14px}
+.nick input:focus{outline:2px solid var(--red);outline-offset:1px}
+.nick small{flex-basis:100%;color:var(--muted);font-size:13px}
+.polls{display:grid;gap:14px;margin-top:20px}
+.poll{border:1px solid var(--line);border-radius:var(--radius);background:var(--card);overflow:hidden}
+.poll.is-open{border-color:rgba(227,38,43,.45)}
+.poll-head{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:20px;cursor:pointer;width:100%;background:none;border:0;color:inherit;text-align:left;font:inherit}
+.poll-head .idx{font:900 22px/1 Unbounded,sans-serif;color:var(--red);width:38px}
+.poll-head p{color:var(--muted);font-size:14px;margin-top:4px}
+.poll-head .meta{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.poll-head .dl{font-size:12px;color:var(--muted);white-space:nowrap}
+.poll-body{display:none;padding:0 20px 20px;border-top:1px solid var(--line)}
+.poll.expanded .poll-body{display:block}
+.poll ul.asks{margin:16px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:8px}
+.poll ul.asks li{font-size:13px;padding:6px 10px;border-radius:8px;background:var(--bg);color:#cfcac2}
+.form-slot{margin-top:18px;border-radius:12px;overflow:hidden;background:#fff}
+.form-slot iframe{display:block;width:100%;border:0;min-height:420px}
+.form-empty{margin-top:18px;border:1px dashed var(--line);border-radius:12px;padding:26px;text-align:center;color:var(--muted);font-size:14px}
+.poll-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+@media(max-width:600px){.poll-head{grid-template-columns:1fr auto}.poll-head .idx{display:none}.poll-head .meta .dl{display:none}}
+
+/* program */
+.prog{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,64px);margin-top:44px}
+@media(max-width:860px){.prog{grid-template-columns:1fr}}
+.timeline{list-style:none;margin:0;padding:0;border-left:2px solid var(--line)}
+.timeline li{position:relative;padding:0 0 22px 24px}
+.timeline li::before{content:"";position:absolute;left:-7px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--muted)}
+.timeline li.key::before{border-color:var(--red);background:var(--red)}
+.timeline time{font:700 13px/1 Unbounded,sans-serif;color:var(--muted)}
+.timeline li.key time{color:var(--red)}
+.timeline h3{font-size:16px;margin-top:6px}
+.timeline p{font-size:14px;color:var(--muted);margin-top:3px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.card .ico{font-size:22px;line-height:1}
+.card h3{margin-top:12px;font-size:16px}
+.card p{color:var(--muted);font-size:14px;margin-top:6px}
+.wiki{background:linear-gradient(135deg,#1d0809,#17171a 60%);border-color:rgba(227,38,43,.4);grid-column:1/-1}
+.rounds{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.rounds div{background:rgba(0,0,0,.35);border-radius:10px;padding:12px}
+.rounds b{display:block;font:700 13px/1.2 Unbounded,sans-serif}
+.rounds span{font-size:12px;color:var(--muted)}
+@media(max-width:560px){.rounds{grid-template-columns:1fr}}
+.blocks{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px}
+@media(max-width:860px){.blocks{grid-template-columns:1fr}}
+.block{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px 22px 24px;overflow:hidden;min-height:230px;display:flex;flex-direction:column}
+.block .num{font:900 64px/1 Unbounded,sans-serif;color:transparent;-webkit-text-stroke:1.5px var(--red);opacity:.9}
+.block h3{font-size:20px;margin-top:18px}
+.block p{color:var(--muted);font-size:15px;margin-top:8px}
+.block .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:18px}
+.block .tags span{font-size:12px;padding:5px 9px;border-radius:7px;background:var(--bg);color:#cfcac2}
+.block.key{border-color:rgba(227,38,43,.45);background:linear-gradient(160deg,#1d0809,var(--card) 65%)}
+.legend{position:relative;margin-top:36px;border:1px solid rgba(232,196,106,.45);border-radius:20px;padding:clamp(24px,4vw,44px);background:radial-gradient(120% 140% at 100% 0%,rgba(227,38,43,.28),transparent 55%),linear-gradient(160deg,#1a1408,#121214 70%);overflow:hidden;display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center}
+@media(max-width:820px){.legend{grid-template-columns:1fr}}
+.legend::after{content:"♠";position:absolute;right:-20px;bottom:-70px;font:900 260px/1 Unbounded,sans-serif;color:var(--gold);opacity:.06;pointer-events:none}
+.legend .tag{font:700 11px/1 Manrope,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.legend h3{font:900 clamp(34px,6vw,64px)/.95 Unbounded,sans-serif;text-transform:uppercase;margin-top:14px}
+.legend .for{margin-top:14px;font-size:17px;color:#e4ded3;max-width:480px}
+.legend .who{margin-top:10px;font-size:14px;color:var(--muted)}
+.legend .who b{color:var(--text)}
+.legend .weights{position:relative;z-index:1}
+.legend .w-bar i{background:var(--gold)}
+
+/* board: Legend + main tiles, one screenshot */
+.board{margin-top:36px;padding:clamp(18px,3vw,32px);border-radius:24px;background:#0d0d0f;border:1px solid var(--line)}
+.board-head{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:14px;margin-bottom:20px}
+.board-logo{font:900 18px/1 Unbounded,sans-serif;letter-spacing:.02em}
+.board-logo b{color:var(--red)}
+.period-badge{display:inline-flex;align-items:center;gap:12px;padding:10px 16px;border-radius:999px;border:1px solid rgba(232,196,106,.5);background:rgba(232,196,106,.08)}
+.period-badge span{font:700 11px/1 Manrope,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.period-badge b{font:700 15px/1 Unbounded,sans-serif}
+.period-badge{position:relative;cursor:default}
+.period-badge .info{font:700 11px/1 Manrope,sans-serif;font-style:normal;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--gold);color:var(--gold)}
+.period-badge .tip{position:absolute;right:0;top:calc(100% + 8px);z-index:5;font:500 13px/1.35 Manrope,sans-serif;font-style:normal;color:var(--text);background:#222226;border:1px solid var(--line);border-radius:10px;padding:10px 12px;white-space:nowrap;opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity .15s,transform .15s}
+.period-badge:hover .tip,.period-badge:focus .tip{opacity:1;transform:none}
+.board .legend{margin-top:0}
+.pillars{display:grid;grid-template-columns:1fr 1fr;gap:10px;position:relative;z-index:1}
+.pillar{background:rgba(0,0,0,.35);border:1px solid rgba(232,196,106,.25);border-radius:14px;padding:16px}
+.pillar i{font-style:normal;font-size:22px;display:block}
+.pillar b{display:block;margin-top:10px;font:700 15px/1.25 Unbounded,sans-serif}
+.main-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:14px}
+@media(max-width:1000px){.main-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:540px){.main-grid{grid-template-columns:1fr}}
+.tile{position:relative;overflow:hidden;border-radius:18px;padding:22px 20px 22px;background:linear-gradient(180deg,#1b1b1f,#141416);border:1px solid var(--line);display:flex;flex-direction:column}
+.tile::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--accent)}
+.tile::after{content:attr(data-suit);position:absolute;right:-14px;top:-30px;font:900 150px/1 Unbounded,sans-serif;color:var(--accent);opacity:.09;pointer-events:none}
+.tile .glyph{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font:900 22px/1 Unbounded,sans-serif;color:#fff;background:var(--accent);box-shadow:0 8px 24px -8px var(--accent)}
+.tile h3{font:900 23px/1.1 Unbounded,sans-serif;margin-top:18px}
+.tile .for{margin-top:10px;font-size:15px;color:#e4ded3}
+.tile ul{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.tile li{font-size:12.5px;color:#d9d4cb;padding:5px 9px;border-radius:7px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);line-height:1.2}
+.tile .crit{font-size:13.5px;color:#c9c4bb;border:0;padding:0;margin-top:14px}
+.tile .who{margin-top:auto;padding-top:16px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.tile .who b{color:var(--text)}
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}
+@media(max-width:760px){.tiers{grid-template-columns:1fr}}
+.tier{position:relative;display:flex;flex-direction:column;gap:4px;padding:18px 18px 16px;border-radius:16px;text-decoration:none;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 10%,var(--bg-2)),var(--bg-2));border:1px solid color-mix(in srgb,var(--c) 30%,var(--line));transition:transform .15s,border-color .15s}
+.tier:hover{transform:translateY(-2px);border-color:var(--c)}
+.t-num{position:absolute;top:14px;right:16px;font:900 26px/1 Unbounded,sans-serif;color:var(--c);opacity:.5}
+.tier b{font:700 17px/1.2 Unbounded,sans-serif}
+.t-sub{font-size:13px;color:var(--muted)}
+.decider{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;margin-top:12px;padding:7px 12px;border-radius:999px;background:color-mix(in srgb,var(--c) 16%,transparent);border:1px solid color-mix(in srgb,var(--c) 40%,transparent);font-size:13px;font-weight:700;color:var(--text)}
+.decider i{font-style:normal}
+.decider-mini{font-style:normal;font-size:13px;font-weight:700;color:var(--text);padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.sec-label{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;margin:26px 0 0}
+.sec-label span{font:700 13px/1 Manrope,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+.sec-label em{font-style:normal;font-size:13px;color:var(--muted)}
+.tile-info{position:absolute;top:16px;right:16px;z-index:3;width:28px;height:28px;border-radius:50%;border:1px solid color-mix(in srgb,var(--accent) 60%,transparent);background:rgba(0,0,0,.35);color:var(--text);font:700 13px/1 Manrope,sans-serif;cursor:pointer}
+.tile-info:hover,.tile.pop-open .tile-info{background:var(--accent)}
+.tile-pop{position:absolute;top:52px;right:12px;left:12px;z-index:4;padding:14px 16px;border-radius:12px;background:#232327;border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));box-shadow:0 18px 40px -12px rgba(0,0,0,.7);font-size:13.5px;line-height:1.5;color:#e4ded3;opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .15s,transform .15s}
+.tile-info:hover + .tile-pop,.tile-info:focus-visible + .tile-pop,.tile.pop-open .tile-pop{opacity:1;transform:none;pointer-events:auto}
+.tile{min-height:250px}
+.sec-label.first{margin-top:0}
+.board .sec-label{margin:30px 0 14px}
+.board .sec-label.first{margin-top:0}
+.board .main-grid{margin-top:0}
+.rules-link{display:inline-block;margin-left:6px;color:var(--red);font-weight:700;text-decoration:none;border-bottom:1px dashed rgba(227,38,43,.5)}
+.rules-link:hover{border-bottom-style:solid}
+.inf-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;margin-bottom:14px}
+.inf-head p{color:var(--muted);font-size:14px}
+.btn.vote-btn{padding:11px 16px;font-size:13px;background:#3d8bff;border-color:#3d8bff}
+.btn.vote-btn:hover{background:#5a9cff}
+.board .inf{margin-top:0;grid-template-columns:repeat(5,1fr)}
+@media(max-width:1100px){.board .inf{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.board .inf{grid-template-columns:1fr 1fr}}
+@media(max-width:440px){.board .inf{grid-template-columns:1fr}}
+.part .btn{margin-top:22px;position:relative;z-index:1;padding:11px 16px;font-size:13px;background:var(--accent);border-color:var(--accent)}
+.sub-row{margin:0 0 10px;font:700 12px/1 Manrope,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.fixed-row{margin-bottom:26px}
+.fixed-card{position:relative;display:flex;align-items:center;gap:22px;padding:22px 24px;border-radius:16px;border:1px solid rgba(232,196,106,.5);background:linear-gradient(90deg,rgba(232,196,106,.12),var(--card) 55%)}
+.fixed-card .live{position:absolute;top:14px;right:16px;font:700 11px/1 Manrope,sans-serif;letter-spacing:.12em;color:var(--gold)}
+.fx-ico{font-size:44px;flex:none}
+.fx-body h3{font:700 20px/1.2 Unbounded,sans-serif}
+.fx-body p{margin-top:6px;color:#cfcac2;font-size:14px;max-width:620px}
+.rounds-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.rounds-row span{font-size:12px;padding:5px 10px;border-radius:7px;background:rgba(0,0,0,.35);border:1px solid rgba(232,196,106,.25)}
+@media(max-width:600px){.fixed-card{flex-direction:column;align-items:flex-start;padding-top:40px}}
+.adm-note{margin-left:8px;color:var(--muted);white-space:nowrap}.adm-note i{font-style:normal;color:var(--gold)}
+.inf-head p b{color:var(--text)}
+.board .inf .card{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:0;padding:22px 14px 18px}
+.board .inf .ico{font-size:32px;width:auto;line-height:1}
+.board .inf .card h3{margin-top:12px;font-size:15px}
+.board .inf .card p{margin-top:6px;font-size:13px;line-height:1.45}
+.fab{position:fixed;right:20px;bottom:20px;z-index:30;display:inline-flex;align-items:center;gap:10px;padding:14px 18px;border-radius:999px;font:700 14px/1.2 Manrope,sans-serif;text-decoration:none;color:#fff;box-shadow:0 14px 36px -10px rgba(0,0,0,.8);transition:transform .15s}
+.fab:hover{transform:translateY(-2px)}
+.fab[hidden]{display:none}
+.fab.hot{background:var(--red)}
+.fab.calm{background:#232327;border:1px solid var(--line);color:#cfcac2}
+.fab .pulse{width:9px;height:9px;border-radius:50%;background:#fff;animation:pulse 1.4s infinite}
+@media(max-width:600px){.fab{left:12px;right:12px;bottom:12px;justify-content:center;border-radius:14px}}
+.back-vote{margin-top:28px}
+.back-vote[hidden]{display:none}
+.stage-legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:16px}
+.stage-legend span{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:#cfcac2}
+.stage-legend i{width:12px;height:12px;border-radius:50%}
+.board-note{margin-top:14px;font-size:13px;color:var(--muted);text-align:center}
+.inf-title{margin-top:56px;font:700 22px/1.2 Unbounded,sans-serif}
+.nom.locked-slot{border-style:dashed;justify-content:center;min-height:170px}
+.nom.locked-slot h3{color:var(--muted)}
+.nom .tag{font:700 11px/1 Manrope,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--red)}
+.duo{display:grid;grid-template-columns:1fr 56px 1fr;grid-template-rows:auto 1fr auto;align-items:stretch;margin-top:44px}
+.duo>.part{grid-row:1/4;display:grid;grid-template-rows:subgrid;row-gap:0}
+.duo>.part:first-child{grid-column:1}.duo>.part:last-child{grid-column:3}
+.duo>.duo-join{grid-row:1/4;grid-column:2}
+.part ul{align-self:start}
+.part .btn{justify-self:start;align-self:end}
+.duo-join{display:flex;align-items:center;justify-content:center;position:relative}
+.duo-join::before{content:"";position:absolute;top:12%;bottom:12%;left:50%;width:1px;background:linear-gradient(var(--red),#3d8bff);opacity:.5}
+.duo-join span{position:relative;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--bg-2);border:1px solid var(--line);font-weight:700;color:var(--text)}
+.part{position:relative;overflow:hidden;border-radius:20px;padding:clamp(22px,3vw,34px);background:radial-gradient(120% 80% at 0% 0%,color-mix(in srgb,var(--accent) 18%,transparent),transparent 60%),var(--card);border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line))}
+.part::after{content:attr(data-suit);position:absolute;right:-16px;bottom:-60px;font:900 200px/1 Unbounded,sans-serif;color:var(--accent);opacity:.07;pointer-events:none}
+.part-tag{font:700 12px/1 Manrope,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.part h3{font:900 clamp(24px,3vw,34px)/1.05 Unbounded,sans-serif;margin-top:12px}
+.part-lead{margin-top:10px;color:#cfcac2;font-size:15px}
+.part ul{list-style:none;margin:22px 0 0;padding:0;display:flex;flex-direction:column;gap:10px;position:relative;z-index:1}
+.part li{display:grid;grid-template-columns:10px 1fr;column-gap:12px;row-gap:2px;align-items:baseline}
+.part li::before{content:"";grid-row:1/3;width:8px;height:8px;border-radius:2px;background:var(--accent);transform:translateY(-1px)}
+.part li b{font-size:15px}
+.part li span{grid-column:2;font-size:13px;color:var(--muted)}
+@media(max-width:820px){.duo{grid-template-columns:1fr;grid-template-rows:auto}.duo>.part,.duo>.part:first-child,.duo>.part:last-child{grid-row:auto;grid-column:1;display:block}.duo>.duo-join{grid-row:auto;grid-column:1;height:48px}.duo-join::before{top:0;bottom:0}.duo-join span{transform:rotate(90deg)}}
+.sub-h{font:700 13px/1 Manrope,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 16px}
+.platforms{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.platforms span{font-size:13px;padding:8px 12px;border-radius:999px;border:1px solid var(--line)}
+.platforms span em{font-style:normal;color:var(--muted)}
+
+/* nominations */
+.tabs{display:flex;gap:6px;margin-top:36px;padding:5px;background:var(--bg-2);border:1px solid var(--line);border-radius:12px;width:max-content;max-width:100%}
+.tabs button{font:700 14px Manrope,sans-serif;background:none;border:0;color:var(--muted);padding:10px 16px;border-radius:8px;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--red);color:#fff}
+.noms{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:22px}
+@media(max-width:360px){.noms{grid-template-columns:1fr}}
+.nom{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:12px}
+.nom-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.nom h3{font-size:19px}
+.nom .for{color:#d9d5ce;font-size:15px}
+.nom .who{font-size:13px;color:var(--muted)}
+.nom .who b{color:var(--text);font-weight:700}
+.weights{display:flex;flex-direction:column;gap:7px;margin-top:2px}
+.w-row{display:grid;grid-template-columns:1fr 44px;gap:10px;align-items:center;font-size:13px}
+.w-bar{grid-column:1/-1;height:5px;border-radius:3px;background:var(--line);overflow:hidden}
+.w-bar i{display:block;height:100%;background:var(--red)}
+.w-row span:last-of-type{text-align:right;font-weight:700}
+.crit{font-size:13px;color:var(--muted);border-left:2px solid var(--red-dim);padding-left:10px}
+.inf{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:22px}
+.inf .card{display:flex;gap:14px;align-items:flex-start}
+.inf .ico{font-size:26px;width:34px;text-align:center;flex:none}
+.inf .card h3{margin:0;font-size:15px}
+.inf .card p{margin-top:4px}
+.suit-r{color:var(--red)}
+.note{margin-top:22px;font-size:14px;color:var(--muted)}
+
+/* nominees */
+.nominees{margin-top:36px;display:flex;flex-direction:column;gap:36px}
+.nomgroup h3{font-size:18px;margin-bottom:14px}
+.ncards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.ncard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden}
+.ncard::after{content:attr(data-suit);position:absolute;right:-8px;bottom:-26px;font:900 110px/1 Unbounded,sans-serif;color:var(--red);opacity:.07}
+.ncard .who{display:flex;align-items:center;gap:12px}
+.avatar{width:46px;height:46px;border-radius:50%;background:var(--red-dim);box-shadow:0 0 0 3px var(--card),0 0 0 6px var(--stage,var(--line));display:grid;place-items:center;font:900 18px/1 Unbounded,sans-serif;flex:none;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.ncard .nick-name{font:700 16px/1.2 Unbounded,sans-serif;word-break:break-word}
+.ncard .role{font-size:12px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:16px}
+.stats dt{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.stats dd{margin:2px 0 0;font:700 17px/1.2 Unbounded,sans-serif}
+.stats dd small{font:500 12px Manrope,sans-serif;color:var(--muted)}
+.fact{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:14px;color:#d9d5ce}
+.fact::before{content:"★ ";color:var(--gold)}
+.ncard.example{border-style:dashed}
+.ncard.example .stats dd,.ncard.example .nick-name,.ncard.example .fact{color:var(--muted)}
+.locked{margin-top:36px;display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}
+@media(max-width:820px){.locked{grid-template-columns:1fr}}
+.locked .msg{font:700 clamp(20px,2.6vw,28px)/1.25 Unbounded,sans-serif}
+.locked .msg + p{color:var(--muted);margin-top:12px}
+
+/* rules */
+.who-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:40px}
+@media(max-width:820px){.who-grid{grid-template-columns:1fr}}
+.who-card{position:relative;padding:24px 22px;border-radius:18px;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 12%,var(--bg-2)),var(--bg-2));border:1px solid color-mix(in srgb,var(--c) 35%,var(--line))}
+.who-ico{font-size:26px;display:block}
+.who-k{display:block;margin-top:14px;font:700 12px/1 Manrope,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--c)}
+.who-card b{display:block;margin-top:8px;font:700 19px/1.2 Unbounded,sans-serif}
+.who-card p{margin-top:8px;font-size:14px;color:#cfcac2}
+.rule.wide{grid-column:1/-1;border-color:rgba(63,208,107,.35);background:linear-gradient(90deg,rgba(63,208,107,.08),var(--bg-2) 60%)}
+.rules{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:40px}
+@media(max-width:640px){.rules{grid-template-columns:1fr}}
+.rule{padding:20px;border-radius:var(--radius);background:var(--bg-2);border:1px solid var(--line)}
+.rule b{display:block;font:700 15px/1.3 Unbounded,sans-serif;margin-bottom:8px}
+.rule p{font-size:14px;color:var(--muted)}
+details{border-bottom:1px solid var(--line);padding:16px 0}
+details summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:12px}
+details summary::after{content:"+";color:var(--red);font:700 20px/1 Unbounded,sans-serif}
+details[open] summary::after{content:"–"}
+details p{color:var(--muted);margin-top:10px;font-size:15px}
+.faq{margin-top:40px;max-width:820px}
+
+footer{border-top:1px solid var(--line);padding:36px 0 48px;color:var(--muted);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px}
+footer nav{display:flex;flex-wrap:wrap;gap:18px}
+footer a{text-decoration:none}
+footer a:hover{color:var(--text)}
+
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s}
+.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.chip.open::before{animation:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<!-- Мазок пензля: спільний фільтр для всіх підкреслень -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="rough" x="-5%" y="-100%" width="110%" height="300%"><feTurbulence type="fractalNoise" baseFrequency="0.035 0.9" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>
+</svg>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="#top">EVO <b>AWARDS</b> 2026</a><span class="nav-date" title="Онлайн-ефір"><i class="live-dot"></i>22 грудня</span>
+    <ul>
+      <li><a href="#program">Програма</a></li>
+      <li><a href="#nominations">Номінації</a></li>
+      <li><a href="#vote">Голосування</a></li>
+      <li><a href="#nominees">Номінанти</a></li>
+      <li><a href="#rules">Правила</a></li>
+    </ul>
+  </div>
+</header>
+
+<main id="top">
+
+<section class="hero">
+  <div class="suits" aria-hidden="true">♠♥</div>
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="kicker">Школа Еволюція · підсумки року</div>
+        <h1>EVO Awards<span class="yr">2026</span></h1>
+        <p class="sub">Онлайн-церемонія для <strong>гравців і команди EVO</strong>. Відзначаємо ріст, стабільність і людей, без яких Еволюція була б іншою. Нагороди, ком'юніті номінації і формат вечора визначаємо разом.</p>
+        <div class="hero-cta">
+          <a class="btn" href="#vote">Проголосувати ↓</a>
+        </div>
+      </div>
+      <div class="countdown" id="countdown" aria-live="polite"></div>
+    </div>
+    <div class="road" id="road" aria-label="Шлях до EVO Awards"></div>
+  </div>
+</section>
+
+<section id="program" style="background:var(--bg-2)">
+  <div class="wrap">
+    <div class="kicker">Як це буде</div>
+    <h2>Один вечір —<br>дві частини</h2>
+
+    <div class="duo" id="blocks"></div>
+  </div>
+</section>
+
+<section id="nominations">
+  <div class="wrap">
+    <div class="kicker">Номінації</div>
+    <h2>Нагороди<br>2026</h2>
+    <p class="lead">Три блоки нагород — у кожного свій спосіб визначити переможця.</p>
+
+    <div class="board" id="board">
+      <div class="board-head">
+        <span class="period-badge" tabindex="0"><span>Рік EVO 2026</span><b id="period"></b><i class="info" aria-label="Враховуються лише турніри, зіграні у складі EVO">i</i><em class="tip">Нагороди визначаються за результатами року — враховуються лише турніри, зіграні у складі EVO</em></span>
+      </div>
+      <div class="sec-label first"><span style="color:var(--gold)">I · EVO Legend</span><em class="decider-mini">👥 Переможця обирає адмінсклад на основі статистики</em></div>
+      <div id="legend"></div>
+      <div class="sec-label"><span>II · Статистичні номінації</span><em class="decider-mini">📊 Переможець визначається на основі статистики</em></div>
+      <div class="main-grid" id="serious"></div>
+      <div class="sec-label"><span style="color:#3d8bff">III · Ком'юніті номінації</span><em class="decider-mini">🗳️ Переможець визначається на основі голосування гравців та статистики</em></div>
+      <p class="sub-row">Точно буде на ефірі</p>
+      <div class="fixed-row" id="fixed"></div>
+      <div class="inf-head">
+        <p><b>Обираєте ви:</b> 17 кандидатів, на ефір потрапить 7 — разом з EVO Wiki Live буде 8.</p>
+        <a class="btn vote-btn" href="#poll-noms" data-poll="noms">Голосувати за номінації →</a>
+      </div>
+      <div class="inf" id="informal"></div>
+    </div>
+  </div>
+</section>
+
+<section id="vote" style="background:var(--bg-2)">
+  <div class="wrap">
+    <div class="kicker">Голосування</div>
+    <h2>Твій голос<br>визначає ефір</h2>
+    <svg class="brush" viewBox="0 0 360 22" preserveAspectRatio="none" aria-hidden="true"><path d="M4 12 C80 4 180 18 356 8" stroke="#e3262b" stroke-width="10" fill="none" stroke-linecap="round" filter="url(#rough)"/></svg>
+    <p class="lead">Опитування відкриваються по черзі, кожне — на 2–3 хвилини. Голосування анонімне, результати — на ефірі. <a class="rules-link" href="#rules">Правила голосування →</a></p>
+
+    <div class="nick">
+      <label for="nick">Твій нік у Discord</label>
+      <input id="nick" type="text" autocomplete="nickname" placeholder="наприклад, Walkower" maxlength="40">
+      <small>Введи один раз — підставиться в усі форми на цій сторінці. Зберігається лише у твоєму браузері.</small>
+    </div>
+
+    <div class="polls" id="polls"></div>
+  </div>
+</section>
+
+<section id="nominees">
+  <div class="wrap">
+    <div class="kicker">Номінанти</div>
+    <h2>Шортлист</h2>
+    <div id="nominees-body"></div>
+  </div>
+</section>
+
+<section id="rules" style="background:var(--bg-2)">
+  <div class="wrap">
+    <div class="kicker">Правила</div>
+    <h2>Чесно<br>і прозоро</h2>
+    <div class="rules">
+      <div class="rule wide"><b>🔒 Анонімне голосування: один нік — один голос</b><p>Нік потрібен лише для того, щоб кожен голос рахувався один раз. Хто за кого голосував, ніде не публікується — враховуються лише підсумки.</p></div>
+      <div class="rule"><b>Хто визначає переможців</b><p>EVO Legend — адмінсклад на основі статистики. Статистичні номінації — статистика. Ком'юніті номінації — голосування гравців та статистика.</p></div>
+      <div class="rule"><b>Результати — на ефірі</b><p>Шортлист оголошується заздалегідь, переможці — лише під час церемонії.</p></div>
+      <div class="rule"><b>Дані — відкриті</b><p>Статистика всіх претендентів буде опублікована на цій сторінці — її зможе перевірити кожен.</p></div>
+      <div class="rule"><b>Лише турніри в складі EVO</b><p>Статистика рахується за 1 грудня 2025 – 30 листопада 2026 за тими самими правилами, що й на перегляді рангів.</p></div>
+    </div>
+
+    <div class="faq">
+      <details><summary>Хто може голосувати?</summary><p>Гравці EVO і команда: тренери та адміни.</p></details>
+      <details><summary>Чи можна номінувати себе?</summary><p>У ком'юніті номінаціях — ні. Висувати можна будь-кого іншого: гравців, тренерів, адмінів. У статистичних номінантів визначають цифри.</p></details>
+      <details><summary>Що отримають переможці?</summary><p>Це вирішуєте ви — <a href="#poll-prizes" data-poll="prizes" style="color:var(--red)">проголосуй в опитуванні про нагороди</a>. Формат нагород визначиться за підсумками опитування, деталі будуть оголошені разом зі шортлистом.</p></details>
+      <details><summary>Мене не буде на ефірі. Що робити?</summary><p>Запис буде. Але EVO Wiki Live визначається грою наживо — її можна виграти лише на ефірі.</p></details>
+    </div>
+    <a class="btn ghost back-vote" id="back-vote" href="#vote">← Повернутися до голосування</a>
+  </div>
+</section>
+
+</main>
+<a class="fab" id="fab" href="#vote" hidden></a>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Еволюція · <a href="https://evopoker.pro/">evopoker.pro</a></span>
+    <nav>
+      <a href="https://discord.gg/N5DZWh67Se">Discord</a>
+      <a href="https://www.twitch.tv/evolytsiya">Twitch</a>
+      <a href="https://www.youtube.com/@evolytsiya">YouTube</a>
+      <a href="https://t.me/Evolytsiya">Telegram</a>
+      <a href="https://www.instagram.com/evopoker.pro/">Instagram</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+/* ======================================================================
+   НАЛАШТУВАННЯ — усе, що змінюється по ходу підготовки, лише тут.
+   ====================================================================== */
+
+// Дата ефіру і (коли визначимо) час.
+const EVENT_DATE = '2026-12-22';
+const EVENT_TIME = null; // напр. '19:00' — тоді з'явиться в блоці «До EVO Awards»
+
+// Показувати картки номінантів (вмикаємо після оголошення шортлисту).
+const SHOW_NOMINEES = false;
+
+/* Шлях до ефіру. date — початок етапу (YYYY-MM-DD), until — кінець, якщо етап триває кілька днів.
+   Дати, окрім кінця періоду і ефіру, — робоча чернетка. */
+const MILESTONES = [
+  { date:'2026-11-02', until:'2026-11-08', title:'Блок голосування 1', text:'Призи і учасники вечора' },
+  { date:'2026-11-09', until:'2026-11-15', title:'Блок голосування 2', text:'Ком\'юніті номінації та афтерпаті' },
+  { date:'2026-11-16', until:'2026-11-22', title:'Блок голосування 3', text:'Фінальне визначення номінацій' },
+  { date:'2026-11-23', until:'2026-11-29', title:'Nomination Week', text:'Висуваємо претендентів у номінаціях' },
+  { date:'2026-12-01', title:'Шортлист', text:'Рік EVO 2026 завершено — претенденти в усіх номінаціях' },
+  { date:'2026-12-22', title:'EVO Awards', text:'Нагородження, ігри, афтерпаті', final:true },
+];
+
+/* Опитування. tally — ID форми Tally (з посилання tally.so/r/<ID>).
+   Поки ID порожній, замість форми показується заглушка.
+   У кожній формі Tally створи приховане поле "nick" — сторінка підставить туди нік.
+   status: 'open' | 'soon' | 'closed'. deadline — ISO або null. */
+const POLLS = [
+  { id:'prizes', opens:'2026-10-30', closes:'2026-11-08', title:'Якою має бути нагорода', tally:'kbbVLo',
+    text:'Кубок чи щось практичне — вирішуємо разом, що отримають переможці 2026.',
+    asks:['Кубок, практичне чи обидва','Що саме з практичного','Свій варіант'] },
+  { id:'guests', opens:'2026-10-30', closes:'2026-11-08', title:'Учасники вечора', tally:'Eqq49B',
+    text:'Камерний вечір лише для EVO чи також для близьких — як глядачів.',
+    asks:['Формат для гостей','Чи запросив би когось'] },
+  { id:'afterparty', opens:'2026-11-09', closes:'2026-11-15', title:'Афтерпаті: що робимо після ефіру', tally:'',
+    text:'Обери, що тобі цікаво, — під це будуть кімнати на афтерпаті.',
+    asks:['Тімбілдинг «Вгадай, хто це»','Настільні ігри онлайн','Кіберспорт','Просто поспілкуватися','Свій варіант'] },
+  { id:'noms', opens:'2026-11-09', closes:'2026-11-15', title:'Ком\'юніті номінації: які залишаємо', tally:'',
+    text:'Обери до 7 номінацій, які мають бути на ефірі, або запропонуй свою.',
+    asks:['До 7 номінацій','Своя номінація'] },
+  { id:'noms-final', opens:'2026-11-16', closes:'2026-11-22', title:'Фінальне визначення номінацій', tally:'',
+    text:'Фінальний вибір серед номінацій, які набрали найбільше голосів.',
+    asks:['Фінальний список'] },
+  { id:'nominate', opens:'2026-11-23', closes:'2026-11-29', title:'Nomination Week: претенденти', tally:'',
+    text:'Висуваємо претендентів у ком\'юніті номінаціях — найсильніші пройдуть у шортлист.',
+    asks:['Претенденти','Коротко — чому'] },
+];
+
+/* Три ключові блоки ефіру — без таймінгу. */
+const BLOCKS = [
+  { part:'Частина I', title:'Нагородження та інтерактив', accent:'#e3262b', suit:'♥',
+    text:'Офіційна частина: оголошення переможців та ігри разом з ефіром.',
+    cta:['#nominations','Усі номінації ↓'],
+    items:[['Нагородження','EVO Legend, 4 статистичні і 8 ком\'юніті номінацій'],['EVO Wiki Live','квіз наживо у 3 раунди — переможець отримує номінацію'],['Ігри з ефіром','«Вгадай гравця», EVO Bingo, Decode — граємо всі разом']] },
+  { part:'Частина II', title:'Афтерпаті', accent:'#3d8bff', suit:'♠',
+    text:'Неформальна частина: тематичні кімнати, ігри й спілкування.',
+    cta:['afterparty','Обрати формат афтерпаті →'],
+    items:[['Тематичні кімнати','кожен обирає, куди піти'],['Ігри','тімбілдинг, настільні, кіберспорт'],['Просто поговорити','з тими, кого зазвичай бачиш лише в Discord'],['Формат','обираєте ви в Блоці голосування 2']] },
+];
+
+const PLATFORMS = [
+  ['Discord + OBS','звично'], ['Zoom + OBS','просто'], ['Airmeet','віртуальні столики'],
+  ['Gather','цифровий офіс'], ['SpatialChat','кімнати'], ['vFairs','своя локація'],
+];
+
+/* Номінації — чернетка до погодження з командою (документ «EVO Awards 2026 — номінації та критерії»).
+   LEGEND — центральна нагорода, показується окремим блоком.
+   SERIOUS — статистичні; show:false ховає картку. weights — [назва, %]; criteria — текст, якщо ваг немає. */
+const PERIOD = '1 грудня 2025 — 30 листопада 2026';
+const LEGEND = { name:'EVO Legend', for:'Людина, яка за рік зробила для Еволюції найбільше — за столами і поза ними.',
+  who:'Адмінсклад на основі статистики', pillars:[['🏆','Результати'],['🎯','Професіоналізм'],['🤝','Наставництво'],['💬','Вклад у ком\'юніті']] };
+const SERIOUS = [
+  { show:true, name:'Top Profit', glyph:'$', suit:'♦', accent:'#e3262b', for:'Найбільший прибуток року', who:'Статистика',
+    info:'Сума виграшів у турнірах, зіграних у складі EVO за рік: 1 грудня 2025 — 30 листопада 2026. Мінімальної дистанції немає.' },
+  { show:true, name:'Top ROI', glyph:'%', suit:'♠', accent:'#3d8bff', for:'Найвища прибутковість року', who:'Статистика',
+    info:'ROI — прибуток відносно суми бай-інів. Беруть участь гравці, які зіграли за рік щонайменше 2000 турнірів у складі EVO (ре-ентрі рахуються).' },
+  { show:true, name:'Професіонал року', glyph:'✓', suit:'♣', accent:'#3fd06b', for:'Найпрофесійніший підхід до гри', who:'Статистика',
+    info:'Допуск — від 2000 турнірів за рік і щонайменше 6 повних місяців у EVO. Шість складових з рівною вагою: норма дистанції, регулярність ігрових днів, сесії 3–8 годин, 6–9 столів, селект турнірів і EV.' },
+  { show:true, name:'ABIатор', glyph:'↑', suit:'♥', accent:'#e8a13a', for:'Найшвидший ріст року', who:'Статистика',
+    info:'Найбільше зростання за рангами за рік. ABI + «атор»: читається як «Авіатор».' },
+];
+
+/* Пул ком'юніті номінацій. fixed:true — завжди на ефірі, не в голосуванні. */
+/* Ком'юніті номінації. FIXED — завжди на ефірі (не в голосуванні). Висувати можна будь-кого: гравців, тренерів, адмінів. */
+const FIXED = [
+  { ico:'🧠', name:'EVO Wiki Live', text:'Хто знає про EVO і покер найбільше. Переможця визначає квіз наживо на ефірі.',
+    rounds:['EVO Lore','Poker Brain','Deep Wiki'] },
+];
+/* Порядок — за оцінкою (score, 0–10), найвищі зверху. */
+const INFORMAL = [
+  { score:9,   ico:'📝', name:'Блог року', text:'Найцікавіший блог гравця: чесно, регулярно і про справжній шлях.' },
+  { score:9,   ico:'🌱', name:'Новачок року', text:'Пройшов REVO з самого нуля — від ABI $2 — і вже високо в EVO.' },
+  { score:8,   ico:'♥', red:true, name:'EVO ♥', text:'Людина, з якою в EVO тепліше: підтримає, підбадьорить, допоможе.' },
+  { score:8,   ico:'🍀', name:'Run Good', text:'Найбільше везіння за рік: результат вище за all-in EV.' },
+  { score:8,   ico:'🧊', name:'Cooler King', text:'Найменше везіння за рік: результат нижче за all-in EV.' },
+  { score:7,   ico:'🎓', name:'Тренер року', text:'Найбільше допомагає зі стратегією і аналізом гри.' },
+  { score:6.5, ico:'🛟', name:'Рятівник року', text:'Допоможе з усім навколо покеру: софт, руми, налаштування, організаційні питання.' },
+  { score:6.5, ico:'🛑', name:'Fold of the Year', text:'Найкращий фолд року.' },
+  { score:6,   ico:'👑', name:'Late EV King', text:'Найкраща гра на пізніх стадіях: найвищий EV на рівнях 9+ за рік.' },
+  { score:6,   ico:'🎯', name:'Total EV Prince', text:'Найвищий загальний EV за рік — найкращі рішення незалежно від везіння.' },
+  { score:6,   ico:'💬', name:'Always Online', text:'Найпомітніший у житті EVO: чати, войси, івенти.' },
+  { score:6,   ico:'💥', name:'Занос року', text:'Найбільший разовий виграш за рік.' },
+  { score:5.5, ico:'📈', name:'Камбек року', text:'Найглибша просадка — і новий максимум після неї.' },
+  { score:5,   ico:'🃏', name:'Hand of the Year', text:'Найкращий розіграш року — за рішення, не за розмір банку.' },
+  { score:4,   ico:'🐾', name:'Petfluencer', text:'Улюбленець, який уже став частиною команди.' },
+  { score:3,   ico:'🎤', name:'Mic Drop', text:'Найсильніші аргументи в покерних обговореннях.' },
+  { score:2.5, ico:'😂', name:'Meme Lord', text:'Найкращі меми про покер і EVO.' },
+].sort((a, b) => b.score - a.score);
+
+/* Номінанти — заповнюється після шортлисту.
+   Формат: { 'Назва номінації': [ {nick, avatar, rank, abi, distance, bestCash, fact} ] }
+   rank — поточний ранг (1–16, етап рахується автоматично), abi — ABI рангу, avatar — URL або порожньо. */
+const NOMINEES = {};
+
+/* ====================================================================== */
+
+const $ = s => document.querySelector(s);
+const el = (tag, attrs = {}, html = '') => { const n = document.createElement(tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (html) n.innerHTML = html; return n; };
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtDate = iso => new Date(iso).toLocaleString('uk-UA', { day:'numeric', month:'long', hour:'2-digit', minute:'2-digit', timeZone:'Europe/Kyiv' });
+
+function store(key, val) { try { if (val === undefined) return localStorage.getItem(key); localStorage.setItem(key, val); } catch (e) { return null; } }
+
+/* --- дні до ефіру і шлях --- */
+const MONTHS = ['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'];
+const dayNum = iso => { const [y, m, d] = iso.split('-').map(Number); return Date.UTC(y, m - 1, d) / 864e5; };
+const todayNum = () => { const t = new Date().toLocaleDateString('en-CA', { timeZone:'Europe/Kyiv' }); return dayNum(t); };
+const dLabel = iso => { const [, m, d] = iso.split('-').map(Number); return d + ' ' + MONTHS[m - 1]; };
+const plural = (n, one, few, many) => { const a = n % 10, b = n % 100; return a === 1 && b !== 11 ? one : a >= 2 && a <= 4 && (b < 12 || b > 14) ? few : many; };
+const days = n => n + ' ' + plural(n, 'день', 'дні', 'днів');
+
+function renderRoad() {
+  if (EVENT_TIME) $('.nav-date').lastChild.textContent = dLabel(EVENT_DATE) + ' · ' + EVENT_TIME;
+  const today = todayNum(), left = dayNum(EVENT_DATE) - today;
+  $('#countdown').innerHTML = left > 0
+    ? `<div class="label">До EVO Awards ${plural(left, 'залишився', 'залишилось', 'залишилось')}</div>
+       <div class="cd-big"><b>${left}</b><span>${plural(left, 'день', 'дні', 'днів')}</span></div>${EVENT_TIME ? `<div class="what">о ${esc(EVENT_TIME)}</div>` : ''}`
+    : `<div class="label">EVO Awards 2026</div><div class="cd-big"><b>${left === 0 ? 'Сьогодні' : 'Відбулось'}</b></div><div class="what">${dLabel(EVENT_DATE)} 2026</div>`;
+
+  // поточна позиція на шкалі: між вузлами i та i+1
+  const pts = MILESTONES.map(m => dayNum(m.date));
+  let pos = 0;
+  if (today >= pts[pts.length - 1]) pos = 1;
+  else if (today > pts[0]) {
+    const i = pts.findIndex((p, k) => today >= p && today < pts[k + 1]);
+    pos = (i + (today - pts[i]) / (pts[i + 1] - pts[i])) / (pts.length - 1);
+  }
+  const state = m => { const s = dayNum(m.date), e = dayNum(m.until || m.date);
+    return today > e ? 'done' : today >= s ? 'now' : 'next'; };
+  const when = m => { const st = state(m), s = dayNum(m.date) - today;
+    if (st === 'done') return 'Завершено';
+    if (st === 'now') return m.until ? 'Зараз · ще ' + days(dayNum(m.until) - today + 1) : 'Сьогодні';
+    return 'Через ' + days(s); };
+  const span = m => m.until ? `${dLabel(m.date).split(' ')[0]}–${dLabel(m.until)}` : dLabel(m.date);
+  $('#road').style.setProperty('--n', MILESTONES.length);
+  $('#road').style.setProperty('--pos', pos);
+  $('#road').innerHTML = `<div class="road-track"><i></i></div>` + MILESTONES.map(m =>
+    `<div class="mile ${state(m)}${m.final ? ' final' : ''}">
+       <span class="dot"></span>
+       <span class="when">${when(m)}</span>
+       <h3>${esc(m.title)}</h3>
+       <span class="date">${span(m)}</span>
+       <p>${esc(m.text)}</p>
+     </div>`).join('');
+}
+renderRoad(); setInterval(renderRoad, 60 * 60 * 1000);
+
+/* --- опитування --- */
+const nickInput = $('#nick');
+nickInput.value = store('evo_awards_nick') || '';
+/* Нік в один вигляд: без @ і пробілів, малими літерами — щоб «Wander » і «wander» були одним голосом. */
+const normNick = v => v.trim().replace(/^@+/, '').replace(/\s+/g, '').toLowerCase();
+function formUrl(p, embed) {
+  const q = new URLSearchParams({ nick: normNick(nickInput.value), source: 'awards-page' });
+  if (embed) { q.set('hideTitle', '1'); q.set('dynamicHeight', '1'); q.set('alignLeft', '1'); }
+  return `https://tally.so/${embed ? 'embed' : 'r'}/${encodeURIComponent(p.tally)}?${q}`;
+}
+const STATUS = { open:['open','Відкрито'], soon:['soon','Скоро'], closed:['done','Завершено'] };
+/* --- хто вже проголосував (лише в цьому браузері) --- */
+const VOTED_KEY = 'evo_awards_voted';
+const votedSet = () => { try { return new Set(JSON.parse(store(VOTED_KEY) || '[]')); } catch (e) { return new Set(); } };
+const hasVoted = id => votedSet().has(id);
+function markVoted(id) { const v = votedSet(); v.add(id); store(VOTED_KEY, JSON.stringify([...v]));
+  const chip = document.querySelector('#poll-' + id + ' .meta .chip'); if (chip) { chip.className = 'chip done'; chip.textContent = '✓ Ти проголосував'; }
+  renderFab(); }
+window.addEventListener('message', e => {
+  if (!/tally\.so$/.test(new URL(e.origin || 'http://x').hostname)) return;
+  let d = e.data; if (typeof d === 'string') { try { d = JSON.parse(d); } catch (_) { return; } }
+  if (!d || d.event !== 'Tally.FormSubmitted') return;
+  const formId = d.payload && d.payload.formId; const p = POLLS.find(x => x.tally && x.tally === formId);
+  if (p) markVoted(p.id);
+});
+function nextVote() {
+  const open = POLLS.filter(p => p.status === 'open' && !hasVoted(p.id));
+  if (open.length) return { poll: open[0] };
+  const t = todayNum(), soon = POLLS.filter(p => p.status === 'soon').sort((a, b) => dayNum(a.opens) - dayNum(b.opens))[0];
+  const anyOpen = POLLS.some(p => p.status === 'open');
+  return !anyOpen && soon ? { soon, days: dayNum(soon.opens) - t } : null;
+}
+let voteInView = false;
+function renderFab() {
+  const fab = $('#fab'), back = $('#back-vote'), n = nextVote();
+  if (n && n.poll) { fab.className = 'fab hot'; fab.dataset.poll = n.poll.id; fab.href = '#poll-' + n.poll.id;
+    fab.innerHTML = `<span class="pulse"></span>Голосуй: ${esc(n.poll.title)} <b>→</b>`;
+    back.dataset.poll = n.poll.id; back.textContent = '← Повернутися до голосування'; back.hidden = false; }
+  else if (n && n.soon) { fab.className = 'fab calm'; delete fab.dataset.poll; fab.href = '#vote';
+    fab.innerHTML = `Наступне голосування через ${days(n.days)}`; delete back.dataset.poll; back.hidden = false; }
+  else { fab.className = 'fab'; back.hidden = true; }
+  fab.hidden = !(n) || voteInView;
+}
+POLLS.forEach(p => { const t = todayNum(); p.status = t < dayNum(p.opens) ? 'soon' : t > dayNum(p.closes) ? 'closed' : 'open'; });
+POLLS.forEach((p, i) => {
+  const [cls, lbl] = STATUS[p.status] || STATUS.soon;
+  const card = el('article', { class:'poll' + (p.status === 'open' ? ' is-open' : ''), id:'poll-' + p.id });
+  card.innerHTML = `
+    <button class="poll-head" aria-expanded="false" aria-controls="pb-${p.id}">
+      <span class="idx">${String(i + 1).padStart(2, '0')}</span>
+      <span><h3>${esc(p.title)}</h3><p>${esc(p.text)}</p></span>
+      <span class="meta">${hasVoted(p.id) ? '<span class="chip done">✓ Ти проголосував</span>' : `<span class="chip ${cls}">${lbl}</span>`}<span class="dl">${dLabel(p.opens).split(' ')[0]}–${dLabel(p.closes)}</span></span>
+    </button>
+    <div class="poll-body" id="pb-${p.id}">
+      <ul class="asks">${p.asks.map(a => `<li>${esc(a)}</li>`).join('')}</ul>
+      <div class="slot"></div>
+    </div>`;
+  const head = card.querySelector('.poll-head');
+  head.addEventListener('click', () => {
+    const open = card.classList.toggle('expanded');
+    head.setAttribute('aria-expanded', open);
+    if (open) fillSlot(card, p);
+  });
+  $('#polls').append(card);
+});
+function fillSlot(card, p) {
+  const slot = card.querySelector('.slot');
+  if (p.status !== 'open') { slot.innerHTML = `<div class="form-empty">${p.status === 'closed' ? 'Опитування завершено. Дякуємо за голос!' : 'Відкриється ' + dLabel(p.opens) + ' — анонс буде в Discord.'}</div>`; return; }
+  if (!p.tally) { slot.innerHTML = `<div class="form-empty">Форма ще не підключена.</div>`; return; }
+  if (!nickInput.value.trim()) {
+    slot.innerHTML = `<div class="form-empty">Спершу введи свій нік у Discord вище — так твій голос врахується один раз.</div>`;
+    return;
+  }
+  const src = formUrl(p, true);
+  const frame = slot.querySelector('iframe');
+  if (frame && frame.dataset.src === src) return;
+  slot.innerHTML = `<div class="form-slot"><iframe data-src="${esc(src)}" src="${esc(src)}" loading="lazy" title="${esc(p.title)}"></iframe></div>
+    <div class="poll-actions"><a class="btn ghost" href="${esc(formUrl(p, false))}" target="_blank" rel="noopener">Відкрити форму в новій вкладці ↗</a></div>`;
+  loadTally();
+}
+let tallyLoaded = false;
+function loadTally() {
+  if (tallyLoaded) { window.Tally && Tally.loadEmbeds(); return; }
+  tallyLoaded = true;
+  const s = el('script', { src:'https://tally.so/widgets/embed.js', async:'' });
+  s.onload = () => window.Tally && Tally.loadEmbeds();
+  document.body.append(s);
+}
+let nickTimer;
+nickInput.addEventListener('input', () => {
+  store('evo_awards_nick', nickInput.value.trim());
+  clearTimeout(nickTimer);
+  nickTimer = setTimeout(() => document.querySelectorAll('.poll.expanded').forEach(c => fillSlot(c, POLLS.find(p => 'poll-' + p.id === c.id))), 600);
+});
+// перше відкрите опитування — розгорнуте одразу
+document.addEventListener('click', e => {
+  const a = e.target.closest('[data-poll]'); if (!a) return;
+  const card = document.getElementById('poll-' + a.dataset.poll); if (!card) return;
+  e.preventDefault(); card.scrollIntoView({ behavior:'smooth', block:'start' });
+  if (!card.classList.contains('expanded')) card.querySelector('.poll-head').click();
+});
+if ('IntersectionObserver' in window) new IntersectionObserver(es => { voteInView = es[0].isIntersecting; renderFab(); }, { threshold: .15 }).observe($('#vote'));
+renderFab();
+const firstOpen = document.querySelector('.poll.is-open .poll-head');
+if (firstOpen) firstOpen.click();
+
+/* --- програма: 3 блоки --- */
+$('#blocks').innerHTML = BLOCKS.map((b, i) => `
+  <article class="part" style="--accent:${b.accent}" data-suit="${b.suit}">
+    <div class="part-top"><span class="part-tag">${esc(b.part)}</span>
+    <h3>${esc(b.title)}</h3>
+    <p class="part-lead">${esc(b.text)}</p></div>
+    <ul>${b.items.map(([k, v]) => `<li><b>${esc(k)}</b><span>${esc(v)}</span></li>`).join('')}</ul>
+    ${b.cta ? (b.cta[0][0] === '#' ? `<a class="btn vote-btn" href="${b.cta[0]}">${esc(b.cta[1])}</a>` : `<a class="btn vote-btn" href="#poll-${b.cta[0]}" data-poll="${b.cta[0]}">${esc(b.cta[1])}</a>`) : ''}
+  </article>${i === 0 ? '<div class="duo-join" aria-hidden="true"><span>→</span></div>' : ''}`).join('');
+
+/* --- номінації --- */
+const nomCard = n => { const t = el('article', { class:'tile', 'data-suit': n.suit || '' }); t.style.setProperty('--accent', n.accent || 'var(--red)');
+  t.innerHTML = `<button class="tile-info" type="button" aria-label="Детальніше про ${esc(n.name)}">i</button>
+    <div class="tile-pop" role="tooltip">${esc(n.info)}</div>
+    <div class="glyph">${esc(n.glyph || '★')}</div><h3>${esc(n.name)}</h3><p class="for">${esc(n.for)}</p>`;
+  t.querySelector('.tile-info').addEventListener('click', e => { e.stopPropagation(); const on = !t.classList.contains('pop-open');
+    document.querySelectorAll('.tile.pop-open').forEach(x => x.classList.remove('pop-open')); t.classList.toggle('pop-open', on); });
+  return t; };
+document.addEventListener('click', () => document.querySelectorAll('.tile.pop-open').forEach(x => x.classList.remove('pop-open')));
+$('#period').textContent = PERIOD;
+$('#legend').innerHTML = `<article class="legend">
+  <div><span class="tag">Основна нагорода EVO Awards</span><h3>${esc(LEGEND.name)}</h3>
+    <p class="for">${esc(LEGEND.for)}</p></div>
+  <div class="pillars">${LEGEND.pillars.map(([i, k]) => `<div class="pillar"><i>${i}</i><b>${esc(k)}</b></div>`).join('')}</div>
+</article>`;
+$('#serious').append(...SERIOUS.filter(n => n.show).map(nomCard));
+$('#fixed').innerHTML = FIXED.map(n => `<article class="fixed-card">
+  <span class="live">● LIVE · розігруємо на ефірі</span>
+  <div class="fx-ico">${n.ico}</div>
+  <div class="fx-body"><h3>${esc(n.name)}</h3><p>${esc(n.text)}</p>
+    <div class="rounds-row">${n.rounds.map((r, i) => `<span>Раунд ${i + 1} · ${esc(r)}</span>`).join('')}</div></div>
+</article>`).join('');
+$('#informal').append(...INFORMAL.map(n => el('div', { class:'card' },
+  `<div class="ico ${n.red ? 'suit-r' : ''}">${n.ico}</div><h3>${esc(n.name)}</h3><p>${esc(n.text)}</p>`)));
+document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.tabs button').forEach(x => {
+    const on = x === b; x.setAttribute('aria-selected', on);
+    document.getElementById(x.getAttribute('aria-controls')).hidden = !on;
+  });
+}));
+
+/* --- номінанти --- */
+const SUITS = ['♠', '♥', '♦', '♣'];
+const arrow = a => Array.isArray(a) ? `${esc(a[0])} → ${esc(a[1])}` : esc(a ?? '—');
+const STAGE_COLORS = ['#8a8a92', '#3d8bff', '#e3262b', '#e8c46a']; // етапи 1–4 (ранги 1–4, 5–8, 9–12, 13–16)
+const stageOf = r => Math.min(4, Math.max(1, Math.ceil(Number(r) / 4) || 1));
+function nomineeCard(x, i, example) {
+  const st = stageOf(x.rank), col = example ? 'var(--line)' : STAGE_COLORS[st - 1];
+  const av = x.avatar ? `<img src="${esc(x.avatar)}" alt="">` : esc((x.nick || '?')[0].toUpperCase());
+  return `<article class="ncard${example ? ' example' : ''}" data-suit="${SUITS[i % 4]}" style="--stage:${col}">
+    <div class="who"><div class="avatar">${av}</div><div><div class="nick-name">${esc(x.nick)}</div><div class="role">${example ? 'Етап — колір обідка' : 'Етап ' + st}</div></div></div>
+    <dl class="stats">
+      <div style="grid-column:1/-1"><dt>Ранг</dt><dd>${esc(x.rank ?? '—')} <small>(ABI ${x.abi ? '$' + esc(x.abi) : '—'})</small></dd></div>
+      <div><dt>Дистанція за рік</dt><dd>${esc(x.distance ?? '—')} <small>турн.</small></dd></div>
+      <div><dt>Найбільший занос</dt><dd>${esc(x.bestCash ?? '—')}</dd></div>
+    </dl>
+    ${x.fact ? `<p class="fact">${esc(x.fact)}</p>` : ''}
+  </article>`;
+}
+const groups = Object.entries(NOMINEES).filter(([, list]) => list && list.length);
+if (SHOW_NOMINEES && groups.length) {
+  $('#nominees-body').innerHTML = `<div class="nominees">${groups.map(([nom, list]) =>
+    `<div class="nomgroup"><h3>${esc(nom)}</h3><div class="ncards">${list.map((x, i) => nomineeCard(x, i)).join('')}</div></div>`).join('')}</div>`;
+} else {
+  $('#nominees-body').innerHTML = `<div class="locked">
+    <div><p class="msg">Претенденти будуть оголошені наприкінці листопада, коли завершиться Рік EVO 2026.</p>
+      <p>На картці — ранг і ABI, дистанція за рік, найбільший занос і цікавий факт. Колір обідка — етап гравця.</p>
+      <div class="stage-legend">${STAGE_COLORS.map((c, i) => `<span><i style="background:${c}"></i>Етап ${i + 1}</span>`).join('')}</div></div>
+    ${nomineeCard({ nick:'Нікнейм', rank:'—', abi:'', distance:'—', bestCash:'—', fact:'Цікавий факт зі статистики гравця' }, 0, true)}
+  </div>`;
+}
+
+/* --- поява блоків --- */
+const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold:.08 }) : null;
+document.querySelectorAll('section .wrap > *').forEach(n => { if (io) { n.classList.add('reveal'); io.observe(n); } });
+</script>
+</body>
+</html>
