@@ -389,6 +389,7 @@ footer a:hover{color:var(--text)}
 .reveal.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.chip.open::before{animation:none}html{scroll-behavior:auto}}
 </style>
+<link rel="stylesheet" href="vote.css">
 </head>
 <body>
 
@@ -470,15 +471,18 @@ footer a:hover{color:var(--text)}
     <div class="kicker">Голосування</div>
     <h2>Твій голос<br>визначає ефір</h2>
     <svg class="brush" viewBox="0 0 360 22" preserveAspectRatio="none" aria-hidden="true"><path d="M4 12 C80 4 180 18 356 8" stroke="#e3262b" stroke-width="10" fill="none" stroke-linecap="round" filter="url(#rough)"/></svg>
-    <p class="lead">Опитування відкриваються по черзі, кожне — на 2–3 хвилини. Голосування анонімне, результати — на ефірі. <a class="rules-link" href="#rules">Правила голосування →</a></p>
+    <p class="lead">Опитування відкриваються по черзі, кожне — на 2–3 хвилини. Хто за кого голосував, не публікується, результати — на ефірі. <a class="rules-link" href="#rules">Правила голосування →</a></p>
 
-    <div class="nick">
+    <div class="auth" id="auth"></div>
+
+    <div class="nick" id="nick-box">
       <label for="nick">Твій нік у Discord</label>
       <input id="nick" type="text" autocomplete="nickname" placeholder="наприклад, Walkower" maxlength="40">
       <small>Введи один раз — підставиться в усі форми на цій сторінці. Зберігається лише у твоєму браузері.</small>
     </div>
 
     <div class="polls" id="polls"></div>
+    <div class="board-card" id="chips-board" hidden></div>
   </div>
 </section>
 
@@ -495,7 +499,8 @@ footer a:hover{color:var(--text)}
     <div class="kicker">Правила</div>
     <h2>Чесно<br>і прозоро</h2>
     <div class="rules">
-      <div class="rule wide"><b>🔒 Анонімне голосування: один нік — один голос</b><p>Нік потрібен лише для того, щоб кожен голос рахувався один раз. Хто за кого голосував, ніде не публікується — враховуються лише підсумки.</p></div>
+      <div class="rule wide"><b>🔒 Один гравець — один голос</b><p>Голосувати можуть гравці EVO і REVO: вхід через Discord і вибір себе зі списку гравців, один раз. Хто за кого голосував, ніде не публікується — враховуються лише підсумки.</p></div>
+      <div class="rule wide"><b>🪙 Фішки на переможців</b><p>Кожен учасник отримує 1 000 фішок на весь івент і в Блоці 4 ставить їх на тих, хто, на його думку, переможе в номінаціях. Банк кожної номінації ділиться між тими, хто вгадав, пропорційно ставкам, без жодної комісії. Не вгадав — фішки в цій номінації втрачено. Якщо на переможця не поставив ніхто, ставки повертаються. Після ефіру тут з'явиться таблиця: хто скільки фішок зібрав.</p></div>
       <div class="rule"><b>Хто визначає переможців</b><p>EVO Legend — адмінсклад на основі статистики. Статистичні номінації — статистика. Ком'юніті номінації — голосування гравців та статистика.</p></div>
       <div class="rule"><b>Результати — на ефірі</b><p>Шортлист оголошується заздалегідь, переможці — лише під час церемонії.</p></div>
       <div class="rule"><b>Дані — відкриті</b><p>Статистика всіх претендентів буде опублікована на цій сторінці — її зможе перевірити кожен.</p></div>
@@ -503,7 +508,8 @@ footer a:hover{color:var(--text)}
     </div>
 
     <div class="faq">
-      <details><summary>Хто може голосувати?</summary><p>Гравці EVO і команда: тренери та адміни.</p></details>
+      <details><summary>Хто може голосувати?</summary><p>Гравці EVO і REVO. Увійди через Discord і обери себе зі списку — один раз. Якщо твоє ім'я вже зайняте, напиши адміну.</p></details>
+      <details><summary>Як працюють фішки?</summary><p>1 000 фішок на весь івент, розподіляєш між номінаціями як хочеш, до 29 листопада ставки можна змінювати. Коефіцієнт біля претендента — скільки фішок повернеться за кожну поставлену, якщо банк не зміниться до кінця. Фішки — гра для азарту, на голосування вони не впливають.</p></details>
       <details><summary>Чи можна номінувати себе?</summary><p>У ком'юніті номінаціях — ні. Висувати можна будь-кого іншого: гравців, тренерів, адмінів. У статистичних номінантів визначають цифри.</p></details>
       <details><summary>Що отримають переможці?</summary><p>Це вирішуєте ви — <a href="#poll-prizes" data-poll="prizes" style="color:var(--red)">проголосуй в опитуванні про нагороди</a>. Формат нагород визначиться за підсумками опитування, деталі будуть оголошені разом зі шортлистом.</p></details>
       <details><summary>Мене не буде на ефірі. Що робити?</summary><p>Запис буде. Але EVO Wiki Live визначається грою наживо — її можна виграти лише на ефірі.</p></details>
@@ -561,19 +567,26 @@ const POLLS = [
   { id:'prizes', opens:'2026-10-30', closes:'2026-11-08', title:'Якою має бути нагорода', tally:'kbbVLo',
     text:'Кубок чи щось практичне — вирішуємо разом, що отримають переможці 2026.',
     asks:['Кубок, практичне чи обидва','Що саме з практичного','Свій варіант'] },
-  { id:'noms', opens:'2026-11-09', closes:'2026-11-15', title:'Ком\'юніті номінації: які залишаємо', tally:'',
+  { id:'noms', opens:'2026-11-09', closes:'2026-11-15', title:'Ком\'юніті номінації: які залишаємо', engine:'own',
     text:'Обери до 7 номінацій, які мають бути на ефірі, або запропонуй свою.',
-    asks:['До 7 номінацій','Своя номінація'] },
-  { id:'nominate', opens:'2026-11-16', closes:'2026-11-22', title:'Результати і Nomination Week', tally:'',
+    asks:['До 7 номінацій','Своя номінація'],
+    form:[ { id:'keep', type:'multi', max:7, title:'Які ком\'юніті номінації залишаємо на ефірі', hint:'До 7 номінацій. EVO Wiki Live буде завжди — її в списку немає.', options:'INFORMAL' },
+           { id:'own', type:'text', optional:true, title:'Своя номінація', placeholder:'Назва і коротко — за що', rows:2 } ] },
+  { id:'nominate', opens:'2026-11-16', closes:'2026-11-22', title:'Результати і Nomination Week', engine:'own',
     text:'Які ком\'юніті номінації будуть на ефірі — і висуваємо претендентів у кожній з них.',
     results:'', // HTML з результатами Блоку 2; показується над формою з дати opens
-    asks:['Претенденти','Коротко — чому'] },
-  { id:'final', opens:'2026-11-23', closes:'2026-11-29', title:'Голосування за переможців', tally:'',
-    text:'Обираємо переможців ком\'юніті номінацій серед претендентів шортлисту.',
+    asks:['Претенденти','Коротко — чому'],
+    // items — номінації, що пройшли за підсумками Блоку 2 (замінити на 7 переможців, коли будуть результати)
+    form:[ { id:'nominees', type:'nominate', optional:false, title:'Кого висуваєш', hint:'Можна заповнити лише ті номінації, де маєш кандидата. Висувати можна будь-кого, крім себе: гравців, тренерів, адмінів.', items:'INFORMAL' } ] },
+  { id:'final', opens:'2026-11-23', closes:'2026-11-29', title:'Голосування за переможців', engine:'own',
+    text:'Обираємо переможців ком\'юніті номінацій серед претендентів шортлисту — і ставимо фішки на тих, хто переможе.',
     asks:['Переможець у кожній номінації'] },
-  { id:'guests', opens:'2026-12-01', closes:'2026-12-06', title:'Вечір: учасники й афтерпаті', tally:'Eqq49B',
+  { id:'guests', opens:'2026-12-01', closes:'2026-12-06', title:'Вечір: учасники й афтерпаті', engine:'own',
     text:'Хто дивиться ефір разом з EVO і що робимо після нього — під це будуть кімнати на афтерпаті.',
-    asks:['Формат для гостей','Чи запросив би когось','Що цікаво на афтерпаті'] },
+    asks:['Формат для гостей','Чи запросив би когось','Що цікаво на афтерпаті'],
+    form:[ { id:'format', type:'single', title:'Яким має бути вечір?', options:['Камерним — лише для гравців і команди','Близькі можуть дивитися нагородження, афтерпаті — лише для команди','Близькі можуть дивитися нагородження і долучитися до афтерпаті','Мені не принципово'] },
+           { id:'after', type:'multi', optional:true, title:'Що цікаво на афтерпаті', options:['Тематичні кімнати','Тімбілдинг','Настільні ігри','Кіберспорт','Просто поговорити'] },
+           { id:'note', type:'text', optional:true, title:'Що варто врахувати?', rows:2 } ] },
 ];
 
 /* Три ключові блоки ефіру — без таймінгу. */
@@ -605,7 +618,7 @@ const SERIOUS = [
   { show:true, name:'Top ROI', glyph:'%', suit:'♠', accent:'#3d8bff', for:'Найвища прибутковість року', who:'Статистика',
     info:'ROI — прибуток відносно суми бай-інів. Беруть участь гравці, які зіграли за рік щонайменше 2000 турнірів у складі EVO (ре-ентрі рахуються).' },
   { show:true, name:'Професіонал року', glyph:'✓', suit:'♣', accent:'#3fd06b', for:'Найпрофесійніший підхід до гри', who:'Статистика',
-    info:'Допуск — від 2000 турнірів за рік і щонайменше 6 повних місяців у EVO. Шість складових з рівною вагою: норма дистанції, регулярність ігрових днів, сесії 3–8 годин, 6–9 столів, селект турнірів і EV.' },
+    info:'Допуск — від 2000 турнірів за рік і щонайменше 6 повних місяців у EVO. Девʼять складових: норма дистанції, EV, регулярність ігрових днів, сесії 6–9 годин, 6–9 столів, вхід на першому рівні блайндів, гра у вихідні, здача рук і стабільний розклад.' },
   { show:true, name:'ABIатор', glyph:'↑', suit:'♥', accent:'#e8a13a', for:'Найшвидший ріст року', who:'Статистика',
     info:'Найбільше зростання за рангами за рік. ABI + «атор»: читається як «Авіатор».' },
 ];
@@ -637,6 +650,8 @@ const INFORMAL = [
   { score:2.5, ico:'😂', name:'Meme Lord', text:'Найкращі меми про покер і EVO.' },
 ].sort((a, b) => b.score - a.score);
 
+POLLS.forEach(p => (p.form || []).forEach(q => { if (q.options === 'INFORMAL') q.options = INFORMAL.map(n => n.name); if (q.items === 'INFORMAL') q.items = INFORMAL.map(n => n.name); }));
+
 /* Номінанти — заповнюється після шортлисту.
    Формат: { 'Назва номінації': [ {nick, avatar, rank, abi, distance, bestCash, fact} ] }
    rank — поточний ранг (1–16, етап рахується автоматично), abi — фактичний ABI за рік, avatar — URL або порожньо. */
@@ -654,7 +669,8 @@ function store(key, val) { try { if (val === undefined) return localStorage.getI
 /* --- дні до ефіру і шлях --- */
 const MONTHS = ['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'];
 const dayNum = iso => { const [y, m, d] = iso.split('-').map(Number); return Date.UTC(y, m - 1, d) / 864e5; };
-const todayNum = () => { const t = new Date().toLocaleDateString('en-CA', { timeZone:'Europe/Kyiv' }); return dayNum(t); };
+const TODAY_OVERRIDE = /^\d{4}-\d{2}-\d{2}$/.test(new URLSearchParams(location.search).get('today') || '') ? new URLSearchParams(location.search).get('today') : null;
+const todayNum = () => { const t = TODAY_OVERRIDE || new Date().toLocaleDateString('en-CA', { timeZone:'Europe/Kyiv' }); return dayNum(t); };
 const dLabel = iso => { const [, m, d] = iso.split('-').map(Number); return d + ' ' + MONTHS[m - 1]; };
 const plural = (n, one, few, many) => { const a = n % 10, b = n % 100; return a === 1 && b !== 11 ? one : a >= 2 && a <= 4 && (b < 12 || b > 14) ? few : many; };
 const days = n => n + ' ' + plural(n, 'день', 'дні', 'днів');
@@ -698,6 +714,7 @@ renderRoad(); setInterval(renderRoad, 60 * 60 * 1000);
 /* --- опитування --- */
 const nickInput = $('#nick');
 nickInput.value = store('evo_awards_nick') || '';
+{ const tallyLive = POLLS.some(p => p.tally && todayNum() <= dayNum(p.closes)); if (!tallyLive) $('#nick-box').style.display = 'none'; }
 /* Нік в один вигляд: без @ і пробілів, малими літерами — щоб «Wander » і «wander» були одним голосом. */
 const normNick = v => v.trim().replace(/^@+/, '').replace(/\s+/g, '').toLowerCase();
 function formUrl(p, embed) {
@@ -713,7 +730,7 @@ const hasVoted = id => votedSet().has(id);
 function markVoted(id) { const v = votedSet(); v.add(id); store(VOTED_KEY, JSON.stringify([...v]));
   const chip = document.querySelector('#poll-' + id + ' .meta .chip'); if (chip) { chip.className = 'chip done'; chip.textContent = '✓ Ти проголосував'; }
   const card = document.getElementById('poll-' + id), p = POLLS.find(x => x.id === id);
-  if (card && p) showThanks(card, p);
+  if (card && p && p.id !== 'final') { if (p.engine === 'own' && window.showOwnThanks) showOwnThanks(card, p, Vote.answers[p.id]); else showThanks(card, p); }
   renderFab(); }
 /* Своя картка подяки замість екрана Tally: показується одразу після відправки і при повторному відкритті. */
 function showThanks(card, p) {
@@ -775,6 +792,7 @@ function fillSlot(card, p) {
   if (p.kind === 'results') { slot.innerHTML = p.status !== 'soon' && p.results
       ? `<div class="results-slot">${p.results}</div>`
       : `<div class="form-empty">Результати з'являться тут ${dLabel(p.opens)} — анонс буде в Discord.</div>`; return; }
+  if (p.engine === 'own' && p.status === 'open') { if (window.renderOwnPoll) renderOwnPoll(card, p); else card.querySelector('.slot').innerHTML = '<div class="form-empty">Підключаємось…</div>'; return; }
   if (hasVoted(p.id)) { showThanks(card, p); return; }
   if (p.status !== 'open') { slot.innerHTML = `<div class="form-empty">${p.status === 'closed' ? 'Опитування завершено. Дякуємо за голос!' : 'Відкриється ' + dLabel(p.opens) + ' — анонс буде в Discord.'}</div>`; return; }
   if (!p.tally) { slot.innerHTML = `<div class="form-empty">Форма ще не підключена.</div>`; return; }
@@ -891,5 +909,6 @@ if (SHOW_NOMINEES && groups.length) {
 const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold:.08 }) : null;
 document.querySelectorAll('section .wrap > *').forEach(n => { if (io) { n.classList.add('reveal'); io.observe(n); } });
 </script>
+<script src="vote.js"></script>
 </body>
 </html>
