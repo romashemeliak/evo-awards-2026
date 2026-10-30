@@ -134,6 +134,14 @@ section{padding:clamp(56px,9vw,110px) 0;position:relative}
 .form-slot iframe{display:block;width:100%;border:0;min-height:420px;background:transparent;color-scheme:normal}
 .form-empty{margin-top:18px;border:1px dashed var(--line);border-radius:12px;padding:26px;text-align:center;color:var(--muted);font-size:14px}
 .poll-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.thanks{margin-top:18px;display:flex;align-items:center;gap:20px;padding:clamp(18px,3vw,28px);border-radius:var(--radius);border:1px solid rgba(63,208,107,.35);background:linear-gradient(90deg,rgba(63,208,107,.09),var(--bg-2) 60%)}
+.thanks .ok{flex:none;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:rgba(63,208,107,.14);color:var(--green);font:900 24px/1 Unbounded,sans-serif}
+.thanks h4{margin:0;font:700 18px/1.25 Unbounded,sans-serif}
+.thanks p{margin-top:6px;color:var(--muted);font-size:14px}
+.thanks .poll-actions{margin-top:14px}
+@media(max-width:560px){.thanks{flex-direction:column;align-items:flex-start}}
+.results-slot{margin-top:18px;padding:clamp(18px,3vw,28px);border-radius:var(--radius);border:1px solid rgba(232,196,106,.35);background:linear-gradient(90deg,rgba(232,196,106,.08),var(--bg-2) 60%)}
+.chip.res{border-color:rgba(232,196,106,.55);color:var(--gold)}
 @media(max-width:600px){.poll-head{grid-template-columns:1fr auto}.poll-head .idx{display:none}.poll-head .meta .dl{display:none}}
 
 /* program */
@@ -537,7 +545,7 @@ const SHOW_NOMINEES = false;
 const MILESTONES = [
   { date:'2026-11-02', until:'2026-11-08', title:'Блок голосування 1', text:'Призи і учасники вечора' },
   { date:'2026-11-09', until:'2026-11-15', title:'Блок голосування 2', text:'Ком\'юніті номінації та афтерпаті' },
-  { date:'2026-11-16', until:'2026-11-22', title:'Блок голосування 3', text:'Фінальне визначення номінацій' },
+  { date:'2026-11-16', until:'2026-11-22', title:'Результати', text:'Презентація: які номінації будуть на ефірі' },
   { date:'2026-11-23', until:'2026-11-29', title:'Nomination Week', text:'Висуваємо претендентів у номінаціях' },
   { date:'2026-12-01', title:'Шортлист', text:'Рік EVO 2026 завершено — претенденти в усіх номінаціях' },
   { date:'2026-12-22', title:'EVO Awards', text:'Нагородження, ігри, афтерпаті', final:true },
@@ -546,7 +554,8 @@ const MILESTONES = [
 /* Опитування. tally — ID форми Tally (з посилання tally.so/r/<ID>).
    Поки ID порожній, замість форми показується заглушка.
    У кожній формі Tally створи приховане поле "nick" — сторінка підставить туди нік.
-   status: 'open' | 'soon' | 'closed'. deadline — ISO або null. */
+   status: 'open' | 'soon' | 'closed'. deadline — ISO або null.
+   kind:'results' — не голосування, а презентація результатів: форми немає, показується поле results. */
 const POLLS = [
   { id:'prizes', opens:'2026-10-30', closes:'2026-11-08', title:'Якою має бути нагорода', tally:'kbbVLo',
     text:'Кубок чи щось практичне — вирішуємо разом, що отримають переможці 2026.',
@@ -554,15 +563,16 @@ const POLLS = [
   { id:'guests', opens:'2026-10-30', closes:'2026-11-08', title:'Учасники вечора', tally:'Eqq49B',
     text:'Камерний вечір лише для EVO чи також для близьких — як глядачів.',
     asks:['Формат для гостей','Чи запросив би когось'] },
-  { id:'afterparty', opens:'2026-11-09', closes:'2026-11-15', title:'Афтерпаті: що робимо після ефіру', tally:'',
-    text:'Обери, що тобі цікаво, — під це будуть кімнати на афтерпаті.',
-    asks:['Тімбілдинг «Вгадай, хто це»','Настільні ігри онлайн','Кіберспорт','Просто поспілкуватися','Свій варіант'] },
   { id:'noms', opens:'2026-11-09', closes:'2026-11-15', title:'Ком\'юніті номінації: які залишаємо', tally:'',
     text:'Обери до 7 номінацій, які мають бути на ефірі, або запропонуй свою.',
     asks:['До 7 номінацій','Своя номінація'] },
-  { id:'noms-final', opens:'2026-11-16', closes:'2026-11-22', title:'Фінальне визначення номінацій', tally:'',
-    text:'Фінальний вибір серед номінацій, які набрали найбільше голосів.',
-    asks:['Фінальний список'] },
+  { id:'afterparty', opens:'2026-11-09', closes:'2026-11-15', title:'Афтерпаті: що робимо після ефіру', tally:'',
+    text:'Обери, що тобі цікаво, — під це будуть кімнати на афтерпаті.',
+    asks:['Тімбілдинг «Вгадай, хто це»','Настільні ігри онлайн','Кіберспорт','Просто поспілкуватися','Свій варіант'] },
+  { id:'noms-final', kind:'results', opens:'2026-11-16', closes:'2026-11-22', title:'Результати: номінації на ефірі', tally:'',
+    text:'Презентація результатів Блоку 2: які ком\'юніті номінації будуть на ефірі.',
+    results:'', // HTML з результатами; поки порожньо — показується анонс
+    asks:[] },
   { id:'nominate', opens:'2026-11-23', closes:'2026-11-29', title:'Nomination Week: претенденти', tally:'',
     text:'Висуваємо претендентів у ком\'юніті номінаціях — найсильніші пройдуть у шортлист.',
     asks:['Претенденти','Коротко — чому'] },
@@ -704,7 +714,17 @@ const votedSet = () => { try { return new Set(JSON.parse(store(VOTED_KEY) || '[]
 const hasVoted = id => votedSet().has(id);
 function markVoted(id) { const v = votedSet(); v.add(id); store(VOTED_KEY, JSON.stringify([...v]));
   const chip = document.querySelector('#poll-' + id + ' .meta .chip'); if (chip) { chip.className = 'chip done'; chip.textContent = '✓ Ти проголосував'; }
+  const card = document.getElementById('poll-' + id), p = POLLS.find(x => x.id === id);
+  if (card && p) showThanks(card, p);
   renderFab(); }
+/* Своя картка подяки замість екрана Tally: показується одразу після відправки і при повторному відкритті. */
+function showThanks(card, p) {
+  const next = POLLS.find(x => x.id !== p.id && x.kind !== 'results' && x.status === 'open' && !hasVoted(x.id));
+  card.querySelector('.slot').innerHTML = `<div class="thanks"><div class="ok">✓</div><div>
+    <h4>Голос враховано</h4><p>Дякуємо! Підсумки — на ефірі EVO Awards ${dLabel(EVENT_DATE)}.</p>
+    ${next ? `<div class="poll-actions"><a class="btn vote-btn" href="#poll-${next.id}" data-poll="${next.id}">Наступне: ${esc(next.title)} →</a></div>` : ''}
+  </div></div>`;
+}
 window.addEventListener('message', e => {
   if (!/tally\.so$/.test(new URL(e.origin || 'http://x').hostname)) return;
   let d = e.data; if (typeof d === 'string') { try { d = JSON.parse(d); } catch (_) { return; } }
@@ -713,10 +733,10 @@ window.addEventListener('message', e => {
   if (p) markVoted(p.id);
 });
 function nextVote() {
-  const open = POLLS.filter(p => p.status === 'open' && !hasVoted(p.id));
+  const open = POLLS.filter(p => p.kind !== 'results' && p.status === 'open' && !hasVoted(p.id));
   if (open.length) return { poll: open[0] };
-  const t = todayNum(), soon = POLLS.filter(p => p.status === 'soon').sort((a, b) => dayNum(a.opens) - dayNum(b.opens))[0];
-  const anyOpen = POLLS.some(p => p.status === 'open');
+  const t = todayNum(), soon = POLLS.filter(p => p.kind !== 'results' && p.status === 'soon').sort((a, b) => dayNum(a.opens) - dayNum(b.opens))[0];
+  const anyOpen = POLLS.some(p => p.kind !== 'results' && p.status === 'open');
   return !anyOpen && soon ? { soon, days: dayNum(soon.opens) - t } : null;
 }
 let voteInView = false;
@@ -732,13 +752,13 @@ function renderFab() {
 }
 POLLS.forEach(p => { const t = todayNum(); p.status = t < dayNum(p.opens) ? 'soon' : t > dayNum(p.closes) ? 'closed' : 'open'; });
 POLLS.forEach((p, i) => {
-  const [cls, lbl] = STATUS[p.status] || STATUS.soon;
-  const card = el('article', { class:'poll' + (p.status === 'open' ? ' is-open' : ''), id:'poll-' + p.id });
+  const [cls, lbl] = p.kind === 'results' ? (p.status === 'soon' ? ['soon', 'Скоро'] : ['res', 'Результати']) : (STATUS[p.status] || STATUS.soon);
+  const card = el('article', { class:'poll' + (p.status === 'open' && p.kind !== 'results' ? ' is-open' : ''), id:'poll-' + p.id });
   card.innerHTML = `
     <button class="poll-head" aria-expanded="false" aria-controls="pb-${p.id}">
       <span class="idx">${String(i + 1).padStart(2, '0')}</span>
       <span><h3>${esc(p.title)}</h3><p>${esc(p.text)}</p></span>
-      <span class="meta">${hasVoted(p.id) ? '<span class="chip done">✓ Ти проголосував</span>' : `<span class="chip ${cls}">${lbl}</span>`}<span class="dl">${dLabel(p.opens).split(' ')[0]}–${dLabel(p.closes)}</span></span>
+      <span class="meta">${hasVoted(p.id) && p.kind !== 'results' ? '<span class="chip done">✓ Ти проголосував</span>' : `<span class="chip ${cls}">${lbl}</span>`}<span class="dl">${dLabel(p.opens).split(' ')[0]}–${dLabel(p.closes)}</span></span>
     </button>
     <div class="poll-body" id="pb-${p.id}">
       <div class="slot"></div>
@@ -753,6 +773,10 @@ POLLS.forEach((p, i) => {
 });
 function fillSlot(card, p) {
   const slot = card.querySelector('.slot');
+  if (p.kind === 'results') { slot.innerHTML = p.status !== 'soon' && p.results
+      ? `<div class="results-slot">${p.results}</div>`
+      : `<div class="form-empty">Результати з'являться тут ${dLabel(p.opens)} — анонс буде в Discord.</div>`; return; }
+  if (hasVoted(p.id)) { showThanks(card, p); return; }
   if (p.status !== 'open') { slot.innerHTML = `<div class="form-empty">${p.status === 'closed' ? 'Опитування завершено. Дякуємо за голос!' : 'Відкриється ' + dLabel(p.opens) + ' — анонс буде в Discord.'}</div>`; return; }
   if (!p.tally) { slot.innerHTML = `<div class="form-empty">Форма ще не підключена.</div>`; return; }
   if (!nickInput.value.trim()) {
@@ -858,7 +882,6 @@ if (SHOW_NOMINEES && groups.length) {
 } else {
   $('#nominees-body').innerHTML = `<div class="locked">
     <div><p class="msg">Претенденти будуть оголошені наприкінці листопада, коли завершиться Рік EVO 2026.</p>
-      <p>На картці — ранг і ABI, дистанція за рік, найбільший занос і цікавий факт. Колір обідка — етап гравця.</p>
       <div class="stage-legend">${STAGE_COLORS.map((c, i) => `<span><i style="background:${c}"></i>Етап ${i + 1}</span>`).join('')}</div></div>
     ${nomineeCard({ nick:'Нікнейм', rank:'—', abi:'', distance:'—', bestCash:'—', fact:'Цікавий факт зі статистики гравця' }, 0, true)}
   </div>`;
