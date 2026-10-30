@@ -181,7 +181,7 @@ ol.big li{margin:8px 0}
 
 <h2 id="s7">6. Вага факторів разом</h2>
 <p>Усе в одній моделі з поправкою на гравця. Стовпчик — зміна EV bb/100 проти типового режиму того самого гравця.</p>
-<div class="card"><h3>Вага керованих факторів, bb/100</h3><div class="chart" style="height:640px"><canvas id="c_model"></canvas></div><p class="note">Типовий режим (нуль): бай-ін 0,67–1× медіани, реєстрації 4–5 год, 17–20 за Києвом, 7–8 столів, 5 днів на тиждень. Відсутній рядок у факторі — це його базова категорія. Зелене — краще за типовий режим, помаранчеве — гірше.</p></div>
+<div class="card"><h3>Вага керованих факторів, bb/100</h3><div class="chart" style="height:640px"><canvas id="c_model"></canvas></div><p class="note">Типовий режим (нуль): бай-ін 0,67–1× медіани, реєстрації 4–5 год, 17–20 за Києвом, 7–8 столів, 5 днів на тиждень. Відсортовано від найгіршого до найкращого. Базові категорії (нуль) не показані. Зелене — краще за типовий режим, помаранчеве — гірше.</p></div>
 <div class="callout"><b>Порядок важливості керованих рішень:</b> бай-ін відносно звичного (до −7) → тривалість реєстрацій (−9 за короткі, +3 за довгі) → час доби (+3…+4 за ніч) → столи (−1,4 за 11–12) → дні на тиждень (0). Некероване, але найбільше: рівень і стек, до −13 bb/100 між стартом турніру й глибокою стадією на короткому стеку.</div>
 
 <h2 id="calc">Калькулятор режиму</h2>
@@ -326,7 +326,7 @@ function render(){
   const names = {bir_b:'бай-ін vs звичний', rs_b:'реєстрації, год', kh_b:'час доби', tab_b:'столів', days_b:'днів/тиж'};
   const order = ['bir_b','rs_b','kh_b','tab_b','days_b'];
   const cf = T['S7_model_M2_coef'].filter(r=>order.includes(r['фактор']))
-    .sort((a,b)=>order.indexOf(a['фактор'])-order.indexOf(b['фактор']) || FORD[a['фактор']].indexOf(a['рівень'])-FORD[b['фактор']].indexOf(b['рівень']));
+    .sort((a,b)=>a['β_bb100']-b['β_bb100']);   // від найгіршого до найкращого
   mk('c_model', {type:'bar', data:{labels:cf.map(r=>names[r['фактор']]+'  '+r['рівень']), datasets:[{label:'зміна EV', data:cf.map(r=>r['β_bb100']), backgroundColor:cf.map(r=>r['β_bb100']>=0?css('--s3'):css('--s2')), borderRadius:3, maxBarThickness:16}]},
     options:baseOpts('', {indexAxis:'y', plugins:{legend:{display:false}, tooltip:{callbacks:{label:(c)=>'зміна EV '+(c.parsed.x>=0?'+':'')+c.parsed.x.toFixed(2)+' bb/100 ['+cf[c.dataIndex].lo.toFixed(2)+'; '+cf[c.dataIndex].hi.toFixed(2)+']'}}}, scales:{x:{title:{display:true,text:'зміна EV, bb/100 проти типового режиму'}}, y:{grid:{display:false}, ticks:{autoSkip:false, font:{size:13}}}}}), plugins:[zeroLine()]});
   calc();
