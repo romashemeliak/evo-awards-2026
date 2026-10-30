@@ -32,6 +32,8 @@ select,button{font:inherit;font-size:14px;padding:6px 10px;border-radius:8px;bor
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .seg button{border:0;border-radius:0;background:var(--surface);cursor:pointer}
 .seg button.on{background:var(--s1);color:#fff}
+.card h3{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px}
+.seg.mini button{font-size:12px;padding:4px 8px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin:16px 0}
 .card h3{margin-top:0}
 .chart{position:relative;height:320px}
@@ -98,8 +100,7 @@ ol.big li{margin:8px 0}
 
 <div class="bar">
 <label>Група <select id="grp"><option value="усі">уся школа</option><option value="I">етап I</option><option value="II">етап II</option><option value="III">етап III</option><option value="IV">етап IV (+V)</option><option value="REVO">REVO</option></select></label>
-<label>Показник <span class="seg" id="metric"><button data-m="raw" class="on">EV як є</button><button data-m="adj">порівняно з собою</button></span></label>
-<span class="note" id="metricNote">EV як є: середній chipEV bb/100 усіх роздач у цій категорії.</span>
+<span class="note">Під кожним графіком можна перемкнути «EV як є» на «порівняно з собою».</span>
 </div>
 
 <h2 id="s4">1. Столи</h2>
@@ -225,7 +226,13 @@ const D = JSON.parse(document.getElementById('data').textContent);
 const T = D.tables, META = D.meta, CM = D.calc;
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const GCOL = {"усі":"--s6","I":"--s1","II":"--s2","III":"--s3","IV":"--s4","REVO":"--s5"};
-let grp = "усі", metric = "raw";
+let grp = "усі";
+const TOGGLE = ['c_tables','c_terc','c_late','c_phase','c_bir','c_bia','c_reg','c_hrb','c_sl','c_kh','c_days','c_hw','c_level','c_stack'];
+const MET = Object.fromEntries(TOGGLE.map(id=>[id,'raw']));
+for(const id of TOGGLE){ const cv = document.getElementById(id); const card = cv.closest('.card'); const h3 = card.querySelector('h3');
+  const seg = document.createElement('span'); seg.className = 'seg mini'; seg.innerHTML = '<button data-m="raw" class="on">EV як є</button><button data-m="adj">порівняно з собою</button>';
+  seg.querySelectorAll('button').forEach(b=>b.addEventListener('click', ()=>{ MET[id] = b.dataset.m; seg.querySelectorAll('button').forEach(x=>x.classList.toggle('on', x===b)); render(); }));
+  h3.appendChild(seg); }
 const charts = {};
 const rows = (name, g) => (T[name]||[]).filter(r => g === undefined || r["група"] === g);
 const sortBy = (arr, key, order) => order ? arr.slice().sort((a,b)=>order.indexOf(String(a[key]))-order.indexOf(String(b[key]))) : arr.slice().sort((a,b)=>Number(a[key])-Number(b[key]));
@@ -241,22 +248,22 @@ function baseOpts(ylabel, extra){
 function zeroLine(){ return {id:'zero', afterDraw(ch){ const y = ch.scales.y; if(!y || y.min>0 || y.max<0) return; const ctx=ch.ctx; ctx.save(); ctx.strokeStyle=css('--muted'); ctx.lineWidth=1; ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(ch.chartArea.left, y.getPixelForValue(0)); ctx.lineTo(ch.chartArea.right, y.getPixelForValue(0)); ctx.stroke(); ctx.restore(); }}; }
 function mk(id, cfg){ if(charts[id]) charts[id].destroy(); charts[id] = new Chart(document.getElementById(id), cfg); }
 function col(g){ return css(GCOL[g]||'--s1'); }
-const MNAME = () => metric==='raw' ? 'EV як є' : 'порівняно з собою';
+const MNAME = (id) => (MET[id]||'raw')==='raw' ? 'EV як є' : 'порівняно з собою';
 function lineWithBand(id, data, xkey, ylabel, opts){
-  const m = metric, c = col(grp);
+  const m = MET[id]||'raw', c = col(grp);
   const labels = data.map(r=>String(r[xkey]));
   const ds = [
     {label:'верхня межа', data:data.map(r=>r[m+'_hi']), borderWidth:0, pointRadius:0, fill:'+1', backgroundColor:css('--band'), tension:.3},
     {label:'нижня межа', data:data.map(r=>r[m+'_lo']), borderWidth:0, pointRadius:0, fill:false, tension:.3},
-    {label:MNAME() + ' · ' + (grp==='усі'?'уся школа':grp), data:data.map(r=>r[m]), borderColor:c, backgroundColor:c, borderWidth:2, pointRadius:4, pointHoverRadius:6, tension:.3}
+    {label:MNAME(id) + ' · ' + (grp==='усі'?'уся школа':grp), data:data.map(r=>r[m]), borderColor:c, backgroundColor:c, borderWidth:2, pointRadius:4, pointHoverRadius:6, tension:.3}
   ];
   if(opts && opts.ghost && grp!=='усі'){ const gh = sortBy(rows(opts.ghost, 'усі'), xkey, opts.order); const map = Object.fromEntries(gh.map(r=>[String(r[xkey]), r[m]])); ds.push({label:'уся школа', data:labels.map(l=>map[l]??null), borderColor:css('--s6'), borderDash:[5,4], borderWidth:1.5, pointRadius:0, tension:.3}); }
   mk(id, {type:'line', data:{labels, datasets:ds}, options:baseOpts(ylabel, {plugins:{legend:{display:ds.length>3, labels:{filter:i=>!/межа/.test(i.text)}}, tooltip:{filter:i=>!/межа/.test(i.dataset.label), callbacks:{label:(c)=>c.dataset.label+': '+c.parsed.y.toFixed(2)}}}}), plugins:[zeroLine()]});
 }
 function bars(id, data, xkey, ylabel){
-  const m = metric, c = col(grp);
+  const m = MET[id]||'raw', c = col(grp);
   const labels = data.map(r=>String(r[xkey]));
-  const ds = [{label:MNAME(), data:data.map(r=>r[m]), backgroundColor:c, borderRadius:4, maxBarThickness:46}];
+  const ds = [{label:MNAME(id), data:data.map(r=>r[m]), backgroundColor:c, borderRadius:4, maxBarThickness:46}];
   mk(id, {type:'bar', data:{labels, datasets:ds}, options:baseOpts(ylabel, {plugins:{tooltip:{callbacks:{label:(c)=>c.dataset.label+': '+c.parsed.y.toFixed(2)+'  (' + fmt(data[c.dataIndex]['роздач']/1000) + ' тис. роздач)'}}}}), plugins:[zeroLine()]});
 }
 function tableHTML(df, idx, cols, valkey, fmtf){
@@ -279,7 +286,6 @@ const THR_TEXT = {
  "REVO":"<b>REVO.</b> На 4–7 столах 14,5 bb/100. 8 столів −1,5 у межах шуму, 9 столів −3,5 (доведено), на 10+ менше 100 тис. роздач. Межа — 7–8."};
 function render(){
   theme();
-  document.getElementById('metricNote').textContent = metric==='raw' ? 'EV як є: середній chipEV bb/100 усіх роздач у цій категорії.' : 'Порівняно з собою: відхилення від власного середнього гравця після зняття інших факторів (під кожним графіком написано, яких). 0 = як у середньому в цього гравця.';
   lineWithBand('c_tables', sortBy(rows('S4_tables_core', grp), 'tab'), 'tab', 'EV, bb/100', {ghost:'S4_tables_core'});
   const th = T['S4_tables_threshold'].filter(r=>r['група']===grp && r['столів']>0).sort((a,b)=>a['столів']-b['столів']);
   let ht = '<table><tr><th>столів</th>' + th.map(r=>'<th>'+r['столів']+(r['столів']>=13?'+':'')+'</th>').join('') + '</tr>';
@@ -290,7 +296,7 @@ function render(){
   document.getElementById('t_thr').innerHTML = ht;
   document.getElementById('thr_text').innerHTML = THR_TEXT[grp] || '';
   const tc = sortBy(T['S4_sessions_terciles_6h'].filter(r=>r.group===grp), 'terc', TERC);
-  mk('c_terc', {type:'bar', data:{labels:tc.map(r=>r.terc+' ('+r['столів_сер'].toFixed(1)+' ст.)'), datasets:[{label:MNAME(), data:tc.map(r=>metric==='raw'?r.ev:r.adj), backgroundColor:col(grp), borderRadius:4, maxBarThickness:60}]}, options:baseOpts('EV, bb/100'), plugins:[zeroLine()]});
+  mk('c_terc', {type:'bar', data:{labels:tc.map(r=>r.terc+' ('+r['столів_сер'].toFixed(1)+' ст.)'), datasets:[{label:MNAME('c_terc'), data:tc.map(r=>MET['c_terc']==='raw'?r.ev:r.adj), backgroundColor:col(grp), borderRadius:4, maxBarThickness:60}]}, options:baseOpts('EV, bb/100'), plugins:[zeroLine()]});
   const sl = T['S4_player_slopes_summary'].filter(r=>r.group!=='усі');
   mk('c_slopes', {type:'bar', data:{labels:sl.map(r=>r.group), datasets:[
     {label:'шкодить', data:sl.map(r=>r['шкодить']), backgroundColor:css('--bad'), borderRadius:3},
@@ -299,7 +305,7 @@ function render(){
     options:baseOpts('гравців', {plugins:{legend:{display:true}}, scales:{x:{stacked:true, grid:{display:false}}, y:{stacked:true}}})});
   bars('c_late', sortBy(rows('S4_late_other_tables_core', grp), 'oth_tabs_b', ["єдиний стіл","1–3 поруч","4–7 поруч","8+ поруч"]), 'oth_tabs_b', 'EV, bb/100');
   const ph = sortBy(rows('S4_phase', grp), 'phase', ["розігрів","ядро","догравання"]).concat(sortBy(rows('S4_rel_peak', grp), 'relpk_b', ["<50% піку","50–75%","75–99%","пік"]));
-  mk('c_phase', {type:'bar', data:{labels:ph.map(r=>r.phase||r.relpk_b), datasets:[{label:MNAME(), data:ph.map(r=>r[metric]), backgroundColor:ph.map((r,i)=>i<3?col(grp):css('--s6')), borderRadius:4, maxBarThickness:46}]}, options:baseOpts('EV, bb/100'), plugins:[zeroLine()]});
+  mk('c_phase', {type:'bar', data:{labels:ph.map(r=>r.phase||r.relpk_b), datasets:[{label:MNAME('c_phase'), data:ph.map(r=>r[MET['c_phase']||'raw']), backgroundColor:ph.map((r,i)=>i<3?col(grp):css('--s6')), borderRadius:4, maxBarThickness:46}]}, options:baseOpts('EV, bb/100'), plugins:[zeroLine()]});
   bars('c_bir', sortBy(rows('S2_buyin_rel', grp), 'bir_b', BIR_ORDER), 'bir_b', 'EV, bb/100');
   bars('c_bia', sortBy(rows('S2_buyin_abs', grp), 'bi_b', BIA_ORDER), 'bi_b', 'EV, bb/100');
   lineWithBand('c_reg', sortBy(rows('S5_reg_span', grp), 'rs_b', RS_ORDER), 'rs_b', 'EV, bb/100', {ghost:'S5_reg_span', order:RS_ORDER});
@@ -351,7 +357,6 @@ function calc(){
   document.getElementById('k_text').textContent = `Довжина сесії = години реєстрацій + типове догравання групи (${tail.toFixed(1)} год). Ентрі = роздачі / ${hpe.toFixed(0)} (стільки роздач у середньому дає один турнір у цій групі). Щоб закрити норму ${norm} ентрі на ${tab} столах і ${reg} год реєстрацій, потрібно приблизно ${needDays} ${needDays===1?'день':needDays<5?'дні':'днів'} на тиждень. Ефект часу доби береться для середини сесії.`;
 }
 document.getElementById('grp').addEventListener('change', e=>{ grp = e.target.value; render(); });
-document.querySelectorAll('#metric button').forEach(btn=>btn.addEventListener('click', ()=>{ metric = btn.dataset.m; document.querySelectorAll('#metric button').forEach(x=>x.classList.toggle('on', x===btn)); render(); }));
 ['k_grp','k_tab','k_reg','k_days','k_kh'].forEach(id=>document.getElementById(id).addEventListener('input', calc));
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
 render();
