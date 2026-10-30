@@ -54,7 +54,7 @@ main{padding:24px 0 80px}
 .nick{font:700 15px/1.2 Unbounded,sans-serif;word-break:break-word}
 .role{font-size:12px;color:var(--muted);margin-top:2px}
 .role b{color:var(--stage);font-weight:700}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 0;padding:0}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:14px 0 0;padding:0}
 .stats div{background:rgba(255,255,255,.03);border-radius:9px;padding:8px 9px;min-width:0}
 .stats dt{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .stats dd{margin:3px 0 0;font:700 14px/1.2 Unbounded,sans-serif;white-space:nowrap}
@@ -99,7 +99,6 @@ footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);f
   <select id="sort" aria-label="Сортування">
     <option value="rank">За рангом</option>
     <option value="distance">За дистанцією</option>
-    <option value="bestCashUsd">За заносом</option>
     <option value="abi">За ABI</option>
     <option value="nick">За ніком</option>
   </select>
@@ -117,7 +116,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);f
 /* Дані — players.json поруч зі сторінкою (генерує scripts/awards_2026/player_cards.py). */
 const STAGE_COLORS = ['#2ecc71', '#1f8b4c', '#e07bbf', '#ff1fb8', '#9e1b42'];
 const STAGE_ROMAN = ['I', 'II', 'III', 'IV', 'V'];
-const REVO_COLOR = '#8a8a92';
+const REVO_COLOR = '#4aa8e8';
 const MONTHS = ['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'];
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -128,11 +127,11 @@ const colorOf = p => { const s = stageOf(p); return s === 0 ? REVO_COLOR : s ? S
 const labelOf = p => { const s = stageOf(p); return s === 0 ? 'REVO' : s ? STAGE_ROMAN[s - 1] + ' етап' : 'EVO'; };
 
 let ALL = [], state = { q: '', team: 'all', stages: new Set(), sort: 'rank', view: 'cards', dir: -1 };
-try { const s = JSON.parse(localStorage.getItem('evo_nominees_view') || '{}'); if (s.view) state.view = s.view; if (s.sort) state.sort = s.sort; } catch (e) {}
+try { const s = JSON.parse(localStorage.getItem('evo_nominees_view') || '{}'); if (s.view) state.view = s.view; if (['rank', 'distance', 'abi', 'nick'].includes(s.sort)) state.sort = s.sort; } catch (e) {}
 const save = () => { try { localStorage.setItem('evo_nominees_view', JSON.stringify({ view: state.view, sort: state.sort })); } catch (e) {} };
 
 function stageButtons() {
-  const opts = [...STAGE_ROMAN.map((r, i) => ({ v: String(i + 1), t: r, c: STAGE_COLORS[i] })), { v: '0', t: 'REVO', c: REVO_COLOR }];
+  const opts = [{ v: '0', t: 'REVO', c: REVO_COLOR }, ...STAGE_ROMAN.map((r, i) => ({ v: String(i + 1), t: r, c: STAGE_COLORS[i] }))];
   $('#stages').innerHTML = opts.map(o => `<button data-v="${o.v}" aria-pressed="false" style="--c:${o.c}"><i></i>${o.t}</button>`).join('');
   $('#stages').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return;
     state.stages.has(b.dataset.v) ? state.stages.delete(b.dataset.v) : state.stages.add(b.dataset.v);
@@ -162,19 +161,18 @@ function card(p) {
   const av = p.avatar ? `<img src="${esc(p.avatar)}" alt="" loading="lazy">` : esc((p.nick || '?')[0].toUpperCase());
   const pending = !p.distance;
   return `<article class="ncard${pending ? ' pending' : ''}" style="--stage:${colorOf(p)}">
-    <div class="who"><div class="avatar">${av}</div><div><div class="nick">${esc(p.nick)}</div><div class="role"><b>${labelOf(p)}</b>${p.rank != null ? ` · ранг ${p.rank}` : ''}</div></div></div>
+    <div class="who"><div class="avatar">${av}</div><div><div class="nick">${esc(p.nick)}</div><div class="role"><b>${labelOf(p)}</b>${p.rank != null && p.team !== 'REVO' ? ` · ранг ${p.rank}` : ''}</div></div></div>
     <dl class="stats">
       <div><dt>Ентрі</dt><dd>${pending ? '—' : fmt(p.distance)}</dd></div>
       <div><dt>ABI за рік</dt><dd>${pending ? '—' : money(p.abi)}</dd></div>
-      <div><dt>Занос</dt><dd>${esc(p.bestCash || '—')}</dd></div>
     </dl>
     <p class="fact">${pending ? 'Дані з\'являться після перерахунку за повний рік' : esc(p.fact || '—')}</p>
   </article>`;
 }
 function table(list) {
   const th = (k, t, num) => `<th class="${num ? 'num' : ''}" data-k="${k}"${state.sort === k ? ' aria-sort="' + (state.dir === -1 ? 'descending' : 'ascending') + '"' : ''}>${t}${state.sort === k ? (state.dir === -1 ? ' ↓' : ' ↑') : ''}</th>`;
-  return `<div class="tbl-wrap"><table><thead><tr>${th('nick', 'Гравець')}<th>Етап</th>${th('rank', 'Ранг', 1)}${th('abi', 'ABI за рік', 1)}${th('distance', 'Ентрі', 1)}${th('bestCashUsd', 'Занос', 1)}<th>Факт</th></tr></thead><tbody>${
-    list.map(p => `<tr style="--stage:${colorOf(p)}"><td><span class="dot"></span>${esc(p.nick)}</td><td>${labelOf(p)}</td><td class="num">${p.rank ?? '—'}</td><td class="num">${money(p.abi)}</td><td class="num">${p.distance ? fmt(p.distance) : '—'}</td><td class="num">${esc(p.bestCash || '—')}</td><td class="fact-c">${esc(p.fact || '')}</td></tr>`).join('')
+  return `<div class="tbl-wrap"><table><thead><tr>${th('nick', 'Гравець')}<th>Етап</th>${th('rank', 'Ранг', 1)}${th('abi', 'ABI за рік', 1)}${th('distance', 'Ентрі', 1)}<th>Факт</th></tr></thead><tbody>${
+    list.map(p => `<tr style="--stage:${colorOf(p)}"><td><span class="dot"></span>${esc(p.nick)}</td><td>${labelOf(p)}</td><td class="num">${p.team === 'REVO' ? '—' : (p.rank ?? '—')}</td><td class="num">${money(p.abi)}</td><td class="num">${p.distance ? fmt(p.distance) : '—'}</td><td class="fact-c">${esc(p.fact || '')}</td></tr>`).join('')
   }</tbody></table></div>`;
 }
 function render() {

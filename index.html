@@ -870,7 +870,6 @@ function nomineeCard(x, i, example) {
       <div><dt>Ранг</dt><dd>${esc(x.rank ?? '—')}</dd></div>
       <div><dt>Ентрі за рік</dt><dd>${esc(x.distance ?? '—')}</dd></div>
       <div><dt>ABI за рік</dt><dd>${x.abi ? '$' + esc(x.abi) : '—'}</dd></div>
-      <div><dt>Найбільший занос</dt><dd>${esc(x.bestCash ?? '—')}</dd></div>
     </dl>
     ${x.fact ? `<p class="fact">${esc(x.fact)}</p>` : ''}
   </article>`;
