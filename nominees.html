@@ -189,6 +189,7 @@ stageButtons(); seg('#team', 'team'); seg('#view', 'view');
 
 fetch('players.json', { cache: 'no-cache' }).then(r => r.json()).then(d => {
   ALL = d.players || [];
+  if (d.minDistance) $('#lead').insertAdjacentHTML('beforeend', ` На сторінці — гравці з дистанцією від ${fmt(d.minDistance)} турнірів за рік.`);
   if (d.asOf) { const [y, m, dd] = d.asOf.split('-').map(Number);
     $('#foot').insertAdjacentHTML('afterbegin', `Дані станом на ${dd} ${MONTHS[m - 1]} ${y}; фінальні — після завершення Року EVO 30 листопада. `); }
   render();
