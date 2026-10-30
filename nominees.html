@@ -91,7 +91,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);f
 </header></div>
 
 <div class="bar"><div class="wrap">
-  <input class="search" id="q" type="search" placeholder="Пошук за ніком" autocomplete="off">
+  <input class="search" id="q" type="search" placeholder="Пошук за ім'ям або ніком у румі" autocomplete="off">
   <div class="seg" id="team" role="group" aria-label="Команда">
     <button data-v="all" aria-pressed="true">Усі</button><button data-v="EVO" aria-pressed="false">EVO</button><button data-v="REVO" aria-pressed="false">REVO</button>
   </div>
@@ -154,7 +154,7 @@ function filtered() {
   const q = state.q.trim().toLowerCase();
   return ALL.filter(p => (state.team === 'all' || p.team === state.team)
     && (!state.stages.size || state.stages.has(String(stageOf(p))))
-    && (!q || p.nick.toLowerCase().includes(q)));
+    && (!q || p.nick.toLowerCase().includes(q) || (p.roomNick || '').toLowerCase().includes(q)));
 }
 function card(p) {
   const av = p.avatar ? `<img src="${esc(p.avatar)}" alt="" loading="lazy">` : esc((p.nick || '?')[0].toUpperCase());
