@@ -4,8 +4,8 @@
    Тестовий режим без бази: ?mock=1 (дані в localStorage цього браузера), дата для перевірки блоків: ?today=2026-11-23. */
 
 const VOTE_CFG = {
-  url: '',        // https://<project>.supabase.co — заповнити після створення проєкту
-  anonKey: '',    // Project Settings → API → anon public
+  url: 'https://rofzgohmhqxgngkiruik.supabase.co',
+  anonKey: 'sb_publishable_zEC4Lbhn4Fz2siYEmoElcw_uDRX-lUI',   // publishable — публічний за задумом Supabase
 };
 
 const QS = new URLSearchParams(location.search);
