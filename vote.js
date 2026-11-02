@@ -384,8 +384,9 @@ async function renderBoard() {
   const live = POLLS.some(p => p.bets && p.status !== 'soon');
   if (!enabled() || !Vote.ready || (!live && !MOCK)) { box.hidden = true; return; }
   let rows; try { rows = await Vote.api.leaderboard(); } catch (e) { box.hidden = true; return; }
-  box.hidden = false;
   const settled = rows.some(r => r.settled > 0);
+  if (!settled && !MOCK) { box.hidden = true; return; }        // до оголошення переможців чужі ставки не показуємо
+  box.hidden = false;
   const meP = Vote.me && Vote.me.player;
   const top = rows.filter(r => r.staked > 0 || r.settled > 0);
   box.innerHTML = `<div class="lb-head"><div><div class="kicker">Фішки</div><h3>${settled ? 'Хто вгадав переможців' : 'Ставки на переможців'}</h3>
