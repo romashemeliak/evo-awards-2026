@@ -41,7 +41,7 @@ function supabaseBackend() {
     register: (role, nick) => rpc('register', { p_role: role, p_nick: nick }),
     myAnswers: () => sel(sb.from('answers').select('poll_id,payload,updated_at')),
     submit: (poll, payload) => rpc('submit_answers', { p_poll: poll, p_payload: payload }),
-    markets: () => sel(sb.from('markets').select('id,title,ord,opens_at,closes_at,winner,market_options(option,ord)').order('ord')),
+    markets: () => sel(sb.from('markets').select('id,title,ord,opens_at,closes_at,winner,market_options!market_options_market_id_fkey(option,ord)').order('ord')),   // два зв'язки (ще markets_winner_fk) — вказуємо явно
     pools: () => rpc('market_pools'),
     myBets: () => sel(sb.from('bets').select('market_id,option,amount')),
     placeBets: (m, bets) => rpc('place_bets', { p_market: m, p_bets: bets }),
