@@ -161,7 +161,25 @@ async function refreshMe() {
 }
 
 /* ─── панель входу ────────────────────────────────────────────────────────── */
-function renderAuth() {
+function renderAuth() { renderAuthBox(); renderNavAcct(); }
+
+/* Акаунт у закріпленій верхній панелі — вхід / вихід і фішки з будь-якого місця сторінки. */
+function renderNavAcct() {
+  const box = document.getElementById('nav-acct'); if (!box) return;
+  if (!enabled() || Vote.error || !Vote.ready) { box.innerHTML = ''; return; }
+  if (!Vote.sess.signedIn) {
+    box.innerHTML = `<button class="btn discord sm" type="button" data-act="signin">${DISCORD_SVG}Увійти</button>`;
+  } else if (!Vote.me) {
+    box.innerHTML = `<a class="btn sm" href="#vote">Заверши вхід</a><button class="link" type="button" data-act="signout">Вийти</button>`;
+  } else {
+    box.innerHTML = `<span class="acct-nick" title="Discord: ${esc(Vote.sess.name || '')}">${esc(Vote.me.player)}</span>
+      <span class="chip team ${Vote.me.team === 'REVO' ? 'revo' : ''}">${esc(teamLabel(Vote.me.team))}</span>
+      ${Vote.me.can_bet === false ? '' : `<span class="acct-chips" title="Фішок вільно з ${fmtN(Vote.me.budget)}"><span class="coin sm"></span>${fmtN(Vote.me.budget - Vote.me.staked)}</span>`}
+      <button class="link" type="button" data-act="signout">Вийти</button>`;
+  }
+}
+
+function renderAuthBox() {
   const box = document.getElementById('auth'); if (!box) return;
   const anyOwn = POLLS.some(p => p.engine === 'own' && p.status !== 'closed');
   if (!enabled()) { box.innerHTML = anyOwn ? `<div class="auth-row"><b>Вхід через Discord</b><span class="muted">з'явиться до старту Блоку 2 — ${dLabel(POLLS.find(p => p.engine === 'own').opens)}.</span></div>` : ''; return; }

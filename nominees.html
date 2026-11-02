@@ -97,10 +97,10 @@ footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);f
   </div>
   <div class="stages" id="stages" role="group" aria-label="Етап"></div>
   <select id="sort" aria-label="Сортування">
+    <option value="nick">За ніком</option>
     <option value="rank">За рангом</option>
     <option value="distance">За дистанцією</option>
     <option value="abi">За ABI</option>
-    <option value="nick">За ніком</option>
   </select>
   <div class="seg view" id="view" role="group" aria-label="Вигляд">
     <button data-v="cards" aria-pressed="true">Картки</button><button data-v="table" aria-pressed="false">Таблиця</button>
@@ -126,9 +126,9 @@ const stageOf = p => p.team === 'REVO' ? 0 : p.rank == null ? null : Math.min(5,
 const colorOf = p => { const s = stageOf(p); return s === 0 ? REVO_COLOR : s ? STAGE_COLORS[s - 1] : 'var(--line)'; };
 const labelOf = p => { const s = stageOf(p); return s === 0 ? 'REVO' : s ? STAGE_ROMAN[s - 1] + ' етап' : 'EVO'; };
 
-let ALL = [], state = { q: '', team: 'all', stages: new Set(), sort: 'rank', view: 'cards', dir: -1 };
-try { const s = JSON.parse(localStorage.getItem('evo_nominees_view') || '{}'); if (s.view) state.view = s.view; if (['rank', 'distance', 'abi', 'nick'].includes(s.sort)) state.sort = s.sort; } catch (e) {}
-const save = () => { try { localStorage.setItem('evo_nominees_view', JSON.stringify({ view: state.view, sort: state.sort })); } catch (e) {} };
+let ALL = [], state = { q: '', team: 'all', stages: new Set(), sort: 'nick', view: 'cards', dir: -1 };
+try { const s = JSON.parse(localStorage.getItem('evo_nominees_view2') || '{}'); if (s.view) state.view = s.view; if (['rank', 'distance', 'abi', 'nick'].includes(s.sort)) state.sort = s.sort; } catch (e) {}
+const save = () => { try { localStorage.setItem('evo_nominees_view2', JSON.stringify({ view: state.view, sort: state.sort })); } catch (e) {} };
 
 function stageButtons() {
   const opts = [{ v: '0', t: 'REVO', c: REVO_COLOR }, ...STAGE_ROMAN.map((r, i) => ({ v: String(i + 1), t: r, c: STAGE_COLORS[i] }))];
