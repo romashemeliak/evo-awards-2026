@@ -11,7 +11,7 @@
 <style>
 :root{color-scheme:dark;--bg:#0a0a0b;--bg2:#131315;--surface:#17171a;--surface2:#1f1f24;--text:#f3f0ea;--text2:#cfcac2;--muted:#9c9890;--line:#2a2a2e;--grid:#232327;
 --red:#e3262b;--red-dim:#7a1517;--blue:#3d8bff;--green:#3fd06b;--gold:#e8c46a;
---s1:#4fd1c5;--s2:#f0a35e;--s3:#8fd694;--s4:#c9a9f5;--s5:#e07bbf;--s6:#9c9890;--good:#8fd694;--warn:#e8c46a;--bad:#f0a35e;--adj:#e8c46a;--band:rgba(79,209,197,.18);--radius:14px}
+--s1:#9085e9;--s2:#199e70;--s3:#199e70;--s4:#c98500;--s5:#9085e9;--s6:#9c9890;--good:#199e70;--warn:#c98500;--bad:#c98500;--adj:#c98500;--band:rgba(144,133,233,.22);--radius:14px}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:70px}
 body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.55 Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
@@ -231,7 +231,7 @@ dd{margin:0;color:var(--text2)}
 
 <h2 id="s7">7. Параметри, що контролюються гравцем</h2>
 <p>Дві речі, які гравець вирішує сам: скільки столів понад звичне відкрити і який бай-ін грати. Для кожної — зміна нормованого EV проти базового вибору (звичні столи, бай-ін 0.67–1× медіани). Кількість днів на тиждень на EV не впливає, тому її тут немає. Довжина загрузки сюди не входить: її гравець не вибирає наперед, а невдалі сесії просто закінчує раніше.</p>
-<div class="card"><h3>Вплив параметрів, що контролюються гравцем, на EV, bb/100</h3><div class="chart" style="height:460px"><canvas id="c_dir"></canvas></div><p class="note">Зелене — краще за базовий вибір, помаранчеве — гірше.</p></div>
+<div class="card"><h3>Вплив параметрів, що контролюються гравцем, на EV, bb/100</h3><div class="chart" style="height:460px"><canvas id="c_dir"></canvas></div><p class="note">Бірюзове — краще за базовий вибір, бурштинове — гірше.</p></div>
 <div class="card"><h3>Важливість параметрів</h3><div class="tscroll" id="t_dir"></div><p class="note">Найбільший ефект — найбільша за модулем зміна EV серед реальних варіантів параметра. Частка роздач — скільки роздач вибраної групи зіграно не в базовому варіанті, тобто як часто цей вибір узагалі виникає.</p></div>
 
 <h2 id="s9">8. Додаткові перевірки</h2>
@@ -506,7 +506,7 @@ function section8(){
   // 8.5
   const en = sortBy(rows('X34_entry_level'), 'entry_b', ENTRY_ORDER); if(en.length) bars('c_entry', en, 'entry_b', null, null, {});
   // 8.6
-  const YC = {2024:css('--s6'), 2025:css('--s1'), 2026:css('--s2')};
+  const YC = {2024:css('--s2'), 2025:css('--s1'), 2026:css('--adj')};
   const yt = all('X35_year_tables'); if(yt.length){ mk('c_year_tab', {type:'line', data:{labels:DU_ORDER_Y, datasets:[2024,2025,2026].map(y=>({label:String(y), data:DU_ORDER_Y.map(k=>{const r=yt.find(x=>x.year===y && x.du_b===k); return r?r.adj:null;}), borderColor:YC[y], backgroundColor:YC[y], borderWidth:2, pointRadius:3, tension:.3, spanGaps:true}))},
       options:baseOpts('нормоване EV, bb/100', {plugins:{legend:{display:true}}, scales:{x:{title:{display:true,text:'столів відносно звичного'}, grid:{display:false}}, y:{title:{display:true,text:'нормоване EV, bb/100'}}}}), plugins:[zeroLine()]}); }
   const yb = all('X35_year_buyin'); if(yb.length){ mk('c_year_bir', {type:'line', data:{labels:BIR_ORDER, datasets:[2024,2025,2026].map(y=>({label:String(y), data:BIR_ORDER.map(k=>{const r=yb.find(x=>x.year===y && x.bir_b===k); return r?r.wp:null;}), borderColor:YC[y], backgroundColor:YC[y], borderWidth:2, pointRadius:3, tension:.3, spanGaps:true}))},
@@ -530,7 +530,7 @@ function directions(){
   const bir = rows('S2_buyin_rel'); const b0 = bir.find(r=>r.bir_b==='0.67–1×');
   if(b0) for(const k of ['1–1.5×','1.5–2.5×','>2.5×']){ const r = bir.find(x=>x.bir_b===k); if(r) items.push({dir:'бай-ін', label:'бай-ін: '+k+' твого звичного', v:r.adj-b0.adj, lo:r.adj_lo-b0.adj, hi:r.adj_hi-b0.adj, h:r['роздач']}); }
   const DC = {'столи':'--s1','бай-ін':'--s2'};
-  mk('c_dir', {type:'bar', data:{labels:items.map(i=>i.label), datasets:[{label:'зміна EV', data:items.map(i=>i.v), backgroundColor:items.map(i=>i.v>=0?css('--s3'):css('--s2')), borderRadius:3, maxBarThickness:18}]},
+  mk('c_dir', {type:'bar', data:{labels:items.map(i=>i.label), datasets:[{label:'зміна EV', data:items.map(i=>i.v), backgroundColor:items.map(i=>i.v>=0?css('--good'):css('--bad')), borderRadius:3, maxBarThickness:18}]},
     options:baseOpts('', {indexAxis:'y', plugins:{legend:{display:false}, tooltip:{callbacks:{label:(c)=>'зміна EV '+sg(c.parsed.x)+' bb/100 ['+f2(items[c.dataIndex].lo)+'; '+f2(items[c.dataIndex].hi)+']'}}}, scales:{x:{title:{display:true,text:'зміна нормованого EV, bb/100 проти базового вибору'}}, y:{grid:{display:false}, ticks:{autoSkip:false, font:{size:13}}}}}), plugins:[zeroLine()]});
   // важливість
   const tot = {'столи': rows('X16_delta_usual_mono').reduce((a,r)=>a+r['роздач_категорії'],0), 'бай-ін': bir.reduce((a,r)=>a+r['роздач'],0)};
