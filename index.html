@@ -144,6 +144,7 @@ section{padding:clamp(56px,9vw,110px) 0;position:relative}
 .poll ul.asks li{font-size:13px;padding:6px 10px;border-radius:8px;background:var(--bg);color:#cfcac2}
 .form-slot{margin-top:18px;padding:clamp(14px,2.4vw,26px);border-radius:var(--radius);border:1px solid var(--line);background:var(--bg-2)}
 .form-slot iframe{display:block;width:100%;border:0;min-height:420px;background:transparent;color-scheme:normal}
+.test-note{margin:18px 0 0;padding:10px 14px;border:1px dashed rgba(232,196,106,.5);border-radius:10px;color:var(--gold);font-size:13px}
 .form-empty{margin-top:18px;border:1px dashed var(--line);border-radius:12px;padding:26px;text-align:center;color:var(--muted);font-size:14px}
 .poll-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
 .thanks{margin-top:18px;display:flex;align-items:center;gap:20px;padding:clamp(18px,3vw,28px);border-radius:var(--radius);border:1px solid rgba(63,208,107,.35);background:linear-gradient(90deg,rgba(63,208,107,.09),var(--bg-2) 60%)}
@@ -781,7 +782,10 @@ function renderFab() {
   else { fab.className = 'fab'; back.hidden = true; }
   fab.hidden = !(n) || voteInView;
 }
-POLLS.forEach(p => { const t = todayNum(); p.status = t < dayNum(p.opens) ? 'soon' : t > dayNum(p.closes) ? 'closed' : 'open'; });
+/* До TEST_UNTIL усі власні опитування відкриті для тесту (у Supabase — test_open_all.sql); голоси прибирає clear_test.sql. */
+const TEST_UNTIL = '2026-11-08';
+POLLS.forEach(p => { const t = todayNum(); p.testing = p.engine === 'own' && p.id !== 'test' && t <= dayNum(TEST_UNTIL) && t < dayNum(p.opens);
+  p.status = p.testing ? 'open' : t < dayNum(p.opens) ? 'soon' : t > dayNum(p.closes) ? 'closed' : 'open'; });
 POLLS.forEach((p, i) => {
   const [cls, lbl] = p.kind === 'results' ? (p.status === 'soon' ? ['soon', 'Скоро'] : ['res', 'Результати']) : (STATUS[p.status] || STATUS.soon);
   const card = el('article', { class:'poll' + (p.status === 'open' && p.kind !== 'results' ? ' is-open' : ''), id:'poll-' + p.id });
@@ -793,6 +797,7 @@ POLLS.forEach((p, i) => {
     </button>
     <div class="poll-body" id="pb-${p.id}">
       ${p.kind !== 'results' && p.results && p.status !== 'soon' ? `<div class="results-slot">${p.results}</div>` : ''}
+      ${p.testing ? `<p class="test-note">Тест до ${dLabel(TEST_UNTIL)}: голоси й ставки видалимо. Справжнє голосування — ${dLabel(p.opens).split(' ')[0]}–${dLabel(p.closes)}.</p>` : ''}
       <div class="slot"></div>
     </div>`;
   const head = card.querySelector('.poll-head');

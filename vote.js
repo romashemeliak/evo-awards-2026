@@ -315,7 +315,8 @@ async function renderFinal(card, p) {
   let markets, pools, mine;
   try { [markets, pools, mine] = await Promise.all([Vote.api.markets(), Vote.api.pools(), Vote.api.myBets()]); }
   catch (x) { slot.innerHTML = `<div class="form-empty">${esc(errText(x))}</div>`; return; }
-  markets = markets.filter(m => m.id.startsWith('test') === (p.id === 'test'));   // тестові номінації — лише в тестовому блоці
+  // test* — у тестовому блоці; testf* — тестовий шортлист у «Голосуванні за переможців» до 08.11
+  markets = markets.filter(m => p.id === 'test' ? m.id.startsWith('test') && !m.id.startsWith('testf') : !m.id.startsWith('test') || m.id.startsWith('testf'));
   const canBet = Vote.me.can_bet !== false;
   if (!markets.length) { slot.innerHTML = `<div class="form-empty">Шортлист з'явиться тут на старті блоку — анонс буде в Discord.</div>`; return; }
   const votes = (Vote.answers[p.id] && Vote.answers[p.id].payload && Vote.answers[p.id].payload.votes) || {};
