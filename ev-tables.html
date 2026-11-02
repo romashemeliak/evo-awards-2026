@@ -5,71 +5,84 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>EV і столи</title>
 <meta name="description" content="Скільки столів, яких бай-інів, якої загрузки і якого тижневого обсягу тримати, щоб EV на 100 роздач був максимальним. Дослідження школи, анонімно, по етапах.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;900&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{color-scheme:light;--bg:#f6f5f2;--surface:#fcfcfb;--surface2:#efeee9;--text:#0b0b0b;--text2:#52514e;--muted:#8a8984;--line:#dedcd5;--grid:#e8e6df;
---s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#6250d6;--s6:#8a8984;--good:#0ca30c;--warn:#fab219;--bad:#d03b3b;--adj:#eb6834;--band:rgba(42,120,214,.16)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#121211;--surface:#1a1a19;--surface2:#242422;--text:#f0efec;--text2:#c3c2b7;--muted:#8d8c86;--line:#33332f;--grid:#2a2a27;
---s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#9085e9;--s6:#9a9992;--adj:#d95926;--band:rgba(57,135,229,.22)}}
-:root[data-theme="dark"]{color-scheme:dark;--bg:#121211;--surface:#1a1a19;--surface2:#242422;--text:#f0efec;--text2:#c3c2b7;--muted:#8d8c86;--line:#33332f;--grid:#2a2a27;
---s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#9085e9;--s6:#9a9992;--adj:#d95926;--band:rgba(57,135,229,.22)}
+:root{color-scheme:dark;--bg:#0a0a0b;--bg2:#131315;--surface:#17171a;--surface2:#1f1f24;--text:#f3f0ea;--text2:#cfcac2;--muted:#9c9890;--line:#2a2a2e;--grid:#232327;
+--red:#e3262b;--red-dim:#7a1517;--blue:#3d8bff;--green:#3fd06b;--gold:#e8c46a;
+--s1:#3d8bff;--s2:#e3262b;--s3:#3fd06b;--s4:#e8c46a;--s5:#e07bbf;--s6:#9c9890;--good:#3fd06b;--warn:#e8c46a;--bad:#e3262b;--adj:#e3262b;--band:rgba(61,139,255,.18);--radius:14px}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-.wrap{max-width:1040px;margin:0 auto;padding:0 16px 80px}
-header{padding:40px 0 8px}
-h1{font-size:clamp(28px,5vw,40px);line-height:1.1;margin:0 0 10px;letter-spacing:-.01em}
-h2{font-size:24px;margin:56px 0 8px;padding-top:12px;border-top:1px solid var(--line)}
-h3{font-size:17px;margin:28px 0 6px}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.55 Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 80px}
+header{padding:48px 0 8px}
+.kicker{font:700 12px/1 Manrope,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.kicker::before{content:"";width:22px;height:2px;background:var(--red)}
+h1,h2,h3{font-family:Unbounded,Manrope,sans-serif;letter-spacing:-.01em}
+h1{font-size:clamp(26px,4.4vw,44px);font-weight:900;line-height:1.05;margin:0 0 16px}
+h2{font-size:clamp(20px,3vw,30px);font-weight:900;text-transform:uppercase;line-height:1.1;margin:72px 0 16px;padding:0;border:0}
+h2::before{content:"";display:block;width:40px;height:3px;background:var(--red);margin-bottom:14px}
+h3{font-size:16px;font-weight:700;line-height:1.3;margin:28px 0 8px}
 p{margin:8px 0;max-width:72ch}
-.lead{font-size:18px;color:var(--text2)}
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:20px 0}
-.tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
-.tile b{display:block;font-size:26px;letter-spacing:-.01em}
-.tile span{color:var(--text2);font-size:13px}
-.bar{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
-.bar label{font-size:14px;color:var(--text2)}
-select,button{font:inherit;font-size:14px;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--text)}
-.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.seg button{border:0;border-radius:0;background:var(--surface);cursor:pointer}
-.seg button.on{background:var(--s1);color:#fff}
+.lead{font-size:17px;color:var(--text2);max-width:720px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:24px 0 20px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;text-align:center}
+.tile b{display:block;font:900 28px/1.1 Unbounded,sans-serif;letter-spacing:-.03em}
+.tile span{display:block;margin-top:8px;font:700 11px/1.3 Manrope,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.bar{position:sticky;top:0;z-index:5;background:rgba(10,10,11,.86);backdrop-filter:blur(10px);padding:10px 0;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
+.bar label{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+select,button{font:inherit;font-size:14px;padding:7px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--text)}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;border-radius:0;background:transparent;cursor:pointer;font-weight:700;color:var(--text2)}
+.seg button:hover{color:#fff;background:rgba(255,255,255,.05)}
+.seg button.on{background:var(--red);color:#fff}
 .chk{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--text2);margin:8px 0 2px}
-.chk input{vertical-align:-2px;margin-right:4px}
+.chk input{vertical-align:-2px;margin-right:4px;accent-color:var(--red)}
 .chk .sw{display:inline-block;width:16px;height:3px;vertical-align:middle;margin-right:5px;border-radius:2px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin:16px 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin:16px 0}
 .card h3{margin-top:0}
 .chart{position:relative;height:320px}
 .chart.tall{height:380px}
-.note{font-size:14px;color:var(--text2)}
-.callout{border-left:4px solid var(--s1);background:var(--surface2);padding:10px 14px;border-radius:0 10px 10px 0;margin:14px 0}
-.decision{border-left:4px solid var(--s3);background:var(--surface2);padding:12px 16px;border-radius:0 12px 12px 0;margin:14px 0}
-.decision h4{margin:0 0 6px;font-size:15px;text-transform:uppercase;letter-spacing:.04em;color:var(--s3)}
+.note{font-size:13.5px;color:var(--muted)}
+.callout{border-left:3px solid var(--blue);background:var(--surface);padding:12px 16px;border-radius:0 12px 12px 0;margin:14px 0;font-weight:500}
+.decision{border:1px solid var(--line);border-left:3px solid var(--green);background:var(--surface);padding:14px 18px;border-radius:0 var(--radius) var(--radius) 0;margin:14px 0}
+.decision h4{margin:0 0 8px;font:700 11px/1 Manrope,sans-serif;text-transform:uppercase;letter-spacing:.18em;color:var(--green)}
 .decision ul{margin:4px 0 0 18px;padding:0}
-.decision li{margin:4px 0}
+.decision li{margin:6px 0}
+.decision b{color:#fff}
+.main-card{padding:clamp(16px,3vw,28px);border-radius:20px;border:1px solid rgba(227,38,43,.35);background:radial-gradient(120% 90% at 50% 0%,rgba(227,38,43,.14),transparent 60%),var(--surface);position:relative;overflow:hidden}
+.main-card::after{content:"♠";position:absolute;right:-14px;bottom:-54px;font:900 170px/1 Unbounded,sans-serif;color:var(--red);opacity:.06;pointer-events:none}
+ol.big{list-style:none;margin:0;padding:0;counter-reset:n;display:grid;gap:12px;position:relative;z-index:1}
+ol.big li{counter-increment:n;position:relative;padding:16px 18px 16px 68px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;max-width:none}
+ol.big li::before{content:counter(n);position:absolute;left:20px;top:14px;font:900 26px/1 Unbounded,sans-serif;color:var(--red)}
+ol.big li b{color:#fff}
+@media (max-width:600px){ol.big li{padding-left:56px}ol.big li::before{left:14px;font-size:22px}}
 table{border-collapse:collapse;width:100%;font-size:14px;margin:10px 0}
-th,td{padding:6px 8px;border-bottom:1px solid var(--grid);text-align:right;white-space:nowrap}
+th,td{padding:8px 10px;border-bottom:1px solid var(--grid);text-align:right;white-space:nowrap}
 th:first-child,td:first-child{text-align:left}
-th{color:var(--text2);font-weight:600}
+th{color:var(--muted);font:700 11px/1.3 Manrope,sans-serif;letter-spacing:.1em;text-transform:uppercase}
 .tscroll{overflow-x:auto}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media (max-width:760px){.grid2{grid-template-columns:1fr}}
 .calc{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 @media (max-width:760px){.calc{grid-template-columns:1fr}}
-.calc .ctl{display:flex;flex-direction:column;gap:12px}
-.calc label{font-size:14px;color:var(--text2);display:flex;justify-content:space-between}
-.calc input[type=range]{width:100%}
+.calc .ctl{display:flex;flex-direction:column;gap:14px}
+.calc label{font-size:14px;color:var(--text2);display:flex;justify-content:space-between;font-weight:500}
+.calc input[type=range]{width:100%;accent-color:var(--red)}
 .out{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.out div{background:var(--surface2);border-radius:10px;padding:10px 12px;text-align:center}
-.out div:first-child{grid-column:1/-1}
-.out b{display:block;font-size:22px}
-.out span{font-size:13px;color:var(--text2)}
+.out div{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:12px 12px;text-align:center}
+.out div:first-child{grid-column:1/-1;border-color:rgba(227,38,43,.4);background:radial-gradient(120% 100% at 50% 0%,rgba(227,38,43,.14),transparent 70%),var(--surface2)}
+.out b{display:block;font:900 24px/1.1 Unbounded,sans-serif;letter-spacing:-.02em}
+.out div:first-child b{font-size:32px}
+.out span{display:block;margin-top:6px;font-size:12.5px;color:var(--muted)}
 .ok{color:var(--good)}.no{color:var(--bad)}
-footer{margin-top:60px;color:var(--muted);font-size:13px}
-.toc{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;margin:10px 0 0}
-.toc a{color:var(--s1);text-decoration:none}
-ol.big{padding-left:20px}
-ol.big li{margin:8px 0}
-dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:6px 14px}
-dt{font-weight:600;white-space:nowrap}
+footer{margin-top:72px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+.toc a{font:700 11px/1 Manrope,sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:8px 12px;border-radius:999px;border:1px solid var(--line);color:var(--muted);text-decoration:none;white-space:nowrap}
+.toc a:hover{color:#fff;border-color:var(--text)}
+dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:8px 18px}
+dt{font-weight:700;white-space:nowrap;color:#fff}
 dd{margin:0;color:var(--text2)}
 @media (max-width:600px){dl{grid-template-columns:1fr}dd{margin-bottom:6px}}
 </style>
@@ -77,6 +90,7 @@ dd{margin:0;color:var(--text2)}
 <body>
 <div class="wrap">
 <header>
+<div class="kicker">Школа EVO · дослідження</div>
 <h1>Скільки столів, яких бай-інів і якої загрузки: що каже EV</h1>
 <p class="lead"><span id="m_lead"></span> Як змінюється EV за різних обставин.</p>
 <div class="tiles">
@@ -105,6 +119,7 @@ dd{margin:0;color:var(--text2)}
 </dl></div>
 
 <h2 id="top">Головне</h2>
+<div class="main-card">
 <ol class="big">
 <li><b>Кількість столів — навичка, і звична для тебе кількість може бути будь-якою.</b> Гравці на звичній кількості своїх столів показують EV у межах 10–12 bb/100. Проблема не в кількості столів, а у виході за звичну кількість: кожен стіл понад звичне коштує EV (+1–2 столи −0.5, +3 столи −0.7, +4 і більше столів −2.5 bb/100), а столи, яких менше, навпаки додають (−1 стіл +0.3, −2 столи +1.0, −3 столи +2.8). Тому кількість столів піднімають поступово, по одному, а не стрибком під вечір з великим розкладом.</li>
 <li><b>Турніри дорожчі за 1.5× твого звичного бай-іну граються з EV на 4–7 bb/100 нижчим за середнє EV.</b> І що більше столів поруч, то гірше: з 1–4 столами −3.7, з 7–8 — −5.4. Такий турнір потребує концентрації, яку інші столи забирають.</li>
@@ -113,6 +128,7 @@ dd{margin:0;color:var(--text2)}
 <li><b>Час доби впливає мало.</b> Сесії, що стартують уранці, вдень, у прайм чи вночі, дають практично однакове EV. Єдиний доведений ефект: турніри, зареєстровані о 17–18 за Києвом, на 0.8 bb/100 гірші за решту, а зареєстровані до полудня — на 1.1 кращі.</li>
 <li><b>EV падає з глибиною турніру: 16.8 bb/100 на 1–4 рівнях, 7.8 на 9–12 і 4.1 на 21+.</b> Дві третини цього падіння пояснює наш коротший стек. Суперники з глибиною практично не змінюються.</li>
 </ol>
+</div>
 
 <div class="bar">
 <label>Група</label>
@@ -213,12 +229,12 @@ dd{margin:0;color:var(--text2)}
 <div class="card"><h3>Рівень × стек, EV</h3><div class="tscroll" id="t_lvlstk"></div></div>
 
 <h2 id="s7">7. Параметри, що контролюються гравцем</h2>
-<p>Три речі, які гравець вирішує сам: скільки столів понад звичне відкрити, який бай-ін грати і скільки днів на тиждень грати. Для кожної — зміна нормованого EV проти базового вибору (звичні столи, бай-ін 0.67–1× медіани, 5 днів). Довжина загрузки сюди не входить: її гравець не вибирає наперед, а невдалі сесії просто закінчує раніше.</p>
+<p>Дві речі, які гравець вирішує сам: скільки столів понад звичне відкрити і який бай-ін грати. Для кожної — зміна нормованого EV проти базового вибору (звичні столи, бай-ін 0.67–1× медіани). Кількість днів на тиждень на EV не впливає, тому її тут немає. Довжина загрузки сюди не входить: її гравець не вибирає наперед, а невдалі сесії просто закінчує раніше.</p>
 <div class="card"><h3>Вплив параметрів, що контролюються гравцем, на EV, bb/100</h3><div class="chart" style="height:460px"><canvas id="c_dir"></canvas></div><p class="note">Зелене — краще за базовий вибір, помаранчеве — гірше.</p></div>
 <div class="card"><h3>Важливість параметрів</h3><div class="tscroll" id="t_dir"></div><p class="note">Найбільший ефект — найбільша за модулем зміна EV серед реальних варіантів параметра. Частка роздач — скільки роздач вибраної групи зіграно не в базовому варіанті, тобто як часто цей вибір узагалі виникає.</p></div>
 
 <h2 id="calc">Калькулятор дистанції</h2>
-<p>На яке EV і яку дистанцію розраховувати при x столах, y годинах загрузки і z днях на тиждень. Дистанція береться не з формули «столи × години», а з фактичних сесій школи з такими самими столами в ядрі і такою самою загрузкою: з усіма паузами між дозагрузками, повільним розігрівом і дограванням, яке інколи затягується. EV — середнє школи при такій кількості столів у ядрі з поправкою на дні на тиждень; довжина загрузки на EV не впливає. Якщо x більше за твою звичну кількість столів, перші місяці EV буде нижчим на величину з блоку «Столів понад звичне».</p>
+<p>На яке EV і яку дистанцію розраховувати при x столах, y годинах загрузки і z днях на тиждень. Дистанція береться не з формули «столи × години», а з фактичних сесій школи з такими самими столами в ядрі і такою самою загрузкою: з усіма паузами між дозагрузками, повільним розігрівом і дограванням, яке інколи затягується. EV — середнє школи при такій кількості столів у ядрі; довжина загрузки і дні на тиждень на EV не впливають. Якщо x більше за твою звичну кількість столів, перші місяці EV буде нижчим на величину з блоку «Столів понад звичне».</p>
 <div class="card calc">
 <div class="ctl">
 <label>Столів у ядрі сесії <b id="v_tab">7</b></label><input type="range" id="k_tab" min="3" max="13" value="7">
@@ -430,15 +446,13 @@ function directions(){
   for(const r of dl) items.push({dir:'столи', label:'столи: '+duLab(r.from)+(r.from!==r.to?'–'+r.to:'')+' понад звичне', v:r['зміна'], lo:r.lo, hi:r.hi, h:r['роздач']});
   const bir = rows('S2_buyin_rel'); const b0 = bir.find(r=>r.bir_b==='0.67–1×');
   if(b0) for(const k of ['1–1.5×','1.5–2.5×','>2.5×']){ const r = bir.find(x=>x.bir_b===k); if(r) items.push({dir:'бай-ін', label:'бай-ін: '+k+' твого звичного', v:r.adj-b0.adj, lo:r.adj_lo-b0.adj, hi:r.adj_hi-b0.adj, h:r['роздач']}); }
-  const dys = rows('S6_days_per_week'); const d0 = dys.find(r=>r.days_b==='5');
-  if(d0) for(const k of ['1–2','3–4','6–7']){ const r = dys.find(x=>x.days_b===k); if(r) items.push({dir:'дні', label:'днів на тиждень: '+k, v:r.adj-d0.adj, lo:r.adj_lo-d0.adj, hi:r.adj_hi-d0.adj, h:r['роздач']}); }
-  const DC = {'столи':'--s1','бай-ін':'--s2','дні':'--s3'};
+  const DC = {'столи':'--s1','бай-ін':'--s2'};
   mk('c_dir', {type:'bar', data:{labels:items.map(i=>i.label), datasets:[{label:'зміна EV', data:items.map(i=>i.v), backgroundColor:items.map(i=>i.v>=0?css('--s3'):css('--s2')), borderRadius:3, maxBarThickness:18}]},
     options:baseOpts('', {indexAxis:'y', plugins:{legend:{display:false}, tooltip:{callbacks:{label:(c)=>'зміна EV '+sg(c.parsed.x)+' bb/100 ['+f2(items[c.dataIndex].lo)+'; '+f2(items[c.dataIndex].hi)+']'}}}, scales:{x:{title:{display:true,text:'зміна нормованого EV, bb/100 проти базового вибору'}}, y:{grid:{display:false}, ticks:{autoSkip:false, font:{size:13}}}}}), plugins:[zeroLine()]});
   // важливість
-  const tot = {'столи': rows('X16_delta_usual_mono').reduce((a,r)=>a+r['роздач_категорії'],0), 'бай-ін': bir.reduce((a,r)=>a+r['роздач'],0), 'дні': dys.reduce((a,r)=>a+r['роздач'],0)};
-  const NAME = {'столи':'Столи понад звичне','бай-ін':'Бай-ін вищий за звичний','дні':'Днів на тиждень менше 5'};
-  const rowsD = Object.keys(NAME).map(d=>{ const its = items.filter(i=>i.dir===d); if(!its.length) return null; const worst = its.reduce((a,i)=>Math.abs(i.v)>Math.abs(a.v)?i:a); const share = d==='дні' ? its.filter(i=>!i.label.includes('6–7')).reduce((a,i)=>a+i.h,0) : its.reduce((a,i)=>a+i.h,0);
+  const tot = {'столи': rows('X16_delta_usual_mono').reduce((a,r)=>a+r['роздач_категорії'],0), 'бай-ін': bir.reduce((a,r)=>a+r['роздач'],0)};
+  const NAME = {'столи':'Столи понад звичне','бай-ін':'Бай-ін вищий за звичний'};
+  const rowsD = Object.keys(NAME).map(d=>{ const its = items.filter(i=>i.dir===d); if(!its.length) return null; const worst = its.reduce((a,i)=>Math.abs(i.v)>Math.abs(a.v)?i:a); const share = its.reduce((a,i)=>a+i.h,0);
     return {d, name:NAME[d], worst, share: tot[d] ? 100*share/tot[d] : null, proven: its.filter(i=>i.hi<0||i.lo>0).length, n: its.length}; }).filter(Boolean).sort((a,b)=>Math.abs(b.worst.v)-Math.abs(a.worst.v));
   let h = '<table><tr><th>параметр</th><th>найбільший ефект, bb/100</th><th>де саме</th><th>частка роздач</th></tr>';
   for(const r of rowsD) h += `<tr><td>${r.name}</td><td>${sg(r.worst.v)}</td><td>${r.worst.label}</td><td>${r.share==null?'':r.share.toFixed(0)+'%'}</td></tr>`;
@@ -464,9 +478,7 @@ function evAt(u){ const tm = monoFix(sortBy(rows('X16_tables_mono'), 'tab'), -1)
 function calc(){
   const tab = +document.getElementById('k_tab').value, reg = +document.getElementById('k_reg').value, days = +document.getElementById('k_days').value;
   document.getElementById('v_tab').textContent = tab; document.getElementById('v_reg').textContent = uk(reg); document.getElementById('v_days').textContent = days;
-  const dys = rows('S6_days_per_week'); const d0 = dys.find(r=>r.days_b==='5'), dk = dys.find(r=>r.days_b===daysB(days));
-  const dDays = (d0 && dk) ? dk.adj - d0.adj : 0;
-  const ev = evAt(tab) + dDays;
+  const ev = evAt(tab);
   const dist = distAt(tab, reg);
   document.getElementById('o_ev').textContent = uk(ev.toFixed(1));
   if(dist){
