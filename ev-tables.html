@@ -8,11 +8,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root{color-scheme:light;--bg:#f6f5f2;--surface:#fcfcfb;--surface2:#efeee9;--text:#0b0b0b;--text2:#52514e;--muted:#8a8984;--line:#dedcd5;--grid:#e8e6df;
---s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#6250d6;--s6:#8a8984;--good:#0ca30c;--warn:#fab219;--bad:#d03b3b;--adj:#c2185b;--band:rgba(42,120,214,.16)}
+--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#6250d6;--s6:#8a8984;--good:#0ca30c;--warn:#fab219;--bad:#d03b3b;--adj:#eb6834;--band:rgba(42,120,214,.16)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#121211;--surface:#1a1a19;--surface2:#242422;--text:#f0efec;--text2:#c3c2b7;--muted:#8d8c86;--line:#33332f;--grid:#2a2a27;
---s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#9085e9;--s6:#9a9992;--adj:#e8558f;--band:rgba(57,135,229,.22)}}
+--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#9085e9;--s6:#9a9992;--adj:#d95926;--band:rgba(57,135,229,.22)}}
 :root[data-theme="dark"]{color-scheme:dark;--bg:#121211;--surface:#1a1a19;--surface2:#242422;--text:#f0efec;--text2:#c3c2b7;--muted:#8d8c86;--line:#33332f;--grid:#2a2a27;
---s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#9085e9;--s6:#9a9992;--adj:#e8558f;--band:rgba(57,135,229,.22)}
+--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#9085e9;--s6:#9a9992;--adj:#d95926;--band:rgba(57,135,229,.22)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 .wrap{max-width:1040px;margin:0 auto;padding:0 16px 80px}
@@ -253,7 +253,8 @@ const TOGGLE = ['c_tables','c_delta','c_late','c_phase','c_bir','c_exp','c_bia',
 const SHOW = Object.fromEntries(TOGGLE.map(id=>[id,{raw:true, adj:true}]));
 for(const id of TOGGLE){ const cv = document.getElementById(id); if(!cv) continue;
   const box = document.createElement('div'); box.className = 'chk';
-  box.innerHTML = '<label><input type="checkbox" data-k="raw" checked><span class="sw" data-k="raw"></span>фактичне EV</label><label><input type="checkbox" data-k="adj" checked><span class="sw" data-k="adj"></span>нормоване EV</label>';
+  const sw = id==='c_exp' ? '' : '<span class="sw" data-k="%k"></span>';
+  box.innerHTML = '<label><input type="checkbox" data-k="raw" checked>'+sw.replace('%k','raw')+'фактичне EV</label><label><input type="checkbox" data-k="adj" checked>'+sw.replace('%k','adj')+'нормоване EV</label>';
   box.querySelectorAll('input').forEach(i=>i.addEventListener('change', ()=>{ SHOW[id][i.dataset.k] = i.checked; render(); }));
   cv.closest('.chart').insertAdjacentElement('afterend', box); }
 const charts = {};
@@ -299,7 +300,7 @@ function baseOpts(ylabel, extra){
 }
 function zeroLine(){ return {id:'zero', afterDraw(ch){ const y = ch.scales.y; if(!y || y.min>0 || y.max<0) return; const ctx=ch.ctx; ctx.save(); ctx.strokeStyle=css('--muted'); ctx.lineWidth=1; ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(ch.chartArea.left, y.getPixelForValue(0)); ctx.lineTo(ch.chartArea.right, y.getPixelForValue(0)); ctx.stroke(); ctx.restore(); }}; }
 function mk(id, cfg){ if(charts[id]) charts[id].destroy(); charts[id] = new Chart(document.getElementById(id), cfg); }
-function col(){ return css(sel.length===1 ? (GCOL[sel[0]]||'--s1') : '--s1'); }
+function col(){ return css('--s1'); }
 const al = (hex, a) => { const m = hex.match(/\w\w/g); return m ? `rgba(${parseInt(m[0],16)},${parseInt(m[1],16)},${parseInt(m[2],16)},${a})` : hex; };
 function series(id, data, base, c){
   const sh = SHOW[id]||{raw:true,adj:true}; const ds = [];
