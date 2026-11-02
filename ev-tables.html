@@ -267,12 +267,7 @@ const GCOL = {"усі":"--s6","I":"--s1","II":"--s2","III":"--s3","IV":"--s4","R
 let sel = ["усі"];
 const TOGGLE = ['c_tables','c_delta','c_late','c_phase','c_bir','c_exp','c_bia','c_reghr','c_reg6','c_tail','c_first2','c_start','c_regkh','c_level','c_stack'];
 const SHOW = Object.fromEntries(TOGGLE.map(id=>[id,{raw:true, adj:true}]));
-for(const id of TOGGLE){ const cv = document.getElementById(id); if(!cv) continue;
-  const box = document.createElement('div'); box.className = 'chk';
-  const sw = id==='c_exp' ? '' : '<span class="sw" data-k="%k"></span>';
-  box.innerHTML = '<label><input type="checkbox" data-k="raw" checked>'+sw.replace('%k','raw')+'фактичне EV</label><label><input type="checkbox" data-k="adj" checked>'+sw.replace('%k','adj')+'нормоване EV</label>';
-  box.querySelectorAll('input').forEach(i=>i.addEventListener('change', ()=>{ SHOW[id][i.dataset.k] = i.checked; render(); }));
-  cv.closest('.chart').insertAdjacentElement('afterend', box); }
+// перемикачі фактичне/нормоване прибрано: обидві лінії завжди показуються
 const charts = {};
 (function(){ const mln = String(Math.round(META.hands_ev/1e6)); document.getElementById('m_hands').textContent = mln+' млн'; document.getElementById('m_players').textContent = META.players;
   document.getElementById('m_sess').textContent = META.sessions.toLocaleString('uk-UA'); document.getElementById('m_ev').textContent = (META.ev_all||0).toFixed(1);
@@ -365,7 +360,6 @@ function collapse(data, key){ // сусідні категорії з однак
 const duLab = k => k==='0' ? 'звичне' : (k.startsWith('−') ? k : '+'+k) + (k==='4' ? '+' : '');
 function render(){
   theme();
-  document.querySelectorAll('.chk .sw[data-k=raw]').forEach(e=>e.style.background=col()); document.querySelectorAll('.chk .sw[data-k=adj]').forEach(e=>e.style.background=css('--adj'));
   const tabsM = monoFix(sortBy(rows('X16_tables_mono'), 'tab'), -1);
   lineWithBand('c_tables', tabsM, 'tab', null, {ghost:'X16_tables_mono', plusLast:13});
   const dlt = monoFix(sortBy(rows('X16_delta_usual_mono'), 'du', DU_ORDER), -1);
