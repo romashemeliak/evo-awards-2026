@@ -13,9 +13,10 @@ const MOCK = QS.has('mock');
 
 /* ─── бекенд: Supabase або тестовий ─────────────────────────────────────────── */
 const ERR = {
-  not_signed_in: 'Спершу увійди через Discord.', already_claimed: 'Ти вже обрав себе зі списку.',
-  unknown_player: 'Такого імені немає в списку EVO / REVO / адмінів.', player_taken: 'Цього гравця вже обрав інший акаунт Discord — напиши адміну.',
-  not_participant: 'Спершу обери себе зі списку гравців.', poll_closed: 'Опитування зараз закрите.', bad_payload: 'Форма заповнена некоректно.',
+  not_signed_in: 'Спершу увійди через Discord.', already_claimed: 'Роль і нік уже збережені.',
+  bad_role: 'Обери, хто ти: Адмін, EVO, REVO чи Друг.', bad_nick: 'Нік — від 2 до 40 символів.',
+  nick_taken: 'Такий нік уже зайнятий — напиши адміну, якщо це твій.', role_not_allowed: 'Це опитування — не для твоєї ролі.',
+  not_participant: 'Спершу обери роль і впиши нік.', poll_closed: 'Опитування зараз закрите.', bad_payload: 'Форма заповнена некоректно.',
   market_closed: 'Ставки в цій номінації вже закриті.', no_bets: 'Для твого акаунта ставки вимкнені — можна лише голосувати.',
   staff_no_nominate: 'Адміни не висувають претендентів — висувають гравці.', self_nomination: 'Себе висувати не можна.', over_budget: 'Не вистачає фішок: сума ставок більша за бюджет.',
   bad_amount: 'Ставка — ціле число фішок від 0.', unknown_option: 'Такого претендента немає в шортлисті.', unknown_market: 'Номінацію не знайдено.',
@@ -37,8 +38,7 @@ function supabaseBackend() {
     signOut: () => sb.auth.signOut(),
     me: () => rpc('me'),
     roster: () => sel(sb.from('roster').select('player,team').order('player')),
-    rosterFree: () => rpc('roster_free'),
-    claim: player => rpc('claim_player', { p_player: player }),
+    register: (role, nick) => rpc('register', { p_role: role, p_nick: nick }),
     myAnswers: () => sel(sb.from('answers').select('poll_id,payload,updated_at')),
     submit: (poll, payload) => rpc('submit_answers', { p_poll: poll, p_payload: payload }),
     markets: () => sel(sb.from('markets').select('id,title,ord,opens_at,closes_at,winner,market_options(option,ord)').order('ord')),
@@ -81,11 +81,12 @@ function mockBackend(players) {
     signOut: () => { db.signedIn = false; save(db); return A(null); },
     me: () => A(db.signedIn ? meObj() : null),
     roster: () => A(db.roster),
-    rosterFree: () => A(db.roster.filter(r => !taken().has(r.player))),
-    claim: p => { chk(); if (db.me) throw new Error('already_claimed'); const r = db.roster.find(x => x.player === p); if (!r) throw new Error('unknown_player');
-      if (taken().has(p)) throw new Error('player_taken'); db.me = { player: p, team: r.team }; save(db); return A(meObj()); },
+    register: (role, nick) => { chk(); if (db.me) throw new Error('already_claimed'); if (!ROLES[role]) throw new Error('bad_role');
+      nick = (nick || '').trim(); if (nick.length < 2 || nick.length > 40) throw new Error('bad_nick');
+      if ([...taken()].some(x => x.toLowerCase() === nick.toLowerCase())) throw new Error('nick_taken');
+      db.me = { player: nick, team: role }; save(db); return A(meObj()); },
     myAnswers: () => A(db.me ? Object.entries(db.answers).map(([poll_id, v]) => ({ poll_id, payload: v.payload, updated_at: v.at })) : []),
-    submit: (poll, payload) => { part(); db.answers[poll] = { payload, at: new Date().toISOString() }; save(db); return A(new Date().toISOString()); },
+    submit: (poll, payload) => { part(); if (!canVote(poll, db.me.team)) throw new Error('role_not_allowed'); db.answers[poll] = { payload, at: new Date().toISOString() }; save(db); return A(new Date().toISOString()); },
     markets: () => A(db.markets.map(m => ({ id: m.id, title: m.title, ord: m.ord, winner: m.winner, closes_at: '2026-11-29T21:59:59Z',
       market_options: m.options.map((o, i) => ({ option: o, ord: i })) }))),
     pools: () => A(db.markets.flatMap(m => m.options.map(o => { const bs = db.bets.filter(b => b.market_id === m.id && b.option === o);
@@ -146,7 +147,7 @@ async function refreshMe() {
   Vote.me = Vote.sess.signedIn ? await Vote.api.me() : null;
   // після входу нік для форм Tally береться з акаунта — поле ручного вводу ховаємо
   const box = document.getElementById('nick-box'), inp = document.getElementById('nick');
-  if (box && inp && Vote.sess.signedIn) { inp.value = (Vote.me && Vote.me.discord) || Vote.sess.name || inp.value; box.style.display = 'none'; }
+  if (box && inp && Vote.sess.signedIn) { inp.value = (Vote.me && Vote.me.player) || Vote.sess.name || inp.value; box.style.display = 'none'; }
   Vote.answers = {};
   if (Vote.me) (await Vote.api.myAnswers()).forEach(a => { Vote.answers[a.poll_id] = a; });
   // позначки «✓ Ти проголосував» для власних опитувань — лише за даними бази (на будь-якому пристрої; без входу — без позначок)
@@ -170,19 +171,24 @@ function renderAuth() {
     box.innerHTML = `<div class="auth-row"><div><b>Увійди, щоб голосувати і ставити фішки</b><small>Вхід через Discord — щоб кожен гравець голосував один раз. Хто за кого голосував, не публікується.</small></div>
       <button class="btn discord" type="button" data-act="signin">${DISCORD_SVG}Увійти через Discord</button></div>`;
   } else if (!Vote.me) {
-    box.innerHTML = `<div class="auth-row claim"><div><b>Хто ти в EVO?</b><small>Обери себе зі списку гравців EVO і REVO або адмінів. Вибір — один раз, змінити може лише адмін.</small></div>
-      <div class="claim-form"><input id="claim-input" list="claim-list" placeholder="Почни вводити своє ім'я" autocomplete="off"><datalist id="claim-list"></datalist>
-      <button class="btn" type="button" data-act="claim">Це я</button></div><small class="err" id="claim-err"></small>
+    box.innerHTML = `<div class="auth-row claim"><div><b>Останній крок входу: хто ти і твій нік</b><small>Discord: ${esc(Vote.sess.name || '')}. Роль і нік зберігаються один раз — при наступних входах їх не питаємо. Змінити може лише адмін.</small></div>
+      <div class="role-pick" role="radiogroup" aria-label="Роль">${Object.entries(ROLES).map(([k, v]) =>
+        `<label class="choice"><input type="radio" name="reg-role" value="${k}"><span>${v}</span></label>`).join('')}</div>
+      <div class="claim-form"><input id="claim-input" placeholder="Твій нік" maxlength="40" autocomplete="nickname" value="${esc(Vote.sess.name || '')}">
+      <button class="btn" type="button" data-act="register">Зберегти</button></div><small class="err" id="claim-err"></small>
       <button class="link" type="button" data-act="signout">Вийти з Discord-акаунта ${esc(Vote.sess.name || '')}</button></div>`;
-    Vote.api.rosterFree().then(r => { document.getElementById('claim-list').innerHTML = r.map(x => `<option value="${esc(x.player)}">${teamLabel(x.team)}</option>`).join(''); });
   } else {
     const free = Vote.me.budget - Vote.me.staked;
     box.innerHTML = `<div class="auth-row ok"><div><b>${esc(Vote.me.player)}</b> <span class="chip team ${Vote.me.team === 'REVO' ? 'revo' : ''}">${esc(teamLabel(Vote.me.team))}</span>
-      <small>Discord: ${esc(Vote.sess.name || '')} · <button class="link" type="button" data-act="signout">вийти</button></small></div>
+      <small>Ти увійшов як ${esc(Vote.me.player)} · Discord: ${esc(Vote.sess.name || '')} · <button class="link" type="button" data-act="signout">Вийти</button></small></div>
       ${Vote.me.can_bet === false ? '<small class="muted">Голос без ставок</small>' : `<div class="chips-bal" title="Фішки для ставок на переможців"><span class="coin"></span><b>${fmtN(free)}</b><small>фішок вільно з ${fmtN(Vote.me.budget)}</small></div>`}</div>`;
   }
 }
-const teamLabel = t => t === 'STAFF' ? 'Адмін' : t;
+/* Ролі учасника (обирає при першому вході) і хто голосує в якому опитуванні — як polls.roles у schema.sql. */
+const ROLES = { ADMIN: 'Адмін', EVO: 'EVO', REVO: 'REVO', FRIEND: 'Друг' };
+const POLL_ROLES = { noms: ['ADMIN', 'EVO', 'REVO'], nominate: ['EVO', 'REVO'], final: ['ADMIN', 'EVO', 'REVO'] };
+const canVote = (poll, role) => !POLL_ROLES[poll] || POLL_ROLES[poll].includes(role);
+const teamLabel = t => ROLES[t] || (t === 'STAFF' ? 'Адмін' : t);
 const DISCORD_SVG = '<svg width="20" height="16" viewBox="0 0 71 55" aria-hidden="true"><path fill="currentColor" d="M60.1 4.9A58.5 58.5 0 0 0 45.6.4a40 40 0 0 0-1.8 3.7 54 54 0 0 0-16.2 0A40 40 0 0 0 25.8.4 58.4 58.4 0 0 0 11.3 4.9C2.1 18.6-.4 32 .8 45.2a58.9 58.9 0 0 0 18 9.1 43 43 0 0 0 3.8-6.3 38 38 0 0 1-6-2.9l1.5-1.1a42 42 0 0 0 35.8 0l1.5 1.1a38 38 0 0 1-6 2.9 43 43 0 0 0 3.8 6.3 58.7 58.7 0 0 0 18-9.1C72.6 30 68.8 16.7 60.1 4.9ZM23.7 37.1c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2 6.5 3.3 6.4 7.2c0 4-2.8 7.2-6.4 7.2Zm23.6 0c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2 6.5 3.3 6.4 7.2c0 4-2.8 7.2-6.4 7.2Z"/></svg>';
 
 document.addEventListener('click', async e => {
@@ -190,9 +196,11 @@ document.addEventListener('click', async e => {
   const act = b.dataset.act;
   if (act === 'signin') { Vote.api.signIn(); return; }
   if (act === 'signout') { await Vote.api.signOut(); await refreshMe(); renderAuth(); rerenderOwn(); return; }
-  if (act === 'claim') {
-    const v = document.getElementById('claim-input').value.trim(), err = document.getElementById('claim-err');
-    try { await Vote.api.claim(v); await refreshMe(); renderAuth(); rerenderOwn(); renderBoard(); }
+  if (act === 'register') {
+    const r = document.querySelector('input[name=reg-role]:checked'), v = document.getElementById('claim-input').value.trim(), err = document.getElementById('claim-err');
+    if (!r) { err.textContent = ERR.bad_role; return; }
+    if (v.length < 2) { err.textContent = ERR.bad_nick; return; }
+    try { await Vote.api.register(r.value, v); await refreshMe(); renderAuth(); rerenderOwn(); renderBoard(); }
     catch (x) { err.textContent = errText(x); }
   }
 });
@@ -205,12 +213,14 @@ async function renderOwnPoll(card, p) {
   const gate = msg => { slot.innerHTML = `<div class="form-empty">${msg}</div>`; };
   if (!enabled()) return gate('Форма відкриється тут ' + dLabel(p.opens) + ' — анонс буде в Discord.');
   if (!Vote.ready) return gate(Vote.error ? esc(Vote.error) : 'Підключаємось…');
-  if (!Vote.sess.signedIn || !Vote.me) return gate(`Щоб проголосувати, <a href="#vote" class="inline-link">увійди через Discord і обери себе</a> вгорі цього блоку.`);
+  if (Vote.sess.signedIn && !Vote.me) return gate(`Заверши вхід <a href="#vote" class="inline-link">вгорі цього блоку</a>: обери роль і впиши нік.`);
+  if (!Vote.sess.signedIn) return gate(`Щоб проголосувати, <a href="#vote" class="inline-link">увійди через Discord</a> вгорі цього блоку.`);
   const prev = Vote.answers[p.id];
   if (prev && !card.dataset.editing && !p.bets) return showOwnThanks(card, p, prev);
+  if (!canVote(p.id, Vote.me.team)) return gate(p.id === 'nominate'
+    ? 'Претендентів висувають гравці EVO і REVO.' + (Vote.me.team === 'ADMIN' ? ' Голосування за переможців — з ' + dLabel((POLLS.find(x => x.id === 'final') || p).opens) + '.' : '')
+    : 'Це опитування — для гравців і адмінів школи.');
   if (p.bets) return renderFinal(card, p);
-  if (Vote.me.team === 'STAFF' && p.form.some(q => q.type === 'nominate'))
-    return gate('Претендентів висувають гравці — адміни в цьому блоці не висувають. Голосування за переможців — з ' + dLabel((POLLS.find(x => x.id === 'final') || p).opens) + '.');
   if (!Vote.roster.length && p.form.some(q => q.type === 'nominate')) Vote.roster = await Vote.api.roster();
   const val = (prev && prev.payload) || {};
   slot.innerHTML = `<form class="own-form" novalidate>${p.form.map(q => qHtml(q, val)).join('')}
