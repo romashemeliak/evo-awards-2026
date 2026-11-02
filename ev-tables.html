@@ -11,7 +11,7 @@
 <style>
 :root{color-scheme:dark;--bg:#0a0a0b;--bg2:#131315;--surface:#17171a;--surface2:#1f1f24;--text:#f3f0ea;--text2:#cfcac2;--muted:#9c9890;--line:#2a2a2e;--grid:#232327;
 --red:#e3262b;--red-dim:#7a1517;--blue:#3d8bff;--green:#3fd06b;--gold:#e8c46a;
---s1:#9085e9;--s2:#199e70;--s3:#199e70;--s4:#c98500;--s5:#9085e9;--s6:#9c9890;--good:#199e70;--warn:#c98500;--bad:#c98500;--adj:#c98500;--band:rgba(144,133,233,.22);--radius:14px}
+--s1:#5e5ce6;--s2:#40cbe0;--s3:#40cbe0;--s4:#ff9f0a;--s5:#5e5ce6;--s6:#9c9890;--good:#40cbe0;--warn:#ff9f0a;--bad:#ff9f0a;--adj:#ff9f0a;--band:rgba(94,92,230,.28);--radius:14px}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:70px}
 body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.55 Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
@@ -231,7 +231,7 @@ dd{margin:0;color:var(--text2)}
 
 <h2 id="s7">7. Параметри, що контролюються гравцем</h2>
 <p>Дві речі, які гравець вирішує сам: скільки столів понад звичне відкрити і який бай-ін грати. Для кожної — зміна нормованого EV проти базового вибору (звичні столи, бай-ін 0.67–1× медіани). Кількість днів на тиждень на EV не впливає, тому її тут немає. Довжина загрузки сюди не входить: її гравець не вибирає наперед, а невдалі сесії просто закінчує раніше.</p>
-<div class="card"><h3>Вплив параметрів, що контролюються гравцем, на EV, bb/100</h3><div class="chart" style="height:460px"><canvas id="c_dir"></canvas></div><p class="note">Бірюзове — краще за базовий вибір, бурштинове — гірше.</p></div>
+<div class="card"><h3>Вплив параметрів, що контролюються гравцем, на EV, bb/100</h3><div class="chart" style="height:460px"><canvas id="c_dir"></canvas></div><p class="note">Бірюзове — краще за базовий вибір, помаранчеве — гірше.</p></div>
 <div class="card"><h3>Важливість параметрів</h3><div class="tscroll" id="t_dir"></div><p class="note">Найбільший ефект — найбільша за модулем зміна EV серед реальних варіантів параметра. Частка роздач — скільки роздач вибраної групи зіграно не в базовому варіанті, тобто як часто цей вибір узагалі виникає.</p></div>
 
 <h2 id="s9">8. Додаткові перевірки</h2>
