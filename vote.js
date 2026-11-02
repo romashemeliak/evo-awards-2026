@@ -23,13 +23,16 @@ const errText = e => { const m = String((e && (e.message || e.error_description)
   const k = Object.keys(ERR).find(k => m.includes(k)); return k ? ERR[k] : 'Не вдалося зберегти: ' + m; };
 
 function supabaseBackend() {
-  const sb = window.supabase.createClient(VOTE_CFG.url, VOTE_CFG.anonKey, { auth: { persistSession: true, detectSessionInUrl: true } });
+  // pkce: Supabase повертає ?code=… у query, а не токени в #, тож адреса повернення не конфліктує з якорями сторінки
+  const sb = window.supabase.createClient(VOTE_CFG.url, VOTE_CFG.anonKey, { auth: { persistSession: true, detectSessionInUrl: true, flowType: 'pkce' } });
   const rpc = async (fn, args) => { const { data, error } = await sb.rpc(fn, args); if (error) throw error; return data; };
   const sel = async q => { const { data, error } = await q; if (error) throw error; return data; };
   return {
     async session() { const { data } = await sb.auth.getSession(); const s = data.session;
       return s ? { signedIn: true, name: (s.user.user_metadata || {}).full_name || (s.user.user_metadata || {}).name || 'Discord' } : { signedIn: false }; },
-    signIn: () => sb.auth.signInWithOAuth({ provider: 'discord', options: { redirectTo: location.origin + location.pathname + '#vote' } }),
+    signIn: () => { try { sessionStorage.setItem('evo_after_login', '1'); } catch (e) {}
+      const q = new URLSearchParams(location.search); q.delete('code');
+      return sb.auth.signInWithOAuth({ provider: 'discord', options: { redirectTo: location.origin + location.pathname + (q.size ? '?' + q : '') } }); },
     signOut: () => sb.auth.signOut(),
     me: () => rpc('me'),
     roster: () => sel(sb.from('roster').select('player,team').order('player')),
@@ -129,11 +132,19 @@ async function voteInit() {
   } catch (e) { console.error(e); Vote.error = 'Не вдалося підключитися до голосування. Онови сторінку трохи згодом.'; }
   renderAuth(); renderBoard();
   document.querySelectorAll('.poll.expanded').forEach(c => fillSlot(c, POLLS.find(p => 'poll-' + p.id === c.id)));
+  // повернення з Discord: прибрати ?code= з адреси і показати блок голосування
+  const back = (() => { try { const f = sessionStorage.getItem('evo_after_login'); sessionStorage.removeItem('evo_after_login'); return f; } catch (e) { return null; } })();
+  if (QS.has('code')) { const q = new URLSearchParams(location.search); q.delete('code');
+    history.replaceState(null, '', location.pathname + (q.size ? '?' + q : '') + '#vote'); }
+  if (back || QS.has('code')) { const v = document.getElementById('vote'); if (v) v.scrollIntoView(); }
 }
 
 async function refreshMe() {
   Vote.sess = await Vote.api.session();
   Vote.me = Vote.sess.signedIn ? await Vote.api.me() : null;
+  // після входу нік для форм Tally береться з акаунта — поле ручного вводу ховаємо
+  const box = document.getElementById('nick-box'), inp = document.getElementById('nick');
+  if (box && inp && Vote.sess.signedIn) { inp.value = (Vote.me && Vote.me.discord) || Vote.sess.name || inp.value; box.style.display = 'none'; }
   Vote.answers = {};
   if (Vote.me) (await Vote.api.myAnswers()).forEach(a => { Vote.answers[a.poll_id] = a; });
   // позначки «✓ Ти проголосував» для власних опитувань — лише за даними бази (на будь-якому пристрої; без входу — без позначок)
