@@ -14,9 +14,10 @@ const MOCK = QS.has('mock');
 /* ─── бекенд: Supabase або тестовий ─────────────────────────────────────────── */
 const ERR = {
   not_signed_in: 'Спершу увійди через Discord.', already_claimed: 'Ти вже обрав себе зі списку.',
-  unknown_player: 'Такого імені немає в списку EVO / REVO / команди.', player_taken: 'Цього гравця вже обрав інший акаунт Discord — напиши адміну.',
+  unknown_player: 'Такого імені немає в списку EVO / REVO / адмінів.', player_taken: 'Цього гравця вже обрав інший акаунт Discord — напиши адміну.',
   not_participant: 'Спершу обери себе зі списку гравців.', poll_closed: 'Опитування зараз закрите.', bad_payload: 'Форма заповнена некоректно.',
-  market_closed: 'Ставки в цій номінації вже закриті.', no_bets: 'Для твого акаунта ставки вимкнені — можна лише голосувати.', over_budget: 'Не вистачає фішок: сума ставок більша за бюджет.',
+  market_closed: 'Ставки в цій номінації вже закриті.', no_bets: 'Для твого акаунта ставки вимкнені — можна лише голосувати.',
+  staff_no_nominate: 'Адміни не висувають претендентів — висувають гравці.', self_nomination: 'Себе висувати не можна.', over_budget: 'Не вистачає фішок: сума ставок більша за бюджет.',
   bad_amount: 'Ставка — ціле число фішок від 0.', unknown_option: 'Такого претендента немає в шортлисті.', unknown_market: 'Номінацію не знайдено.',
 };
 const errText = e => { const m = String((e && (e.message || e.error_description)) || e || '');
@@ -169,7 +170,7 @@ function renderAuth() {
     box.innerHTML = `<div class="auth-row"><div><b>Увійди, щоб голосувати і ставити фішки</b><small>Вхід через Discord — щоб кожен гравець голосував один раз. Хто за кого голосував, не публікується.</small></div>
       <button class="btn discord" type="button" data-act="signin">${DISCORD_SVG}Увійти через Discord</button></div>`;
   } else if (!Vote.me) {
-    box.innerHTML = `<div class="auth-row claim"><div><b>Хто ти в EVO?</b><small>Обери себе зі списку гравців EVO і REVO або команди. Вибір — один раз, змінити може лише адмін.</small></div>
+    box.innerHTML = `<div class="auth-row claim"><div><b>Хто ти в EVO?</b><small>Обери себе зі списку гравців EVO і REVO або адмінів. Вибір — один раз, змінити може лише адмін.</small></div>
       <div class="claim-form"><input id="claim-input" list="claim-list" placeholder="Почни вводити своє ім'я" autocomplete="off"><datalist id="claim-list"></datalist>
       <button class="btn" type="button" data-act="claim">Це я</button></div><small class="err" id="claim-err"></small>
       <button class="link" type="button" data-act="signout">Вийти з Discord-акаунта ${esc(Vote.sess.name || '')}</button></div>`;
@@ -181,7 +182,7 @@ function renderAuth() {
       ${Vote.me.can_bet === false ? '<small class="muted">Голос без ставок</small>' : `<div class="chips-bal" title="Фішки для ставок на переможців"><span class="coin"></span><b>${fmtN(free)}</b><small>фішок вільно з ${fmtN(Vote.me.budget)}</small></div>`}</div>`;
   }
 }
-const teamLabel = t => t === 'STAFF' ? 'Команда' : t;
+const teamLabel = t => t === 'STAFF' ? 'Адмін' : t;
 const DISCORD_SVG = '<svg width="20" height="16" viewBox="0 0 71 55" aria-hidden="true"><path fill="currentColor" d="M60.1 4.9A58.5 58.5 0 0 0 45.6.4a40 40 0 0 0-1.8 3.7 54 54 0 0 0-16.2 0A40 40 0 0 0 25.8.4 58.4 58.4 0 0 0 11.3 4.9C2.1 18.6-.4 32 .8 45.2a58.9 58.9 0 0 0 18 9.1 43 43 0 0 0 3.8-6.3 38 38 0 0 1-6-2.9l1.5-1.1a42 42 0 0 0 35.8 0l1.5 1.1a38 38 0 0 1-6 2.9 43 43 0 0 0 3.8 6.3 58.7 58.7 0 0 0 18-9.1C72.6 30 68.8 16.7 60.1 4.9ZM23.7 37.1c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2 6.5 3.3 6.4 7.2c0 4-2.8 7.2-6.4 7.2Zm23.6 0c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2 6.5 3.3 6.4 7.2c0 4-2.8 7.2-6.4 7.2Z"/></svg>';
 
 document.addEventListener('click', async e => {
@@ -208,12 +209,14 @@ async function renderOwnPoll(card, p) {
   const prev = Vote.answers[p.id];
   if (prev && !card.dataset.editing && !p.bets) return showOwnThanks(card, p, prev);
   if (p.bets) return renderFinal(card, p);
+  if (Vote.me.team === 'STAFF' && p.form.some(q => q.type === 'nominate'))
+    return gate('Претендентів висувають гравці — адміни в цьому блоці не висувають. Голосування за переможців — з ' + dLabel((POLLS.find(x => x.id === 'final') || p).opens) + '.');
   if (!Vote.roster.length && p.form.some(q => q.type === 'nominate')) Vote.roster = await Vote.api.roster();
   const val = (prev && prev.payload) || {};
   slot.innerHTML = `<form class="own-form" novalidate>${p.form.map(q => qHtml(q, val)).join('')}
     <div class="poll-actions"><button class="btn" type="submit">${prev ? 'Зберегти зміни' : 'Надіслати'}</button><span class="form-msg"></span></div></form>`;
   if (!document.getElementById('roster-all')) { const dl = document.createElement('datalist'); dl.id = 'roster-all';
-    dl.innerHTML = Vote.roster.map(r => `<option value="${esc(r.player)}">`).join(''); document.body.append(dl); }
+    dl.innerHTML = Vote.roster.filter(r => r.player !== Vote.me.player).map(r => `<option value="${esc(r.player)}">`).join(''); document.body.append(dl); }   // себе в підказках немає
   const form = slot.querySelector('form');
   form.addEventListener('change', () => limitMulti(form, p));
   limitMulti(form, p);
