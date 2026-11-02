@@ -8,11 +8,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root{color-scheme:light;--bg:#f6f5f2;--surface:#fcfcfb;--surface2:#efeee9;--text:#0b0b0b;--text2:#52514e;--muted:#8a8984;--line:#dedcd5;--grid:#e8e6df;
---s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#6250d6;--s6:#8a8984;--good:#0ca30c;--warn:#fab219;--bad:#d03b3b;--band:rgba(42,120,214,.16)}
+--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#6250d6;--s6:#8a8984;--good:#0ca30c;--warn:#fab219;--bad:#d03b3b;--adj:#c2185b;--band:rgba(42,120,214,.16)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#121211;--surface:#1a1a19;--surface2:#242422;--text:#f0efec;--text2:#c3c2b7;--muted:#8d8c86;--line:#33332f;--grid:#2a2a27;
---s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#9085e9;--s6:#9a9992;--band:rgba(57,135,229,.22)}}
+--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#9085e9;--s6:#9a9992;--adj:#e8558f;--band:rgba(57,135,229,.22)}}
 :root[data-theme="dark"]{color-scheme:dark;--bg:#121211;--surface:#1a1a19;--surface2:#242422;--text:#f0efec;--text2:#c3c2b7;--muted:#8d8c86;--line:#33332f;--grid:#2a2a27;
---s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#9085e9;--s6:#9a9992;--band:rgba(57,135,229,.22)}
+--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#9085e9;--s6:#9a9992;--adj:#e8558f;--band:rgba(57,135,229,.22)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 .wrap{max-width:1040px;margin:0 auto;padding:0 16px 80px}
@@ -34,6 +34,7 @@ select,button{font:inherit;font-size:14px;padding:6px 10px;border-radius:8px;bor
 .seg button.on{background:var(--s1);color:#fff}
 .chk{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--text2);margin:8px 0 2px}
 .chk input{vertical-align:-2px;margin-right:4px}
+.chk .sw{display:inline-block;width:16px;height:3px;vertical-align:middle;margin-right:5px;border-radius:2px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin:16px 0}
 .card h3{margin-top:0}
 .chart{position:relative;height:320px}
@@ -84,7 +85,7 @@ dd{margin:0;color:var(--text2)}
 <div class="tile"><b id="m_ev">—</b><span>середній EV школи, bb/100</span></div>
 </div>
 <nav class="toc">
-<a href="#terms">Терміни</a><a href="#top">Головне</a><a href="#s4">Столи</a><a href="#s2">Бай-ін</a><a href="#s5">Загрузка</a><a href="#s8">Перерви</a><a href="#s3">Час доби</a><a href="#s1">Глибина і стек</a><a href="#s7">Керовані напрями</a><a href="#calc">Калькулятор дистанції</a>
+<a href="#terms">Терміни</a><a href="#top">Головне</a><a href="#s4">Столи</a><a href="#s2">Бай-ін</a><a href="#s5">Загрузка</a><a href="#s8">Перерви</a><a href="#s3">Час доби</a><a href="#s1">Глибина і стек</a><a href="#s7">Що контролює гравець</a><a href="#calc">Калькулятор дистанції</a>
 </nav>
 </header>
 
@@ -97,19 +98,19 @@ dd{margin:0;color:var(--text2)}
 <dt>Догравання</dt><dd>усі роздачі, зіграні після реєстрації останнього турніру.</dd>
 <dt>Звична кількість столів</dt><dd>твоя медіана столів у ядрі сесій за останні 3 місяці.</dd>
 <dt>Рівень турніру</dt><dd>порядковий номер підвищення блайндів: 1 — стартові блайнди, кожне підвищення +1. Пізня стадія — від 9 рівня.</dd>
-<dt>EV</dt><dd>chipEV у bb/100, без ICM.</dd>
-<dt>Нормоване EV</dt><dd>EV тієї самої категорії після того, як із порівняння прибрано глибину турніру, стек і бай-ін.</dd>
+<dt>Фактичне EV</dt><dd>chipEV у bb/100, без ICM, як є.</dd>
+<dt>Нормоване EV</dt><dd>EV тієї самої категорії після того, як із порівняння прибрано глибину турніру, стек і бай-ін. Там, де на осі графіка сама глибина, стек чи бай-ін, цей параметр не прибирається — знімаються лише два інші.</dd>
 <dt>Довірчий інтервал</dt><dd>смуга навколо лінії: з імовірністю 95% справжнє значення лежить у ній. Що менше роздач у категорії, то ширша смуга.</dd>
 </dl></div>
 
 <h2 id="top">Головне</h2>
 <ol class="big">
-<li><b>Кількість столів — навичка, і звична для тебе кількість може бути будь-якою.</b> Гравці на звичній кількості своїх столів показують EV у межах 10–12 bb/100. Проблема не в кількості столів, а у виході за звичну кількість: кожен стіл понад звичне коштує EV (+1–2 столи −0,5, +3 столи −0,7, +4 і більше столів −2,5 bb/100), а столи, яких менше, навпаки додають (−1 стіл +0,3, −2 столи +1,0, −3 столи +2,8). Тому кількість столів піднімають поступово, по одному, а не стрибком під вечір з великим розкладом.</li>
-<li><b>Турніри дорожчі за 1,5× твого звичного бай-іну граються з EV на 4–7 bb/100 нижчим за середнє EV.</b> І що більше столів поруч, то гірше: з 1–4 столами −3,7, з 7–8 — −5,4. Такий турнір потребує концентрації, яку інші столи забирають.</li>
+<li><b>Кількість столів — навичка, і звична для тебе кількість може бути будь-якою.</b> Гравці на звичній кількості своїх столів показують EV у межах 10–12 bb/100. Проблема не в кількості столів, а у виході за звичну кількість: кожен стіл понад звичне коштує EV (+1–2 столи −0.5, +3 столи −0.7, +4 і більше столів −2.5 bb/100), а столи, яких менше, навпаки додають (−1 стіл +0.3, −2 столи +1.0, −3 столи +2.8). Тому кількість столів піднімають поступово, по одному, а не стрибком під вечір з великим розкладом.</li>
+<li><b>Турніри дорожчі за 1.5× твого звичного бай-іну граються з EV на 4–7 bb/100 нижчим за середнє EV.</b> І що більше столів поруч, то гірше: з 1–4 столами −3.7, з 7–8 — −5.4. Такий турнір потребує концентрації, яку інші столи забирають.</li>
 <li><b>Довга загрузка не шкодить.</b> Турніри, зареєстровані на 5–8-й годині сесії, не гірші за зареєстровані в перші години, а догравання на 8–12-й годині не просідає.</li>
 <li><b>Обсяг тижня на EV не впливає.</b> 6–7 ігрових днів дають стільки ж, скільки 5, тижні з 40+ годинами не гірші за тижні з 30–40.</li>
-<li><b>Час доби впливає мало.</b> Сесії, що стартують уранці, вдень, у прайм чи вночі, дають практично однакове EV. Єдиний доведений ефект: турніри, зареєстровані о 17–18 за Києвом, на 0,8 bb/100 гірші за решту, а зареєстровані до полудня — на 1,1 кращі.</li>
-<li><b>EV падає з глибиною турніру: 7,8 bb/100 на 9–12 рівнях і 4,1 на 21+.</b> Третину цього падіння пояснює наш коротший стек. Суперники з глибиною практично не змінюються.</li>
+<li><b>Час доби впливає мало.</b> Сесії, що стартують уранці, вдень, у прайм чи вночі, дають практично однакове EV. Єдиний доведений ефект: турніри, зареєстровані о 17–18 за Києвом, на 0.8 bb/100 гірші за решту, а зареєстровані до полудня — на 1.1 кращі.</li>
+<li><b>EV падає з глибиною турніру: 7.8 bb/100 на 9–12 рівнях і 4.1 на 21+.</b> Третину цього падіння пояснює наш коротший стек. Суперники з глибиною практично не змінюються.</li>
 </ol>
 
 <div class="bar">
@@ -121,41 +122,41 @@ dd{margin:0;color:var(--text2)}
 <h2 id="s4">1. Столи</h2>
 <div class="decision"><h4>Що показують дані</h4>
 <ul>
-<li>На своїй звичній кількості столів гравці мають EV у межах 10–12 bb/100: ≤5 столів — 12,5, 6 столів — 11,7, 7 столів — 11,3, 8 столів — 10,6, 9+ столів — 10,1.</li>
-<li>Вихід за звичне коштує: <b>+1–2 столи −0,5, +3 столи −0,7, +4 і більше столів −2,5 bb/100</b> (нормоване EV, ядро сесії). Менше за звичне додає: −1 стіл +0,3, −2 столи +1,0, −3 столи +2,8.</li>
-<li>В абсолюті для школи: від 5 до 9 столів EV знижується з 12,4 до 10,2 bb/100, далі до 13+ столів уже не змінюється.</li>
-<li>Багато столів ще й не лишає часу розібрати складну роздачу просто під час сесії. У статистиці EV цього не видно, але це додатковий аргумент не стрибати через кілька столів одразу.</li>
+<li>На своїй звичній кількості столів гравці мають EV у межах 10–12 bb/100: ≤5 столів — 12.5, 6 столів — 11.7, 7 столів — 11.3, 8 столів — 10.6, 9+ столів — 10.1.</li>
+<li>Вихід за звичне коштує: <b>+1–2 столи −0.5, +3 столи −0.7, +4 і більше столів −2.5 bb/100</b> (нормоване EV, ядро сесії). Менше за звичне додає: −1 стіл +0.3, −2 столи +1.0, −3 столи +2.8.</li>
+<li>В абсолюті для школи: від 5 до 9 столів EV знижується з 12.4 до 10.2 bb/100, далі до 13+ столів уже не змінюється.</li>
+<li>Багато столів не лишає простору для розвитку: коли вся увага йде на те, щоб встигати, нових рішень у грі не з'являється. У статистиці EV цього не видно, але це ще один аргумент не стрибати через кілька столів одразу.</li>
 </ul></div>
-<div class="card"><h3>Столів понад звичне: нормоване EV</h3><div class="chart"><canvas id="c_delta"></canvas></div><p class="note">«звичне» — твоя звична кількість столів, +1 — на один стіл більше. Ядро сесії. Сусідні категорії, де даних замало, щоб їх розрізнити, показані одним значенням.</p></div>
+<div class="card"><h3>Столів понад звичне: нормоване EV</h3><div class="chart"><canvas id="c_delta"></canvas></div><p class="note">«звичне» — твоя звична кількість столів, +1 — на один стіл більше. Ядро сесії.</p></div>
 <div class="card"><h3>EV за кількістю одночасних столів, ядро сесії</h3><div class="chart tall"><canvas id="c_tables"></canvas></div>
-<p class="note">Суцільна лінія — EV зі смугою довірчого інтервалу, пунктир — нормоване EV.</p></div>
+<p class="note">Смуга навколо фактичного EV — довірчий інтервал.</p></div>
 <div id="thr_text" class="callout"></div>
 <div class="grid2">
-<div class="card"><h3>EV на звичній кількості столів</h3><div class="chart"><canvas id="c_usual"></canvas></div><p class="note">У дужках — скільки гравців у групі.</p></div>
-<div class="card"><h3>Понад звичне (від +1 стола): зміна в кожній групі</h3><div class="chart"><canvas id="c_over"></canvas></div><p class="note">Нормоване EV понад звичне мінус нормоване EV на звичній кількості столів. Група 9+ мала (58 гравців), її плюс не доведений.</p></div>
+<div class="card"><h3>EV на звичній кількості столів</h3><div class="chart"><canvas id="c_usual"></canvas></div></div>
+<div class="card"><h3>Понад звичне (від +1 стола): зміна в кожній групі</h3><div class="chart"><canvas id="c_over"></canvas></div><p class="note">Нормоване EV понад звичне мінус нормоване EV на звичній кількості столів.</p></div>
 </div>
 <div class="grid2">
-<div class="card"><h3>Пізня стадія: скільки столів поруч</h3><div class="chart"><canvas id="c_late"></canvas></div><p class="note">Усі роздачі на рівні 9+. Сусідні столи пізній стадії не заважають: усі категорії в межах ±0,3, крім «єдиний стіл» (+0,9).</p></div>
-<div class="card"><h3>Фази сесії</h3><div class="chart"><canvas id="c_phase"></canvas></div><p class="note">Розігрів +2,6, ядро 0, догравання −1,4 нормованого EV: догравання гірше навіть після поправки на глибину.</p></div>
+<div class="card"><h3>Пізня стадія: скільки столів поруч</h3><div class="chart"><canvas id="c_late"></canvas></div><p class="note">Усі роздачі на рівні 9+. Сусідні столи пізній стадії не заважають: усі категорії в межах ±0.3, крім «єдиний стіл» (+0.9).</p></div>
+<div class="card"><h3>Фази сесії</h3><div class="chart"><canvas id="c_phase"></canvas></div><p class="note">Розігрів +2.6, ядро 0, догравання −1.4 нормованого EV: догравання гірше навіть після поправки на глибину.</p></div>
 </div>
 
 <h2 id="s2">2. Бай-ін</h2>
 <div class="decision"><h4>Що показують дані</h4>
 <ul>
-<li>Турніри на <b>1,5–2,5× твого звичного</b> бай-іну граються з EV на 3,8 bb/100 нижчим за твої звичні столи, понад 2,5× — на 6,7 нижчим. Це найбільший з керованих ефектів у дослідженні, і він однаковий у всіх групах.</li>
-<li>Що більше столів поруч з дорогим турніром, то глибше падіння: з 1–4 столами −3,7, з 5–6 −4,4, з 7–8 −5,4, з 9+ −5,2. У звичних турнірах кількість столів у цьому діапазоні на EV не впливає. Дорогий турнір потребує концентрації, і решта столів її забирає.</li>
+<li>Турніри на <b>1.5–2.5× твого звичного</b> бай-іну граються з EV на 3.8 bb/100 нижчим за твої звичні столи, понад 2.5× — на 6.7 нижчим. Це найбільший ефект серед параметрів, що контролюються гравцем, і він однаковий у всіх групах.</li>
+<li>Що більше столів поруч з дорогим турніром, то глибше падіння: з 1–4 столами −3.7, з 5–6 −4.4, з 7–8 −5.4, з 9+ −5.2. У звичних турнірах кількість столів у цьому діапазоні на EV не впливає. Дорогий турнір потребує концентрації, і решта столів її забирає.</li>
 </ul></div>
 <div class="grid2">
-<div class="card"><h3>EV за бай-іном відносно твого звичного</h3><div class="chart"><canvas id="c_bir"></canvas></div><p class="note">1–1,5× — турнір на 1–1,5 твого медіанного бай-іну. Турніри з невідомим бай-іном віднесені до 0,67–1×.</p></div>
-<div class="card"><h3>Дорогі та звичні турніри за кількістю столів поруч</h3><div class="chart"><canvas id="c_exp"></canvas></div><p class="note">Дорогий — понад 1,5× медіани, звичний — 0,67–1,5×.</p></div>
+<div class="card"><h3>EV за бай-іном відносно твого звичного</h3><div class="chart"><canvas id="c_bir"></canvas></div><p class="note">1–1.5× — турнір на 1–1.5 твого медіанного бай-іну. Турніри з невідомим бай-іном віднесені до 0.67–1×.</p></div>
+<div class="card"><h3>Дорогі та звичні турніри за кількістю столів поруч</h3><div class="chart"><canvas id="c_exp"></canvas></div><p class="note">Дорогий — понад 1.5× медіани, звичний — 0.67–1.5×.</p></div>
 </div>
 <div class="card"><h3>EV за бай-іном у доларах</h3><div class="chart"><canvas id="c_bia"></canvas></div></div>
 
 <h2 id="s5">3. Загрузка</h2>
 <div class="decision"><h4>Що показують дані</h4>
 <ul>
-<li>Турніри, зареєстровані на 5–6-й годині сесії, в усіх даних дають +0,7 bb/100, на 6–8-й +1,2 проти зареєстрованих у перші години, з усім їхнім дограванням. Вони справді граються на меншій кількості столів (у середньому 5,5–5,2 столи поруч проти 6,2 у турнірів першої години, і 55% їхніх роздач — догравання), але не це їх пояснює: при однаковій кількості столів поруч різниця така сама (+1,1 проти +1,1 без вирівнювання за столами). Пояснює відбір сесій: до 5–8-ї години загрузки доходять вдалі сесії, і в них усі турніри, з першої години, йдуть на 1–2 bb/100 вище звичайного EV гравця. Серед сесій із загрузкою 6+ годин турніри 5–8-ї години проти перших двох: +0,2 bb/100 з інтервалом від −0,3 до +0,7, тобто різниці немає.</li>
-<li>Догравання на 6–8-й годині сесії −0,4, на 8–10-й −0,1, на 10–12-й −0,5, усе в межах шуму. Провал є лише в сесіях коротших за 4 години (−5,6).</li>
+<li>Турніри, зареєстровані на 5–6-й годині сесії, в усіх даних дають +0.7 bb/100, на 6–8-й +1.2 проти зареєстрованих у перші години, з усім їхнім дограванням. Вони граються на дещо меншій кількості столів (у середньому 5.5–5.2 столи поруч проти 6.2 у турнірів першої години, і 55% їхніх роздач — догравання), але вище EV пояснюється не цим: при однаковій кількості столів поруч різниця така сама (+1.1 проти +1.1 без вирівнювання за столами). Причина в іншому: до 5–8-ї години загрузки гравець доходить тоді, коли сесія йде добре, а невдалу закінчує раніше. Тому серед пізніх турнірів зібрано турніри вдалих сесій, а в таких сесіях усі турніри, з першої години, йдуть на 1–2 bb/100 вище звичайного EV гравця. Якщо порівнювати лише сесії із загрузкою 6+ годин, турніри 5–8-ї години проти перших двох: +0.2 bb/100 з інтервалом від −0.3 до +0.7, тобто різниці немає.</li>
+<li>Догравання на 6–12-й годині сесії не просідає: відхилення в межах шуму. Провал є лише в сесіях коротших за 4 години (−5.6).</li>
 <li>У сесіях, де загрузка тривала до години, перші дві години йшли на 13 bb/100 нижче звичного EV гравця, до двох годин — на 8 нижче. Коротка загрузка в даних збігається з поганим стартом, а не спричиняє його.</li>
 </ul></div>
 <div class="grid2">
@@ -168,8 +169,8 @@ dd{margin:0;color:var(--text2)}
 <h2 id="s3">4. Час доби</h2>
 <div class="decision"><h4>Що показують дані</h4>
 <ul>
-<li>Сесії, що стартують уранці, вдень, у прайм чи вночі, дають однакове нормоване EV: усі в межах ±0,6 bb/100.</li>
-<li>За годиною реєстрації турніру є два доведених ефекти, обидва невеликі: зареєстровані о 17–18 за Києвом −0,8 bb/100, зареєстровані до полудня +1,1. Решта годин у межах шуму.</li>
+<li>Сесії, що стартують уранці, вдень, у прайм чи вночі, дають однакове нормоване EV: усі в межах ±0.6 bb/100.</li>
+<li>За годиною реєстрації турніру є два доведених ефекти, обидва невеликі: зареєстровані о 17–18 за Києвом −0.8 bb/100, зареєстровані до полудня +1.1. Решта годин у межах шуму.</li>
 </ul></div>
 <div class="grid2">
 <div class="card"><h3>EV за годиною старту сесії (Київ)</h3><div class="chart"><canvas id="c_start"></canvas></div></div>
@@ -179,25 +180,25 @@ dd{margin:0;color:var(--text2)}
 <h2 id="s8">5. Перерви в грі</h2>
 <div class="decision"><h4>Що показують дані</h4>
 <ul>
-<li><b>Перша сесія після перерви трохи гірша, і що довша перерва, то більше, але для звичайних пауз різниця мізерна.</b> Проти решти сесій: після паузи 2+ дні −0,3 з інтервалом від −0,6 до 0,0 bb/100 (8141 сесій), 3+ дні −0,5 з інтервалом від −1,0 до 0,0, 7+ днів −0,5 з інтервалом від −1,9 до +0,9, 14+ днів −1,1 з інтервалом від −3,4 до +1,5, місяць і більше −3,5 з інтервалом від −7,2 до +0,8 (44 сесії). Жоден поріг окремо не доведений: інтервали зачіпають нуль. Напрям один і той самий на всіх порогах, тому ефект, найімовірніше, справжній, але до двох тижнів перерви він менший за 1 bb/100 — менше, ніж коштує один зайвий стіл, і в десять разів менше, ніж дорогий турнір.</li><li>Провал не в розігріві: перші 2 години першої сесії після паузи 5+ днів +0,8 bb/100 проти перших 2 годин решти сесій, після 7+ днів +0,9. Якщо перша сесія й програє, то далі по ходу, а не на старті.</li><li>Висновок: після паузи до двох тижнів режим можна не міняти. Після місяця й більше перша сесія в даних на 3,5 bb/100 гірша (44 сесії, інтервал широкий): тут розумно почати зі своєї звичної кількості столів мінус один і без турнірів дорожчих за звичні, а з другої сесії повернутись до звичного режиму.</li>
-<li>Після перерви гравці режим не міняють: столів відносно звичного стільки ж (84% проти 87%), а бай-ін навіть вищий (1,43 проти 1,29 медіани; дорогих турнірів 26% проти 23%).</li>
+<li><b>Перша сесія після перерви трохи гірша, і що довша перерва, то більше, але для звичайних пауз різниця мізерна.</b> Проти решти сесій: після паузи 2+ дні −0.3 з інтервалом від −0.6 до 0.0 bb/100 (8141 сесій), 3+ дні −0.5 з інтервалом від −1.0 до 0.0, 7+ днів −0.5 з інтервалом від −1.9 до +0.9, 14+ днів −1.1 з інтервалом від −3.4 до +1.5, місяць і більше −3.5 з інтервалом від −7.2 до +0.8 (44 сесії). Жоден поріг окремо не доведений: інтервали зачіпають нуль. Напрям один і той самий на всіх порогах, тому ефект, найімовірніше, справжній, але до двох тижнів перерви він менший за 1 bb/100 — менше, ніж коштує один зайвий стіл, і в десять разів менше, ніж дорогий турнір.</li><li>Провал не в розігріві: перші 2 години першої сесії після паузи 5+ днів +0.8 bb/100 проти перших 2 годин решти сесій, після 7+ днів +0.9. Якщо перша сесія й програє, то далі по ходу, а не на старті.</li><li>Висновок: після паузи до двох тижнів режим можна не міняти. Після місяця й більше перша сесія в даних на 3.5 bb/100 гірша (44 сесії, інтервал широкий): тут розумно почати зі своєї звичної кількості столів мінус один і без турнірів дорожчих за звичні, а з другої сесії повернутись до звичного режиму.</li>
+<li>Після перерви гравці режим не міняють: столів відносно звичного стільки ж (84% проти 87%), а бай-ін навіть вищий (1.43 проти 1.29 медіани; дорогих турнірів 26% проти 23%).</li>
 </ul></div>
 <div class="card"><h3>Перша сесія після перерви проти решти сесій</h3><div class="chart"><canvas id="c_fs"></canvas></div><p class="note">Стовпчик — різниця нормованого EV першої сесії після паузи не коротшої за вказану проти всіх інших сесій; світла смуга — довірчий інтервал. У підписі — скільки таких сесій у даних. Уся школа.</p></div>
 
 <h2 id="s1">6. Глибина і стек</h2>
 <div class="decision"><h4>Що показують дані</h4>
 <ul>
-<li>Late EV падає з глибиною: 9–12 рівні — 7,8 bb/100, 13–16 — 6,4, 17–20 — 5,2, 21+ — 4,1. Це однаково в усіх гравців.</li>
+<li>Late EV падає з глибиною: 9–12 рівні — 7.8 bb/100, 13–16 — 6.4, 17–20 — 5.2, 21+ — 4.1. Це однаково в усіх гравців.</li>
 <li>Стек 60–100 bb дає на 2–3 bb/100 більше, ніж 15–40 bb, на будь-якому рівні.</li>
 </ul></div>
 <h3>Чому late EV падає з рівнем: стек чи суперники</h3>
 <p>Для кожної роздачі на рівні 9+ порахували, що відбувається за столом: твій стек, середній стек усіх гравців, скільки гравців у роздачі, і хто суперники — частка регулярів серед них (регуляр — суперник, який грає часто: школа бачила його в 20+ турнірах за місяць).</p>
 <div class="decision"><h4>Що виявилось</h4>
 <ul>
-<li><b>Стек пояснює третину.</b> Середній стек за столом з глибиною падає з 48 до 34 bb. Якщо порівнювати роздачі з однаковими стеками, падіння з 9–12 на 21+ рівень −2,5 замість −3,8 bb/100.</li>
-<li><b>Суперники з глибиною не змінюються.</b> Регулярів серед суперників 20% на 9–12 рівнях і 22% на 21+. Поправка на суперників майже нічого не змінює: −3,6 замість −3,8.</li>
+<li><b>Стек пояснює третину.</b> Середній стек за столом з глибиною падає з 48 до 34 bb. Якщо порівнювати роздачі з однаковими стеками, падіння з 9–12 на 21+ рівень −2.5 замість −3.8 bb/100.</li>
+<li><b>Суперники з глибиною не змінюються.</b> Регулярів серед суперників 20% на 9–12 рівнях і 22% на 21+. Поправка на суперників майже нічого не змінює: −3.6 замість −3.8.</li>
 <li><b>Хоча суперники важливі самі по собі:</b> за столом, де 80%+ регулярів, EV удвічі нижче, ніж там, де їх менше 20%. Просто такі столи трапляються на всіх рівнях однаково часто.</li>
-<li><b>Решта падіння (−2,5) не пояснюється ні стеком, ні відомими нам характеристиками суперників.</b> Гіпотеза, не перевірена в цих даних: тиск ICM і виплат на глибоких стадіях, де правильна гра жертвує chipEV. Довести або спростувати її можна лише з ICM-розрахунком.</li>
+<li><b>Решта падіння (−2.5) не пояснюється ні стеком, ні відомими нам характеристиками суперників.</b> Гіпотеза, не перевірена в цих даних: тиск ICM і виплат на глибоких стадіях, де правильна гра жертвує chipEV. Довести або спростувати її можна лише з ICM-розрахунком.</li>
 </ul></div>
 <div class="card"><h3>Стіл за рівнем турніру</h3><div class="tscroll" id="t_latetab"></div><p class="note">Роздачі героїв школи на рівні 9+. Регуляр — суперник, якого школа бачила в 20+ турнірах за місяць.</p></div>
 <div class="grid2">
@@ -210,9 +211,9 @@ dd{margin:0;color:var(--text2)}
 </div>
 <div class="card"><h3>Рівень × стек, EV</h3><div class="tscroll" id="t_lvlstk"></div></div>
 
-<h2 id="s7">7. Керовані напрями</h2>
-<p>Чотири речі, які гравець вирішує сам: скільки столів понад звичне відкрити, який бай-ін грати, скільки днів на тиждень грати і як довго вантажити. Для кожної — зміна нормованого EV проти базового вибору (звичні столи, бай-ін 0,67–1× медіани, 5 днів, турніри перших двох годин загрузки).</p>
-<div class="card"><h3>Вплив керованих напрямів на EV, bb/100</h3><div class="chart" style="height:460px"><canvas id="c_dir"></canvas></div><p class="note">Зелене — краще за базовий вибір, помаранчеве — гірше. Довжина загрузки — EV турнірів, зареєстрованих на цій годині сесії, проти турнірів перших двох годин, лише серед сесій із загрузкою 6+ годин і при однаковій кількості столів поруч (для всієї школи): без цього обмеження пізні турніри виглядають кращими через відбір вдалих сесій.</p></div>
+<h2 id="s7">7. Параметри, що контролюються гравцем</h2>
+<p>Чотири речі, які гравець вирішує сам: скільки столів понад звичне відкрити, який бай-ін грати, скільки днів на тиждень грати і як довго вантажити. Для кожної — зміна нормованого EV проти базового вибору (звичні столи, бай-ін 0.67–1× медіани, 5 днів, турніри перших двох годин загрузки).</p>
+<div class="card"><h3>Вплив параметрів, що контролюються гравцем, на EV, bb/100</h3><div class="chart" style="height:460px"><canvas id="c_dir"></canvas></div><p class="note">Зелене — краще за базовий вибір, помаранчеве — гірше. Довжина загрузки — EV турнірів, зареєстрованих на цій годині сесії, проти турнірів перших двох годин, лише серед сесій із загрузкою 6+ годин і при однаковій кількості столів поруч (для всієї школи): без цього обмеження пізні турніри виглядають кращими лише тому, що до пізніх годин загрузки доходять вдалі сесії.</p></div>
 <div class="card"><h3>Важливість напрямів</h3><div class="tscroll" id="t_dir"></div><p class="note">Найбільший ефект — найбільша за модулем зміна EV серед реальних варіантів напряму. Частка роздач — скільки роздач вибраної групи зіграно не в базовому варіанті, тобто як часто цей вибір узагалі виникає.</p></div>
 
 <h2 id="calc">Калькулятор дистанції</h2>
@@ -244,6 +245,7 @@ dd{margin:0;color:var(--text2)}
 <script>
 const D = JSON.parse(document.getElementById('data').textContent);
 const T = D.tables, META = D.meta, CM = D.calc;
+Chart.defaults.locale = 'en-US';
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const GCOL = {"усі":"--s6","I":"--s1","II":"--s2","III":"--s3","IV":"--s4","REVO":"--s5"};
 let sel = ["усі"];
@@ -251,12 +253,12 @@ const TOGGLE = ['c_tables','c_delta','c_late','c_phase','c_bir','c_exp','c_bia',
 const SHOW = Object.fromEntries(TOGGLE.map(id=>[id,{raw:true, adj:true}]));
 for(const id of TOGGLE){ const cv = document.getElementById(id); if(!cv) continue;
   const box = document.createElement('div'); box.className = 'chk';
-  box.innerHTML = '<label><input type="checkbox" data-k="raw" checked> EV</label><label><input type="checkbox" data-k="adj" checked> Нормоване EV</label>';
+  box.innerHTML = '<label><input type="checkbox" data-k="raw" checked><span class="sw" data-k="raw"></span>фактичне EV</label><label><input type="checkbox" data-k="adj" checked><span class="sw" data-k="adj"></span>нормоване EV</label>';
   box.querySelectorAll('input').forEach(i=>i.addEventListener('change', ()=>{ SHOW[id][i.dataset.k] = i.checked; render(); }));
   cv.closest('.chart').insertAdjacentElement('afterend', box); }
 const charts = {};
 (function(){ const mln = String(Math.round(META.hands_ev/1e6)); document.getElementById('m_hands').textContent = mln+' млн'; document.getElementById('m_players').textContent = META.players;
-  document.getElementById('m_sess').textContent = META.sessions.toLocaleString('uk-UA'); document.getElementById('m_ev').textContent = (META.ev_all||0).toFixed(1).replace('.', ',');
+  document.getElementById('m_sess').textContent = META.sessions.toLocaleString('uk-UA'); document.getElementById('m_ev').textContent = (META.ev_all||0).toFixed(1);
   document.getElementById('m_lead').textContent = `${mln} млн роздач ${META.players} гравців школи за ${META.period_text}.`; document.getElementById('m_foot').textContent = 'дані '+META.period_text; })();
 // ── вибір груп і злиття ──
 const STAT = ['raw','wp','adj','зміна'], CI = {raw:['raw_lo','raw_hi'], wp:['wp_lo','wp_hi'], adj:['adj_lo','adj_hi'], 'зміна':['lo','hi']};
@@ -283,10 +285,10 @@ function monoFix(data, dir){ // після злиття груп: незрост
       changed=true; break; } } }
   return d; }
 const sortBy = (arr, key, order) => order ? arr.slice().sort((a,b)=>order.indexOf(String(a[key]))-order.indexOf(String(b[key]))) : arr.slice().sort((a,b)=>Number(a[key])-Number(b[key]));
-const fmt = v => (v==null||isNaN(v)) ? "" : (Math.abs(v)<10 ? v.toFixed(1).replace('.', ',') : Math.round(v).toString());
-const sg = v => (Math.abs(v)<0.05?'0,0':(v>=0?'+':'−')+Math.abs(v).toFixed(1).replace('.', ','));
-const f2 = v => (v<0?'−':'')+Math.abs(v).toFixed(2).replace('.', ',');
-const uk = v => String(v).replace('.', ',');
+const fmt = v => (v==null||isNaN(v)) ? "" : (Math.abs(v)<10 ? v.toFixed(1) : Math.round(v).toString());
+const sg = v => (Math.abs(v)<0.05?'0.0':(v>=0?'+':'−')+Math.abs(v).toFixed(1));
+const f2 = v => (v<0?'−':'')+Math.abs(v).toFixed(2);
+const uk = v => String(v);
 Chart.defaults.font.family = getComputedStyle(document.body).fontFamily; Chart.defaults.font.size = 13;
 function theme(){ Chart.defaults.color = css('--text2'); Chart.defaults.borderColor = css('--grid'); }
 theme();
@@ -304,9 +306,9 @@ function series(id, data, base, c){
   if(sh.raw){
     ds.push({label:'верхня межа', data:data.map(r=>r.raw_hi), borderWidth:0, pointRadius:0, fill:'+1', backgroundColor:al(c, 0.16), tension:.3, type:'line'});
     ds.push({label:'нижня межа', data:data.map(r=>r.raw_lo), borderWidth:0, pointRadius:0, fill:false, tension:.3, type:'line'});
-    ds.push({label:'EV', data:data.map(r=>r.raw), borderColor:c, backgroundColor:c, borderWidth:2, pointRadius:4, pointHoverRadius:6, tension:.3, type:'line'});
+    ds.push({label:'фактичне EV', data:data.map(r=>r.raw), borderColor:c, backgroundColor:c, borderWidth:2, pointRadius:4, pointHoverRadius:6, tension:.3, type:'line'});
   }
-  if(sh.adj) ds.push({label:'Нормоване EV', data:data.map(r=>r.adj==null?null:base+r.adj), borderColor:c, backgroundColor:c, borderDash:[6,5], borderWidth:2, pointRadius:3, pointStyle:'rect', tension:.3, type:'line'});
+  if(sh.adj) ds.push({label:'нормоване EV', data:data.map(r=>r.adj==null?null:base+r.adj), borderColor:css('--adj'), backgroundColor:css('--adj'), borderWidth:2, pointRadius:3, pointStyle:'rect', tension:.3, type:'line'});
   return ds;
 }
 function lineWithBand(id, data, xkey, ylabel, opts){
@@ -315,15 +317,15 @@ function lineWithBand(id, data, xkey, ylabel, opts){
   const labels = data.map(lab);
   const ds = series(id, data, base, c);
   if(opts && opts.ghost && !(sel.length===1 && sel[0]==='усі') && (SHOW[id]||{}).raw){ const gh = sortBy(rows(opts.ghost, 'усі'), xkey, opts.order); const map = Object.fromEntries(gh.map(r=>[lab(r), r.raw])); ds.push({label:'уся школа', data:labels.map(l=>map[l]??null), borderColor:css('--s6'), borderDash:[2,3], borderWidth:1.5, pointRadius:0, tension:.3, type:'line'}); }
-  mk(id, {type:'line', data:{labels, datasets:ds}, options:baseOpts(ylabel||'EV, bb/100', {plugins:{legend:{display:true, labels:{filter:i=>!/межа/.test(i.text)}}, tooltip:{filter:i=>!/межа/.test(i.dataset.label), callbacks:{label:(c)=>c.dataset.label+': '+(c.parsed.y==null?'—':f2(c.parsed.y))+(c.dataset.label==='EV'?'  ('+fmt(data[c.dataIndex]['роздач']/1000)+' тис. роздач)':'')}}}}), plugins:[zeroLine()]});
+  mk(id, {type:'line', data:{labels, datasets:ds}, options:baseOpts(ylabel||'EV, bb/100', {plugins:{legend:{display:true, labels:{filter:i=>!/межа/.test(i.text)}}, tooltip:{filter:i=>!/межа/.test(i.dataset.label), callbacks:{label:(c)=>c.dataset.label+': '+(c.parsed.y==null?'—':f2(c.parsed.y))+(c.dataset.label==='фактичне EV'?'  ('+fmt(data[c.dataIndex]['роздач']/1000)+' тис. роздач)':'')}}}}), plugins:[zeroLine()]});
 }
 function bars(id, data, xkey, ylabel, colorFn, opts){
   const c = col(), base = BASE(opts && opts.baseGroup), sh = SHOW[id]||{raw:true,adj:true};
   const labels = data.map(r=>String(r[xkey]));
   const ds = [];
-  if(sh.raw) ds.push({label:'EV', data:data.map(r=>r.raw), backgroundColor:colorFn ? data.map(r=>colorFn(r)) : c, borderRadius:4, maxBarThickness:40, order:2});
-  if(sh.adj) ds.push({label:'Нормоване EV', data:data.map(r=>r.adj==null?null:base+r.adj), backgroundColor:'transparent', borderColor:c, borderWidth:2, borderDash:[5,4], borderRadius:4, maxBarThickness:40, order:2});
-  mk(id, {type:'bar', data:{labels, datasets:ds}, options:baseOpts(ylabel||'EV, bb/100', {plugins:{legend:{display:true}, tooltip:{callbacks:{label:(c)=>c.dataset.label+': '+(c.parsed.y==null?'—':f2(c.parsed.y))+(c.dataset.label==='EV'?'  (' + fmt(data[c.dataIndex]['роздач']/1000) + ' тис. роздач)':'')}}}}), plugins:[zeroLine()]});
+  if(sh.raw) ds.push({label:'фактичне EV', data:data.map(r=>r.raw), backgroundColor:colorFn ? data.map(r=>colorFn(r)) : c, borderRadius:4, maxBarThickness:40, order:2});
+  if(sh.adj) ds.push({label:'нормоване EV', data:data.map(r=>r.adj==null?null:base+r.adj), backgroundColor:al(css('--adj'),0.18), borderColor:css('--adj'), borderWidth:2, borderRadius:4, maxBarThickness:40, order:2});
+  mk(id, {type:'bar', data:{labels, datasets:ds}, options:baseOpts(ylabel||'EV, bb/100', {plugins:{legend:{display:true}, tooltip:{callbacks:{label:(c)=>c.dataset.label+': '+(c.parsed.y==null?'—':f2(c.parsed.y))+(c.dataset.label==='фактичне EV'?'  (' + fmt(data[c.dataIndex]['роздач']/1000) + ' тис. роздач)':'')}}}}), plugins:[zeroLine()]});
 }
 function tableHTML(df, idx, cols, valkey, fmtf){
   const rws = [...new Set(df.map(r=>String(r[idx])))], cls = [...new Set(df.map(r=>String(r[cols])))];
@@ -346,6 +348,7 @@ function collapse(data, key){ // сусідні категорії з однак
 const duLab = k => k==='0' ? 'звичне' : (k.startsWith('−') ? k : '+'+k) + (k==='4' ? '+' : '');
 function render(){
   theme();
+  document.querySelectorAll('.chk .sw[data-k=raw]').forEach(e=>e.style.background=col()); document.querySelectorAll('.chk .sw[data-k=adj]').forEach(e=>e.style.background=css('--adj'));
   const tabsM = monoFix(sortBy(rows('X16_tables_mono'), 'tab'), -1);
   lineWithBand('c_tables', tabsM, 'tab', null, {ghost:'X16_tables_mono', plusLast:13});
   const dlt = monoFix(sortBy(rows('X16_delta_usual_mono'), 'du', DU_ORDER), -1);
@@ -353,14 +356,14 @@ function render(){
   // звичні столи у столах
   const us = T['X21_usual_tables_tab'];
   const usAt = (load, k) => USUAL_ORDER.map(u => (us.find(r=>String(r.u_b)===u && r.load_t===load)||{})[k] ?? null);
-  const usN = USUAL_ORDER.map(u => (us.find(r=>String(r.u_b)===u)||{})['гравців'] ?? 0);
-  const usLabels = USUAL_ORDER.map((u,i)=>u+' ст. ('+usN[i]+')');
-  mk('c_usual', {type:'bar', data:{labels:usLabels, datasets:[{label:'EV на звичній кількості столів', data:usAt('звичне','raw'), backgroundColor:css('--s1'), borderRadius:4, maxBarThickness:46}]},
-    options:baseOpts('EV, bb/100', {scales:{x:{title:{display:true,text:'звична кількість столів (гравців)'}, grid:{display:false}}, y:{beginAtZero:true, title:{display:true,text:'EV, bb/100'}}}}), plugins:[zeroLine()]});
-  const ovA = usAt('понад звичне','adj'), ov0 = usAt('звичне','adj'), ovLo = usAt('понад звичне','adj_lo'), ovHi = usAt('понад звичне','adj_hi');
+  const usLabels = USUAL_ORDER.map(u=>u+' ст.');
+  const OV_ORDER = USUAL_ORDER.filter(u=>u!=='9+'), ovLabels = OV_ORDER.map(u=>u+' ст.'), ovAt = (load, k) => OV_ORDER.map(u => (us.find(r=>String(r.u_b)===u && r.load_t===load)||{})[k] ?? null);
+  mk('c_usual', {type:'bar', data:{labels:usLabels, datasets:[{label:'фактичне EV на звичній кількості столів', data:usAt('звичне','raw'), backgroundColor:css('--s1'), borderRadius:4, maxBarThickness:46}]},
+    options:baseOpts('EV, bb/100', {scales:{x:{title:{display:true,text:'звична кількість столів'}, grid:{display:false}}, y:{beginAtZero:true, title:{display:true,text:'EV, bb/100'}}}}), plugins:[zeroLine()]});
+  const ovA = ovAt('понад звичне','adj'), ov0 = ovAt('звичне','adj'), ovLo = ovAt('понад звичне','adj_lo'), ovHi = ovAt('понад звичне','adj_hi');
   const ov = ovA.map((v,i)=> v==null||ov0[i]==null ? null : v-ov0[i]);
-  mk('c_over', {type:'bar', data:{labels:usLabels, datasets:[{label:'понад звичне проти звичного', data:ov, backgroundColor:css('--s2'), borderRadius:4, maxBarThickness:46}]},
-    options:baseOpts('зміна нормованого EV, bb/100', {plugins:{legend:{display:false}, tooltip:{callbacks:{label:(c)=>'зміна '+sg(c.parsed.y)+' bb/100, інтервал '+sg(ovLo[c.dataIndex]-ov0[c.dataIndex])+' … '+sg(ovHi[c.dataIndex]-ov0[c.dataIndex])}}}, scales:{x:{title:{display:true,text:'звична кількість столів (гравців)'}, grid:{display:false}}}}), plugins:[zeroLine()]});
+  mk('c_over', {type:'bar', data:{labels:ovLabels, datasets:[{label:'понад звичне проти звичного', data:ov, backgroundColor:css('--s2'), borderRadius:4, maxBarThickness:46}]},
+    options:baseOpts('зміна нормованого EV, bb/100', {plugins:{legend:{display:false}, tooltip:{callbacks:{label:(c)=>'зміна '+sg(c.parsed.y)+' bb/100, інтервал '+sg(ovLo[c.dataIndex]-ov0[c.dataIndex])+' … '+sg(ovHi[c.dataIndex]-ov0[c.dataIndex])}}}, scales:{x:{title:{display:true,text:'звична кількість столів'}, grid:{display:false}}}}), plugins:[zeroLine()]});
   bars('c_late', sortBy(rows('X6_late_other_tables_all'), 'oth_tabs_b', ["єдиний стіл","1–3 поруч","4–7 поруч","8+ поруч"]), 'oth_tabs_b');
   bars('c_phase', sortBy(rows('S4_phase'), 'phase', ["розігрів","ядро","догравання"]), 'phase');
   bars('c_bir', sortBy(rows('S2_buyin_rel'), 'bir_b', BIR_ORDER), 'bir_b');
@@ -368,8 +371,8 @@ function render(){
   const ex = T['X2_expensive_x_tables']; const shx = SHOW['c_exp'], bx = BASE('усі');
   const rowsOf = (p, k) => TAB4.map(t => { const r = ex.find(r=>r['ціна']===p && r.tab4===t); return r ? (k==='raw' ? r.raw : bx + r.adj) : null; });
   const dsx = [];
-  if(shx.raw){ dsx.push({label:'дорогий (>1.5×) · EV', data:rowsOf('дорогий (>1.5×)','raw'), backgroundColor:css('--s2'), borderRadius:4, maxBarThickness:36}); dsx.push({label:'звичний (0.67–1.5×) · EV', data:rowsOf('звичний (0.67–1.5×)','raw'), backgroundColor:css('--s1'), borderRadius:4, maxBarThickness:36}); }
-  if(shx.adj){ dsx.push({label:'дорогий · нормоване', data:rowsOf('дорогий (>1.5×)','adj'), backgroundColor:'transparent', borderColor:css('--s2'), borderWidth:2, borderDash:[5,4], borderRadius:4, maxBarThickness:36}); dsx.push({label:'звичний · нормоване', data:rowsOf('звичний (0.67–1.5×)','adj'), backgroundColor:'transparent', borderColor:css('--s1'), borderWidth:2, borderDash:[5,4], borderRadius:4, maxBarThickness:36}); }
+  if(shx.raw){ dsx.push({label:'дорогий (>1.5×) · фактичне', data:rowsOf('дорогий (>1.5×)','raw'), backgroundColor:css('--s2'), borderRadius:4, maxBarThickness:36}); dsx.push({label:'звичний (0.67–1.5×) · фактичне', data:rowsOf('звичний (0.67–1.5×)','raw'), backgroundColor:css('--s1'), borderRadius:4, maxBarThickness:36}); }
+  if(shx.adj){ dsx.push({label:'дорогий · нормоване', data:rowsOf('дорогий (>1.5×)','adj'), backgroundColor:'transparent', borderColor:css('--s2'), borderWidth:2, borderRadius:4, maxBarThickness:36}); dsx.push({label:'звичний · нормоване', data:rowsOf('звичний (0.67–1.5×)','adj'), backgroundColor:'transparent', borderColor:css('--s1'), borderWidth:2, borderRadius:4, maxBarThickness:36}); }
   mk('c_exp', {type:'bar', data:{labels:TAB4, datasets:dsx}, options:baseOpts('EV, bb/100', {plugins:{legend:{display:true}}, scales:{x:{title:{display:true,text:'столів одночасно'}, grid:{display:false}}}}), plugins:[zeroLine()]});
   lineWithBand('c_reghr', sortBy(rows('X3_ev_by_reg_hour', 'усі'), 'reg_hr_b', REGH_ORDER), 'reg_hr_b', null, {order:REGH_ORDER, baseGroup:'усі'});
   lineWithBand('c_reg6', sortBy(rows('X3_ev_by_reg_hour_load6', 'усі'), 'reg_hr_b', REGH_ORDER), 'reg_hr_b', null, {order:REGH_ORDER, baseGroup:'усі'});
