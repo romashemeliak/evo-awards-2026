@@ -1,4 +1,4 @@
-/* EVO Awards 2026 — власні голосування і ставки фішками (замість Tally).
+/* EVO Awards 2026 — власні голосування і ставки фішками.
    Дані — Supabase (Postgres): вхід через Discord, усі записи через функції бази (schema.sql у репозиторії EvoProcesses_CP,
    scripts/awards_2026/voting/). Ключ anon публічний за задумом Supabase: що можна робити, вирішують правила в базі.
    Тестовий режим без бази: ?mock=1 (дані в localStorage цього браузера), дата для перевірки блоків: ?today=2026-11-23. */
@@ -145,9 +145,6 @@ async function voteInit() {
 async function refreshMe() {
   Vote.sess = await Vote.api.session();
   Vote.me = Vote.sess.signedIn ? await Vote.api.me() : null;
-  // після входу нік для форм Tally береться з акаунта — поле ручного вводу ховаємо
-  const box = document.getElementById('nick-box'), inp = document.getElementById('nick');
-  if (box && inp && Vote.sess.signedIn) { inp.value = (Vote.me && Vote.me.player) || Vote.sess.name || inp.value; box.style.display = 'none'; }
   Vote.answers = {};
   if (Vote.me) (await Vote.api.myAnswers()).forEach(a => { Vote.answers[a.poll_id] = a; });
   // позначки «✓ Ти проголосував» для власних опитувань — лише за даними бази (на будь-якому пристрої; без входу — без позначок)
@@ -204,7 +201,7 @@ function renderAuthBox() {
 }
 /* Ролі учасника (обирає при першому вході) і хто голосує в якому опитуванні — як polls.roles у schema.sql. */
 const ROLES = { ADMIN: 'Адмін', EVO: 'EVO', REVO: 'REVO', FRIEND: 'Друг' };
-const POLL_ROLES = { noms: ['ADMIN', 'EVO', 'REVO'], nominate: ['EVO', 'REVO'], final: ['ADMIN', 'EVO', 'REVO'] };
+const POLL_ROLES = { prizes: ['ADMIN', 'EVO', 'REVO'], noms: ['ADMIN', 'EVO', 'REVO'], nominate: ['EVO', 'REVO'], final: ['ADMIN', 'EVO', 'REVO'] };
 const canVote = (poll, role) => !POLL_ROLES[poll] || POLL_ROLES[poll].includes(role);
 const teamLabel = t => ROLES[t] || (t === 'STAFF' ? 'Адмін' : t);
 const DISCORD_SVG = '<svg width="20" height="16" viewBox="0 0 71 55" aria-hidden="true"><path fill="currentColor" d="M60.1 4.9A58.5 58.5 0 0 0 45.6.4a40 40 0 0 0-1.8 3.7 54 54 0 0 0-16.2 0A40 40 0 0 0 25.8.4 58.4 58.4 0 0 0 11.3 4.9C2.1 18.6-.4 32 .8 45.2a58.9 58.9 0 0 0 18 9.1 43 43 0 0 0 3.8-6.3 38 38 0 0 1-6-2.9l1.5-1.1a42 42 0 0 0 35.8 0l1.5 1.1a38 38 0 0 1-6 2.9 43 43 0 0 0 3.8 6.3 58.7 58.7 0 0 0 18-9.1C72.6 30 68.8 16.7 60.1 4.9ZM23.7 37.1c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2 6.5 3.3 6.4 7.2c0 4-2.8 7.2-6.4 7.2Zm23.6 0c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2 6.5 3.3 6.4 7.2c0 4-2.8 7.2-6.4 7.2Z"/></svg>';

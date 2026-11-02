@@ -125,11 +125,6 @@ section{padding:clamp(56px,9vw,110px) 0;position:relative}
 /* polls */
 .role-pick{display:flex;flex-wrap:wrap;gap:8px;flex-basis:100%}
 .role-pick .choice{padding:10px 16px}
-.nick{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;margin-top:34px;padding:18px 20px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg-2)}
-.nick label{font-weight:700}
-.nick input{flex:1 1 220px;min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:10px;color:var(--text);font:500 16px Manrope,sans-serif;padding:12px 14px}
-.nick input:focus{outline:2px solid var(--red);outline-offset:1px}
-.nick small{flex-basis:100%;color:var(--muted);font-size:13px}
 .polls{display:grid;gap:14px;margin-top:20px}
 .poll{border:1px solid var(--line);border-radius:var(--radius);background:var(--card);overflow:hidden}
 .poll.is-open{border-color:rgba(227,38,43,.45)}
@@ -142,8 +137,6 @@ section{padding:clamp(56px,9vw,110px) 0;position:relative}
 .poll.expanded .poll-body{display:block}
 .poll ul.asks{margin:16px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:8px}
 .poll ul.asks li{font-size:13px;padding:6px 10px;border-radius:8px;background:var(--bg);color:#cfcac2}
-.form-slot{margin-top:18px;padding:clamp(14px,2.4vw,26px);border-radius:var(--radius);border:1px solid var(--line);background:var(--bg-2)}
-.form-slot iframe{display:block;width:100%;border:0;min-height:420px;background:transparent;color-scheme:normal}
 .test-note{margin:18px 0 0;padding:10px 14px;border:1px dashed rgba(232,196,106,.5);border-radius:10px;color:var(--gold);font-size:13px}
 .form-empty{margin-top:18px;border:1px dashed var(--line);border-radius:12px;padding:26px;text-align:center;color:var(--muted);font-size:14px}
 .poll-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
@@ -489,12 +482,6 @@ footer a:hover{color:var(--text)}
 
     <div class="auth" id="auth"></div>
 
-    <div class="nick" id="nick-box">
-      <label for="nick">Твій нік у Discord</label>
-      <input id="nick" type="text" autocomplete="nickname" placeholder="наприклад, Walkower" maxlength="40">
-      <small>Введи один раз — підставиться в усі форми на цій сторінці. Зберігається лише у твоєму браузері.</small>
-    </div>
-
     <div class="polls" id="polls"></div>
     <div class="board-card" id="chips-board" hidden></div>
   </div>
@@ -571,9 +558,7 @@ const MILESTONES = [
   { date:'2026-12-22', title:'EVO Awards', text:'Нагородження, ігри, афтерпаті', final:true },
 ];
 
-/* Опитування. tally — ID форми Tally (з посилання tally.so/r/<ID>).
-   Поки ID порожній, замість форми показується заглушка.
-   У кожній формі Tally створи приховане поле "nick" — сторінка підставить туди нік.
+/* Опитування — усі власні (vote.js + Supabase); хто голосує — POLL_ROLES у vote.js і polls.roles у базі.
    status: 'open' | 'soon' | 'closed'. deadline — ISO або null.
    results — HTML з підсумками попереднього блоку, показується над формою з дати opens.
    kind:'results' — картка без форми, лише з полем results. */
@@ -581,9 +566,11 @@ const POLLS = [
   { id:'test', opens:'2026-11-02', closes:'2026-11-08', title:'Тестове голосування', engine:'own', bets:true,
     text:'Спробуй, як працюють вхід, голос і ставки фішками. Усі тестові голоси й ставки видалимо до 9 листопада — фішки повернуться.',
     asks:['Вхід через Discord','Голос у тестовій номінації','Ставка фішками'] },
-  { id:'prizes', opens:'2026-10-30', closes:'2026-11-08', title:'Якою має бути нагорода', tally:'kbbVLo',
+  { id:'prizes', opens:'2026-10-30', closes:'2026-11-08', title:'Якою має бути нагорода', engine:'own',
     text:'Кубок чи щось практичне — вирішуємо разом, що отримають переможці 2026.',
-    asks:['Кубок, практичне чи обидва','Що саме з практичного','Свій варіант'] },
+    asks:['Кубок, практичне чи все одно','Свій варіант'],
+    form:[ { id:'prize', type:'single', title:'Що ти хотів би отримати, якщо переможеш?', options:['Класичний кубок або статуетку','Щось практичне (мерч, колекційні картки, інше)','Мені не принципово'] },
+           { id:'note', type:'text', optional:true, title:'Свій варіант або коментар', rows:2 } ] },
   { id:'noms', opens:'2026-11-09', closes:'2026-11-15', title:'Ком\'юніті номінації: які залишаємо', engine:'own',
     text:'Обери до 7 номінацій, які мають бути на ефірі, або запропонуй свою.',
     asks:['До 7 номінацій','Своя номінація'],
@@ -729,16 +716,6 @@ function renderRoad() {
 renderRoad(); setInterval(renderRoad, 60 * 60 * 1000);
 
 /* --- опитування --- */
-const nickInput = $('#nick');
-nickInput.value = store('evo_awards_nick') || '';
-{ const tallyLive = POLLS.some(p => p.tally && todayNum() <= dayNum(p.closes)); if (!tallyLive) $('#nick-box').style.display = 'none'; }
-/* Нік в один вигляд: без @ і пробілів, малими літерами — щоб «Wander » і «wander» були одним голосом. */
-const normNick = v => v.trim().replace(/^@+/, '').replace(/\s+/g, '').toLowerCase();
-function formUrl(p, embed) {
-  const q = new URLSearchParams({ nick: normNick(nickInput.value), source: 'awards-page' });
-  if (embed) { q.set('hideTitle', '1'); q.set('dynamicHeight', '1'); q.set('alignLeft', '1'); q.set('transparentBackground', '1'); }
-  return `https://tally.so/${embed ? 'embed' : 'r'}/${encodeURIComponent(p.tally)}?${q}`;
-}
 const STATUS = { open:['open','Відкрито'], soon:['soon','Скоро'], closed:['done','Завершено'] };
 /* --- хто вже проголосував (лише в цьому браузері) --- */
 const VOTED_KEY = 'evo_awards_voted';
@@ -749,7 +726,7 @@ function markVoted(id) { const v = votedSet(); v.add(id); store(VOTED_KEY, JSON.
   const card = document.getElementById('poll-' + id), p = POLLS.find(x => x.id === id);
   if (card && p && !p.bets) { if (p.engine === 'own' && window.showOwnThanks) showOwnThanks(card, p, Vote.answers[p.id]); else showThanks(card, p); }
   renderFab(); }
-/* Своя картка подяки замість екрана Tally: показується одразу після відправки і при повторному відкритті. */
+/* Картка подяки: показується одразу після відправки і при повторному відкритті. */
 function showThanks(card, p) {
   const next = POLLS.find(x => x.id !== p.id && x.kind !== 'results' && x.status === 'open' && !hasVoted(x.id));
   card.querySelector('.slot').innerHTML = `<div class="thanks"><div class="ok">✓</div><div>
@@ -757,13 +734,6 @@ function showThanks(card, p) {
     ${next ? `<div class="poll-actions"><a class="btn vote-btn" href="#poll-${next.id}" data-poll="${next.id}">Наступне: ${esc(next.title)} →</a></div>` : ''}
   </div></div>`;
 }
-window.addEventListener('message', e => {
-  if (!/tally\.so$/.test(new URL(e.origin || 'http://x').hostname)) return;
-  let d = e.data; if (typeof d === 'string') { try { d = JSON.parse(d); } catch (_) { return; } }
-  if (!d || d.event !== 'Tally.FormSubmitted') return;
-  const formId = d.payload && d.payload.formId; const p = POLLS.find(x => x.tally && x.tally === formId);
-  if (p) markVoted(p.id);
-});
 function nextVote() {
   const open = POLLS.filter(p => p.kind !== 'results' && p.status === 'open' && !hasVoted(p.id));
   if (open.length) return { poll: open[0] };
@@ -816,32 +786,7 @@ function fillSlot(card, p) {
   if (p.engine === 'own' && p.status === 'open') { if (window.renderOwnPoll) renderOwnPoll(card, p); else card.querySelector('.slot').innerHTML = '<div class="form-empty">Підключаємось…</div>'; return; }
   if (hasVoted(p.id)) { showThanks(card, p); return; }
   if (p.status !== 'open') { slot.innerHTML = `<div class="form-empty">${p.status === 'closed' ? 'Опитування завершено. Дякуємо за голос!' : 'Відкриється ' + dLabel(p.opens) + ' — анонс буде в Discord.'}</div>`; return; }
-  if (!p.tally) { slot.innerHTML = `<div class="form-empty">Форма ще не підключена.</div>`; return; }
-  if (!nickInput.value.trim()) {
-    slot.innerHTML = `<div class="form-empty">Спершу введи свій нік у Discord вище — так твій голос врахується один раз.</div>`;
-    return;
-  }
-  const src = formUrl(p, true);
-  const frame = slot.querySelector('iframe');
-  if (frame && frame.dataset.src === src) return;
-  slot.innerHTML = `<div class="form-slot"><iframe data-src="${esc(src)}" src="${esc(src)}" loading="lazy" title="${esc(p.title)}"></iframe></div>
-    <div class="poll-actions"><a class="btn ghost" href="${esc(formUrl(p, false))}" target="_blank" rel="noopener">Відкрити форму в новій вкладці ↗</a></div>`;
-  loadTally();
 }
-let tallyLoaded = false;
-function loadTally() {
-  if (tallyLoaded) { window.Tally && Tally.loadEmbeds(); return; }
-  tallyLoaded = true;
-  const s = el('script', { src:'https://tally.so/widgets/embed.js', async:'' });
-  s.onload = () => window.Tally && Tally.loadEmbeds();
-  document.body.append(s);
-}
-let nickTimer;
-nickInput.addEventListener('input', () => {
-  store('evo_awards_nick', nickInput.value.trim());
-  clearTimeout(nickTimer);
-  nickTimer = setTimeout(() => document.querySelectorAll('.poll.expanded').forEach(c => fillSlot(c, POLLS.find(p => 'poll-' + p.id === c.id))), 600);
-});
 // перше відкрите опитування — розгорнуте одразу
 document.addEventListener('click', e => {
   const a = e.target.closest('[data-poll]'); if (!a) return;
