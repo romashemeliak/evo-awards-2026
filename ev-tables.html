@@ -11,7 +11,7 @@
 <style>
 :root{color-scheme:dark;--bg:#0a0a0b;--bg2:#131315;--surface:#17171a;--surface2:#1f1f24;--text:#f3f0ea;--text2:#cfcac2;--muted:#9c9890;--line:#2a2a2e;--grid:#232327;
 --red:#e3262b;--red-dim:#7a1517;--blue:#3d8bff;--green:#3fd06b;--gold:#e8c46a;
---s1:#3d8bff;--s2:#e3262b;--s3:#3fd06b;--s4:#e8c46a;--s5:#e07bbf;--s6:#9c9890;--good:#3fd06b;--warn:#e8c46a;--bad:#e3262b;--adj:#e3262b;--band:rgba(61,139,255,.18);--radius:14px}
+--s1:#3d8bff;--s2:#e3262b;--s3:#3fd06b;--s4:#e8c46a;--s5:#e07bbf;--s6:#9c9890;--good:#3fd06b;--warn:#e8c46a;--bad:#e3262b;--adj:#e8c46a;--band:rgba(61,139,255,.18);--radius:14px}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:70px}
 body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.55 Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
@@ -377,7 +377,7 @@ function bars(id, data, xkey, ylabel, colorFn, opts){
   const labels = data.map(r=>String(r[xkey]));
   const ds = [];
   if(sh.raw) ds.push({label:'фактичне EV', data:data.map(r=>r.raw), backgroundColor:colorFn ? data.map(r=>colorFn(r)) : c, borderRadius:4, maxBarThickness:40, order:2});
-  if(sh.adj) ds.push({label:'нормоване EV', data:data.map(r=>r.adj==null?null:base+r.adj), backgroundColor:al(css('--adj'),0.18), borderColor:css('--adj'), borderWidth:2, borderRadius:4, maxBarThickness:40, order:2});
+  if(sh.adj) ds.push({label:'нормоване EV', data:data.map(r=>r.adj==null?null:base+r.adj), backgroundColor:css('--adj'), borderRadius:4, maxBarThickness:40, order:2});
   mk(id, {type:'bar', data:{labels, datasets:ds}, options:baseOpts(ylabel||'EV, bb/100', {plugins:{legend:{display:true}, tooltip:{callbacks:{label:(c)=>c.dataset.label+': '+(c.parsed.y==null?'—':f2(c.parsed.y))+(c.dataset.label==='фактичне EV'?'  (' + fmt(data[c.dataIndex]['роздач']/1000) + ' тис. роздач)':'')}}}}), plugins:[zeroLine()]});
 }
 function tableHTML(df, idx, cols, valkey, fmtf){
@@ -424,7 +424,7 @@ function render(){
   const rowsOf = (p, k) => TAB4.map(t => { const r = ex.find(r=>r['ціна']===p && r.tab4===t); return r ? (k==='raw' ? r.raw : bx + r.adj) : null; });
   const dsx = [];
   if(shx.raw){ dsx.push({label:'дорогий (>1.5×) · фактичне', data:rowsOf('дорогий (>1.5×)','raw'), backgroundColor:css('--s2'), borderRadius:4, maxBarThickness:36}); dsx.push({label:'звичний (0.67–1.5×) · фактичне', data:rowsOf('звичний (0.67–1.5×)','raw'), backgroundColor:css('--s1'), borderRadius:4, maxBarThickness:36}); }
-  if(shx.adj){ dsx.push({label:'дорогий · нормоване', data:rowsOf('дорогий (>1.5×)','adj'), backgroundColor:'transparent', borderColor:css('--s2'), borderWidth:2, borderRadius:4, maxBarThickness:36}); dsx.push({label:'звичний · нормоване', data:rowsOf('звичний (0.67–1.5×)','adj'), backgroundColor:'transparent', borderColor:css('--s1'), borderWidth:2, borderRadius:4, maxBarThickness:36}); }
+  if(shx.adj){ dsx.push({label:'дорогий · нормоване', data:rowsOf('дорогий (>1.5×)','adj'), backgroundColor:al(css('--s2'),0.45), borderRadius:4, maxBarThickness:36}); dsx.push({label:'звичний · нормоване', data:rowsOf('звичний (0.67–1.5×)','adj'), backgroundColor:al(css('--s1'),0.45), borderRadius:4, maxBarThickness:36}); }
   mk('c_exp', {type:'bar', data:{labels:TAB4, datasets:dsx}, options:baseOpts('EV, bb/100', {plugins:{legend:{display:true}}, scales:{x:{title:{display:true,text:'столів одночасно'}, grid:{display:false}}}}), plugins:[zeroLine()]});
   lineWithBand('c_reghr', sortBy(rows('X3_ev_by_reg_hour', 'усі'), 'reg_hr_b', REGH_ORDER), 'reg_hr_b', null, {order:REGH_ORDER, baseGroup:'усі'});
   lineWithBand('c_reg6', sortBy(rows('X3_ev_by_reg_hour_load6', 'усі'), 'reg_hr_b', REGH_ORDER), 'reg_hr_b', null, {order:REGH_ORDER, baseGroup:'усі'});
