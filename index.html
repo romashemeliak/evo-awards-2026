@@ -339,9 +339,22 @@ section{padding:clamp(56px,9vw,110px) 0;position:relative}
 .who-k{display:block;margin-top:14px;font:700 12px/1 Manrope,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--c)}
 .who-card b{display:block;margin-top:8px;font:700 19px/1.2 Unbounded,sans-serif}
 .who-card p{margin-top:8px;font-size:14px;color:#d8cdbb}
-.rule.wide{grid-column:1/-1;border-color:rgba(63,208,107,.35);background:linear-gradient(90deg,rgba(63,208,107,.08),var(--bg-2) 60%)}
-.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:40px}
-@media(max-width:640px){.rules{grid-template-columns:1fr}}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:40px}
+@media(max-width:1180px){.steps{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.steps{grid-template-columns:1fr}}
+.step{padding:22px 20px;border-radius:var(--radius);background:var(--card);border:1px solid rgba(217,164,65,.28)}
+.step i{display:block;font:900 28px/1 Unbounded,sans-serif;font-style:normal;color:transparent;-webkit-text-stroke:1.2px var(--acc)}
+.step b{display:block;margin-top:16px;font:700 16px/1.25 Unbounded,sans-serif}
+.step p{margin-top:8px;font-size:14px;color:var(--muted)}
+.bet-example{margin-top:12px;padding:18px 22px;border-radius:var(--radius);border:1px dashed rgba(217,164,65,.45);background:rgba(217,164,65,.06);display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline}
+.bet-example b{font:700 14px/1.3 Unbounded,sans-serif;color:var(--acc)}
+.bet-example p{flex:1;min-width:240px;font-size:14px;color:var(--muted)}
+.bet-example strong{color:var(--text)}
+.bet-example.lucky{border-style:solid}
+.rules-sub{margin-top:clamp(44px,6vw,64px);font:700 clamp(18px,2.4vw,22px)/1.2 Unbounded,sans-serif}
+.rules{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+@media(max-width:1180px){.rules{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.rules{grid-template-columns:1fr}}
 .rule{padding:20px;border-radius:var(--radius);background:var(--bg-2);border:1px solid var(--line)}
 .rule b{display:block;font:700 15px/1.3 Unbounded,sans-serif;margin-bottom:8px}
 .rule p{font-size:14px;color:var(--muted)}
@@ -431,7 +444,7 @@ footer a:hover{color:var(--text)}
       <li><a href="#program">Програма</a></li>
       <li><a href="#nominations">Номінації</a></li>
       <li><a href="#nominees">Номінанти</a></li>
-      <li><a href="#rules">Правила</a></li>
+      <li><a href="#rules">Ставки</a></li>
     </ul>
     <div class="nav-acct" id="nav-acct"></div>
   </div>
@@ -460,7 +473,7 @@ footer a:hover{color:var(--text)}
     <div class="kicker">Голосування</div>
     <h2>Твій голос<br>визначає ефір</h2>
     <svg class="brush" viewBox="0 0 360 22" preserveAspectRatio="none" aria-hidden="true"><path d="M4 12 C80 4 180 18 356 8" stroke="#d9a441" stroke-width="10" fill="none" stroke-linecap="round" filter="url(#rough)"/></svg>
-    <p class="lead">Опитування відкриваються по черзі, кожне — на тиждень. Проголосувати займе 2–3 хвилини. Хто за кого голосував, не публікується, а результати оголосять на ефірі. <a class="rules-link" href="#rules">Правила голосування →</a></p>
+    <p class="lead">Опитування відкриваються по черзі, кожне — на тиждень. Проголосувати займе 2–3 хвилини. Хто за кого голосував, не публікується, а результати оголосять на ефірі. <a class="rules-link" href="#rules">Як працюють ставки →</a></p>
 
     <div class="auth" id="auth"></div>
 
@@ -513,14 +526,24 @@ footer a:hover{color:var(--text)}
 
 <section id="rules" style="background:var(--bg-2)">
   <div class="wrap">
-    <div class="kicker">Правила</div>
-    <h2>Чесно<br>і прозоро</h2>
+    <div class="kicker">Ставки</div>
+    <h2>Як працюють<br>ставки</h2>
+    <p class="lead">Фішки — гра поверх голосування: вгадай переможців і збери найбільше фішок. На голосування вони не впливають.</p>
+    <div class="steps">
+      <div class="step"><i>01</i><b>1&nbsp;000 фішок</b><p>Кожен учасник отримує 1&nbsp;000 фішок на весь івент. Що не поставив — лишається в балансі.</p></div>
+      <div class="step"><i>02</i><b>Ставиш на переможців</b><p>У Блоці 4 (23–29 листопада) розподіляєш фішки між номінаціями на тих, хто, на твою думку, переможе. До 29 листопада ставки можна змінювати.</p></div>
+      <div class="step"><i>03</i><b>Банк номінації</b><p>Усі фішки номінації діляться між тими, хто вгадав переможця, пропорційно ставкам, без комісії. Коефіцієнт біля претендента — скільки фішок повернеться за кожну поставлену, якщо банк не зміниться.</p></div>
+      <div class="step"><i>04</i><b>Підсумок на ефірі</b><p>Після оголошення переможців баланс — невитрачені фішки плюс виграші. Якщо на переможця не поставив ніхто, ставки повертаються.</p></div>
+    </div>
+    <div class="bet-example"><b>Приклад</b><p>У номінації поставили 10&nbsp;000 фішок, з них 2&nbsp;000 — на того, хто переміг. Ти поставив на нього 200 — отримаєш 200 / 2&nbsp;000 × 10&nbsp;000 = <strong>1&nbsp;000 фішок</strong>.</p></div>
+    <div class="bet-example lucky"><b>EVO Lucky Gambler</b><p>Хто після ефіру матиме найбільший баланс, отримує номінацію EVO Lucky Gambler. Адміни, які знають результати до ефіру, не ставлять.</p></div>
+
+    <h3 class="rules-sub">Як рахується статистика</h3>
     <div class="rules">
-      <div class="rule wide"><b>Один учасник — один голос</b><p>Голосують гравці EVO і REVO та адміни школи; друзі школи — лише в опитуванні про вечір. Вхід через Discord, при першому вході — роль і нік, далі без цього. Претендентів висувають лише гравці, себе висувати не можна. Хто за кого голосував, не публікується — лише підсумки.</p></div>
-      <div class="rule wide"><b>Фішки на переможців</b><p>1 000 фішок на весь івент. У Блоці 4 розподіляєш їх між номінаціями на тих, хто, на твою думку, переможе; до 29 листопада ставки можна змінювати. Банк номінації ділиться між тими, хто вгадав, пропорційно ставкам, без комісії; коефіцієнт біля претендента — скільки фішок повернеться за кожну поставлену, якщо банк не зміниться. Якщо на переможця не поставив ніхто, ставки повертаються. На голосування фішки не впливають. Хто після ефіру матиме найбільше фішок, отримує номінацію EVO Lucky Gambler.</p></div>
-      <div class="rule"><b>Результати — на ефірі</b><p>Шортлист оголошується заздалегідь, переможці — лише під час церемонії.</p></div>
-      <div class="rule"><b>Дані — відкриті</b><p>Статистика всіх претендентів буде опублікована на цій сторінці — її зможе перевірити кожен.</p></div>
-      <div class="rule"><b>Лише турніри в складі EVO</b><p>Статистика рахується за 1 грудня 2025 – 30 листопада 2026 за тими самими правилами, що й на перегляді рангів.</p></div>
+      <div class="rule"><b>Рік EVO</b><p>1 грудня 2025 — 30 листопада 2026.</p></div>
+      <div class="rule"><b>Лише турніри в складі EVO</b><p>Рахуються турніри, зіграні у складі EVO, за тими самими правилами, що й на перегляді рангів.</p></div>
+      <div class="rule"><b>Допуск</b><p>Top ROI — від 2&nbsp;000 турнірів за рік. Професіонал року — від 2&nbsp;000 турнірів і щонайменше 6 повних місяців у EVO.</p></div>
+      <div class="rule"><b>Голосування</b><p>Один учасник — один голос, вхід через Discord. Себе висувати не можна.</p></div>
     </div>
 
     <div class="faq">
