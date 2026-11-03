@@ -407,6 +407,7 @@ footer a:hover{color:var(--text)}
 .wiki-strip .live{font:700 11px/1 Manrope,sans-serif;letter-spacing:.12em;color:var(--acc)}
 .wiki-strip b{font:700 15px/1.2 Unbounded,sans-serif}
 .wiki-strip span:last-child{font-size:14px;color:var(--muted)}
+.wiki-strip + .wiki-strip{margin-top:10px}
 .inf-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 20px;margin-top:26px;padding-top:22px;border-top:1px solid var(--line)}
 .inf-head p{color:var(--muted);font-size:15px}
 .inf-head p b{color:var(--text)}
@@ -495,7 +496,7 @@ footer a:hover{color:var(--text)}
       <div class="car-dots" id="car-dots"></div>
       <div id="fixed"></div>
       <div class="inf-head">
-        <p><b>Обираєте ви:</b> 17 кандидатів, на ефір потрапить 7 — разом з EVO Wiki Live буде 8.</p>
+        <p><b>Обираєте ви:</b> 17 кандидатів, на ефір потрапить 7 — разом з EVO Wiki Live і EVO Lucky Gambler буде 9.</p>
         <a class="btn vote-btn" href="#poll-noms" data-poll="noms">Голосувати за номінації →</a>
       </div>
     </div>
@@ -516,7 +517,7 @@ footer a:hover{color:var(--text)}
     <h2>Чесно<br>і прозоро</h2>
     <div class="rules">
       <div class="rule wide"><b>Один учасник — один голос</b><p>Голосують гравці EVO і REVO та адміни школи; друзі школи — лише в опитуванні про вечір. Вхід через Discord, при першому вході — роль і нік, далі без цього. Претендентів висувають лише гравці, себе висувати не можна. Хто за кого голосував, не публікується — лише підсумки.</p></div>
-      <div class="rule wide"><b>Фішки на переможців</b><p>1 000 фішок на весь івент. У Блоці 4 розподіляєш їх між номінаціями на тих, хто, на твою думку, переможе; до 29 листопада ставки можна змінювати. Банк номінації ділиться між тими, хто вгадав, пропорційно ставкам, без комісії; коефіцієнт біля претендента — скільки фішок повернеться за кожну поставлену, якщо банк не зміниться. Якщо на переможця не поставив ніхто, ставки повертаються. На голосування фішки не впливають.</p></div>
+      <div class="rule wide"><b>Фішки на переможців</b><p>1 000 фішок на весь івент. У Блоці 4 розподіляєш їх між номінаціями на тих, хто, на твою думку, переможе; до 29 листопада ставки можна змінювати. Банк номінації ділиться між тими, хто вгадав, пропорційно ставкам, без комісії; коефіцієнт біля претендента — скільки фішок повернеться за кожну поставлену, якщо банк не зміниться. Якщо на переможця не поставив ніхто, ставки повертаються. На голосування фішки не впливають. Хто після ефіру матиме найбільше фішок, отримує номінацію EVO Lucky Gambler.</p></div>
       <div class="rule"><b>Результати — на ефірі</b><p>Шортлист оголошується заздалегідь, переможці — лише під час церемонії.</p></div>
       <div class="rule"><b>Дані — відкриті</b><p>Статистика всіх претендентів буде опублікована на цій сторінці — її зможе перевірити кожен.</p></div>
       <div class="rule"><b>Лише турніри в складі EVO</b><p>Статистика рахується за 1 грудня 2025 – 30 листопада 2026 за тими самими правилами, що й на перегляді рангів.</p></div>
@@ -586,7 +587,7 @@ const POLLS = [
   { id:'noms', opens:'2026-11-09', closes:'2026-11-15', title:'Ком\'юніті номінації: які залишаємо', engine:'own',
     text:'Обери до 7 номінацій, які мають бути на ефірі, або запропонуй свою.',
     asks:['До 7 номінацій','Своя номінація'],
-    form:[ { id:'keep', type:'multi', max:7, title:'Які ком\'юніті номінації залишаємо на ефірі', hint:'До 7 номінацій. EVO Wiki Live буде завжди — її в списку немає.', options:'INFORMAL' },
+    form:[ { id:'keep', type:'multi', max:7, title:'Які ком\'юніті номінації залишаємо на ефірі', hint:'До 7 номінацій. EVO Wiki Live і EVO Lucky Gambler будуть завжди — їх у списку немає.', options:'INFORMAL' },
            { id:'own', type:'text', optional:true, title:'Своя номінація', placeholder:'Назва і коротко — за що', rows:2 } ] },
   { id:'nominate', opens:'2026-11-16', closes:'2026-11-22', title:'Результати і Nomination Week', engine:'own',
     text:'Які ком\'юніті номінації будуть на ефірі — і висуваємо претендентів у кожній з них.',
@@ -610,7 +611,7 @@ const BLOCKS = [
   { part:'Частина I', title:'Нагородження та інтерактив', accent:'#d9a441', suit:'♥',
     text:'Офіційна частина: оголошення переможців та ігри разом з ефіром.',
     cta:['#nominations','Усі номінації ↓'],
-    items:[['Нагородження','EVO Legend, 4 статистичні і 8 ком\'юніті номінацій'],['EVO Wiki Live','квіз наживо у 3 раунди — переможець отримує номінацію'],['Ігри з ефіром','«Вгадай гравця», EVO Bingo, Decode — граємо всі разом']] },
+    items:[['Нагородження','EVO Legend, 4 статистичні і 9 ком\'юніті номінацій'],['EVO Wiki Live','квіз наживо у 3 раунди — переможець отримує номінацію'],['Ігри з ефіром','«Вгадай гравця», EVO Bingo, Decode — граємо всі разом']] },
   { part:'Частина II', title:'Афтерпаті', accent:'#d9a441', suit:'♠',
     text:'Неформальна частина: тематичні кімнати, ігри й спілкування.',
     cta:['guests','Обрати формат афтерпаті →'],
@@ -649,7 +650,8 @@ const SERIOUS = [
 /* Ком'юніті номінації. FIXED — завжди на ефірі (не в голосуванні). Висувати можна будь-кого: гравців, тренерів, адмінів. */
 const FIXED = [
   { ico:'🧠', name:'EVO Wiki Live', text:'Хто знає про EVO і покер найбільше. Переможця визначає квіз наживо на ефірі.',
-    rounds:['EVO Lore','Poker Brain','Deep Wiki'] },
+    rounds:['EVO Lore','Poker Brain','Deep Wiki'], tag:'● LIVE · точно на ефірі' },
+  { ico:'🎲', name:'EVO Lucky Gambler', text:'Переможець конкурсу ставок: найбільше фішок після оголошення переможців.', tag:'Точно на ефірі' },
 ];
 /* Порядок — за оцінкою (score, 0–10), найвищі зверху. */
 const INFORMAL = [
@@ -861,7 +863,7 @@ $('#legend').innerHTML = `<article class="legend">
   </div>
 </article>`;
 $('#serious').append(...SERIOUS.filter(n => n.show).map(nomCard));
-$('#fixed').innerHTML = FIXED.map(n => `<div class="wiki-strip"><span class="live">● LIVE · точно на ефірі</span><b>${esc(n.name)}</b><span>${esc(n.text)}</span></div>`).join('');
+$('#fixed').innerHTML = FIXED.map(n => `<div class="wiki-strip"><span class="live">${esc(n.tag)}</span><b>${esc(n.name)}</b><span>${esc(n.text)}</span></div>`).join('');
 $('#informal').append(...INFORMAL.map(n => el('div', { class:'card' },
   `<div class="ico">${n.ico}</div><div><h3>${esc(n.name)}</h3><p>${esc(n.text)}</p></div>`)));
 { const row = $('#informal'), dots = $('#car-dots'), btns = document.querySelectorAll('.car-btn');
