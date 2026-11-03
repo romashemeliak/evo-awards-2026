@@ -39,8 +39,7 @@
 .own-form .opt-tag{font-weight:500;color:var(--muted);font-size:12px;margin-left:6px}
 .own-form .hint,.bet-head .hint,.lb-head .hint{margin-top:6px;color:var(--muted);font-size:13px;line-height:1.5}
 .choices{display:grid;gap:8px;margin-top:10px}
-.choices.multi{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
-.choices.multi .choice{align-items:flex-start}
+.choices.multi{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));grid-auto-rows:1fr}
 .choice{display:flex;align-items:center;gap:12px;padding:11px 13px;border:1px solid var(--line);border-radius:10px;cursor:pointer;background:var(--bg);transition:border-color .15s}
 .choice:hover{border-color:#4a4a50}
 .choice input{position:absolute;opacity:0;pointer-events:none}
