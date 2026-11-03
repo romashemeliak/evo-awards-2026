@@ -169,17 +169,24 @@ function renderNavAcct() {
   } else if (!Vote.me) {
     box.innerHTML = `<a class="btn sm" href="#vote">Заверши вхід</a><button class="link" type="button" data-act="signout">Вийти</button>`;
   } else {
-    box.innerHTML = `<span class="acct-nick" title="Discord: ${esc(Vote.sess.name || '')}">${esc(Vote.me.player)}</span>
-      <span class="chip team ${Vote.me.team === 'REVO' ? 'revo' : ''}">${esc(teamLabel(Vote.me.team))}</span>
-      ${Vote.me.can_bet === false ? '' : `<span class="acct-chips" title="Фішок вільно з ${fmtN(Vote.me.budget)}"><span class="coin sm"></span>${fmtN(Vote.me.budget - Vote.me.staked)}</span>`}
-      <button class="link" type="button" data-act="signout">Вийти</button>`;
+    const chips = Vote.me.can_bet === false ? '' : `<span class="acct-chips" title="Фішок вільно з ${fmtN(Vote.me.budget)}"><span class="coin sm"></span>${fmtN(Vote.me.budget - Vote.me.staked)}</span>`;
+    box.innerHTML = `<div class="acct"><button class="acct-pill" type="button" aria-haspopup="true" aria-label="Акаунт">
+        <span class="acct-ava">${esc((Vote.me.player || '?').trim().charAt(0).toUpperCase())}</span>${chips || `<span class="acct-nick">${esc(Vote.me.player)}</span>`}<span class="caret">▾</span></button>
+      <div class="acct-menu">
+        <div class="row"><span class="acct-nick" title="Discord: ${esc(Vote.sess.name || '')}">${esc(Vote.me.player)}</span><span class="chip team ${Vote.me.team === 'REVO' ? 'revo' : ''}">${esc(teamLabel(Vote.me.team))}</span></div>
+        ${chips ? `<div class="row"><span>Фішок вільно</span>${chips}</div>` : ''}
+        <button class="link" type="button" data-act="signout">Вийти</button>
+      </div></div>`;
+    const acct = box.querySelector('.acct');   // на телефоні наведення немає — відкривається тапом
+    acct.querySelector('.acct-pill').addEventListener('click', e => { e.stopPropagation(); acct.classList.toggle('open'); });
+    document.addEventListener('click', e => { if (!acct.contains(e.target)) acct.classList.remove('open'); });
   }
 }
 
 function renderAuthBox() {
   const box = document.getElementById('auth'); if (!box) return;
   const anyOwn = POLLS.some(p => p.engine === 'own' && p.status !== 'closed');
-  if (!enabled()) { box.innerHTML = anyOwn ? `<div class="auth-row"><b>Вхід через Discord</b><span class="muted">з'явиться до старту Блоку 2 — ${dLabel(POLLS.find(p => p.engine === 'own').opens)}.</span></div>` : ''; return; }
+  if (!enabled()) { box.innerHTML = anyOwn ? `<div class="auth-row"><b>Вхід через Discord</b><span class="muted">з'явиться до старту Блоку 1 — ${dLabel(POLLS.find(p => p.engine === 'own').opens)}.</span></div>` : ''; return; }
   if (Vote.error) { box.innerHTML = `<div class="auth-row"><span class="muted">${esc(Vote.error)}</span></div>`; return; }
   if (!Vote.ready) { box.innerHTML = `<div class="auth-row"><span class="muted">Підключаємось…</span></div>`; return; }
   if (!Vote.sess.signedIn) {
@@ -192,12 +199,7 @@ function renderAuthBox() {
       <div class="claim-form"><input id="claim-input" placeholder="Твій нік" maxlength="40" autocomplete="nickname" value="${esc(Vote.sess.name || '')}">
       <button class="btn" type="button" data-act="register">Зберегти</button></div><small class="err" id="claim-err"></small>
       <button class="link" type="button" data-act="signout">Вийти з Discord-акаунта ${esc(Vote.sess.name || '')}</button></div>`;
-  } else {
-    const free = Vote.me.budget - Vote.me.staked;
-    box.innerHTML = `<div class="auth-row ok"><div><b>${esc(Vote.me.player)}</b> <span class="chip team ${Vote.me.team === 'REVO' ? 'revo' : ''}">${esc(teamLabel(Vote.me.team))}</span>
-      <small>Ти увійшов як ${esc(Vote.me.player)} · Discord: ${esc(Vote.sess.name || '')} · <button class="link" type="button" data-act="signout">Вийти</button></small></div>
-      ${Vote.me.can_bet === false ? '<small class="muted">Голос без ставок</small>' : `<div class="chips-bal" title="Фішки для ставок на переможців"><span class="coin"></span><b>${fmtN(free)}</b><small>фішок вільно з ${fmtN(Vote.me.budget)}</small></div>`}</div>`;
-  }
+  } else box.innerHTML = '';   // після входу акаунт і фішки — у верхній панелі
 }
 /* Ролі учасника (обирає при першому вході) і хто голосує в якому опитуванні — як polls.roles у schema.sql. */
 const ROLES = { ADMIN: 'Адмін', EVO: 'EVO', REVO: 'REVO', FRIEND: 'Друг' };

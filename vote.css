@@ -8,7 +8,7 @@
 .auth-row.claim{display:grid;grid-template-columns:1fr;gap:12px}
 .claim-form{display:flex;flex-wrap:wrap;gap:10px}
 .claim-form input,.own-form input:not([type=radio]):not([type=checkbox]),.own-form textarea{flex:1 1 220px;min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:10px;color:var(--text);font:500 15px Manrope,sans-serif;padding:11px 13px}
-.claim-form input:focus,.own-form input:focus,.own-form textarea:focus{outline:2px solid var(--red);outline-offset:1px}
+.claim-form input:focus,.own-form input:focus,.own-form textarea:focus{outline:2px solid var(--acc);outline-offset:1px}
 .own-form textarea{width:100%;resize:vertical}
 .btn.discord{background:#5865f2;border-color:#5865f2}
 .btn.discord:hover{background:#4752c4}
@@ -20,7 +20,7 @@
 .form-msg.ok{color:var(--green)}
 .small{font-size:13px}
 .muted{color:var(--muted)}
-.inline-link{color:var(--red)}
+.inline-link{color:var(--acc)}
 .chip.team{padding:4px 8px;font-size:10px}
 .chip.team.revo{border-color:#4aa8e8;color:#4aa8e8}
 
@@ -30,7 +30,7 @@
 .chips-bal.big b{font-size:26px}
 .chips-bal.neg{border-color:#ff6b6f;background:rgba(217,164,65,.12)}
 .chips-bal.neg b{color:#ff6b6f}
-.coin{flex:none;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 50% 50%,var(--gold) 0 38%,#b8913a 39% 46%,var(--gold) 47% 60%,transparent 61%),repeating-conic-gradient(#fff 0 15deg,var(--red) 15deg 30deg);box-shadow:0 0 0 2px #0006 inset}
+.coin{flex:none;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 50% 50%,var(--gold) 0 38%,#b8913a 39% 46%,var(--gold) 47% 60%,transparent 61%),repeating-conic-gradient(#f2ebdd 0 15deg,#6e5222 15deg 30deg);box-shadow:0 0 0 2px #0006 inset}
 .coin.sm{width:16px;height:16px}
 
 .own-form{margin-top:18px;display:grid;gap:18px}
@@ -44,10 +44,10 @@
 .choice:hover{border-color:#4a4a50}
 .choice input{position:absolute;opacity:0;pointer-events:none}
 .choice .key,.choice .box{flex:none;width:24px;height:24px;border-radius:6px;border:1px solid var(--line);display:grid;place-items:center;font:700 12px Manrope,sans-serif;color:var(--muted)}
-.choice:has(input:checked){border-color:var(--red);background:rgba(217,164,65,.1)}
-.choice:has(input:checked) .key,.choice:has(input:checked) .box{background:var(--red);border-color:var(--red);color:#fff}
+.choice:has(input:checked){border-color:var(--acc);background:rgba(217,164,65,.1)}
+.choice:has(input:checked) .key,.choice:has(input:checked) .box{background:var(--acc);border-color:var(--acc);color:#0b0c0c}
 .choice:has(input:checked) .box::after{content:"✓";font-size:13px}
-.choice:has(input:focus-visible){outline:2px solid var(--red);outline-offset:2px}
+.choice:has(input:focus-visible){outline:2px solid var(--acc);outline-offset:2px}
 .choice.off{opacity:.45;cursor:not-allowed}
 .count{margin-top:8px;color:var(--muted);font-size:13px}
 .nom-grid{display:grid;gap:10px;margin-top:10px}
@@ -68,8 +68,8 @@
 .pick{display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0}
 .pick input{position:absolute;opacity:0;pointer-events:none}
 .pick .dot{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--line)}
-.pick input:checked+.dot{border-color:var(--red);background:radial-gradient(circle,var(--red) 0 45%,transparent 50%)}
-.pick input:focus-visible+.dot{outline:2px solid var(--red);outline-offset:2px}
+.pick input:checked+.dot{border-color:var(--acc);background:radial-gradient(circle,var(--acc) 0 45%,transparent 50%)}
+.pick input:focus-visible+.dot{outline:2px solid var(--acc);outline-offset:2px}
 .pick .nm{overflow-wrap:anywhere}
 .odds{color:var(--muted);font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
 .stake-box{display:flex;align-items:center;gap:6px}
@@ -90,3 +90,4 @@ table.lb th{color:var(--muted);font-weight:600;font-size:12px;text-transform:upp
 table.lb .r{text-align:right}
 table.lb tr.me td{background:rgba(217,164,65,.12)}
 table.lb td b{color:var(--gold)}
+.auth:empty{display:none}
