@@ -407,9 +407,18 @@ footer a:hover{color:var(--text)}
 .legend-meta{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;margin-top:28px}
 .legend-meta .decider-mini{background:rgba(0,0,0,.3)}
 .period-badge .cal{width:18px;height:18px;color:var(--acc);flex:none}
-.main-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-@media(max-width:1180px){.main-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:540px){.main-grid{grid-template-columns:1fr}}
+.main-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.main-grid.big{grid-template-columns:repeat(4,1fr)}
+.main-grid.big .tile{padding:28px 22px 28px 24px;min-height:132px}
+.main-grid.big .tile h3{font-size:21px}
+.main-grid.big .tile .glyph{width:40px;height:40px}
+.tile.live{border-color:rgba(217,164,65,.55);background:radial-gradient(120% 140% at 100% 0%,rgba(217,164,65,.16),transparent 60%),linear-gradient(180deg,#2e271f,#221d18)}
+.live-tag{display:inline-block;margin-bottom:8px;padding:3px 8px;border-radius:999px;background:var(--acc);color:#0b0c0c;font:800 10px/1 Manrope,sans-serif;letter-spacing:.12em;text-transform:uppercase}
+.pop-list{margin:0;padding-left:16px;display:grid;gap:6px}
+.pop-list b{color:var(--text)}
+@media(max-width:1180px){.main-grid.big{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){.main-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:540px){.main-grid,.main-grid.big{grid-template-columns:1fr}}
 .tile{position:relative;display:flex;align-items:center;gap:14px;padding:20px 20px 20px 22px;border-radius:16px;background:linear-gradient(180deg,#2e271f,#221d18);border:1px solid rgba(217,164,65,.28);min-width:0}
 .tile::before{content:"";position:absolute;left:14%;right:14%;top:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--acc),transparent)}
 .tile .t-text{flex:1;min-width:0}
@@ -533,20 +542,11 @@ footer a:hover{color:var(--text)}
     <div class="board" id="board">
       <div id="legend"></div>
       <div class="sec-label"><span>Статистичні номінації</span><em class="decider-mini">Переможець визначається на основі статистики</em></div>
-      <div class="main-grid" id="serious"></div>
-      <div class="car-block" data-kind="stat">
-        <p class="sub-row">Ще за статистикою</p>
-        <div class="car">
-          <button class="car-btn" type="button" data-dir="-1" aria-label="Попередні">←</button>
-          <div class="inf"></div>
-          <button class="car-btn" type="button" data-dir="1" aria-label="Наступні">→</button>
-        </div>
-        <div class="car-dots"></div>
-      </div>
+      <div class="main-grid big" id="serious"></div>
       <div class="sec-label"><span>Ком'юніті номінації</span><em class="decider-mini">Претендентів висувають гравці, переможця обирають голосуванням</em></div>
-      <div class="comm-grid" id="community"></div>
-      <p class="sub-row">Також на ефірі</p>
-      <div class="fixed-list" id="fixed"></div>
+      <div class="main-grid" id="community"></div>
+      <div class="sec-label"><span>Також на ефірі</span><em class="decider-mini">Live-номінації і бонусні статистичні</em></div>
+      <div class="main-grid three" id="fixed"></div>
       <div class="inf-head">
         <p><b>Nomination Week</b> — висуваєш претендентів у кожній ком'юніті номінації. Потім — голосування за переможців.</p>
         <a class="btn vote-btn" href="#poll-nominate" data-poll="nominate">Висунути претендентів →</a>
@@ -588,7 +588,7 @@ footer a:hover{color:var(--text)}
     <div class="faq">
       <details><summary>Мій нік уже зайнятий. Що робити?</summary><p>Напиши адміну в Discord — перевіримо і виправимо.</p></details>
       <details><summary>Що отримають переможці?</summary><p>Це вирішуєте ви — <a href="#poll-prizes" data-poll="prizes" style="color:var(--acc)">проголосуй в опитуванні про нагороди</a>. Формат нагород визначиться за підсумками опитування, деталі будуть оголошені разом зі шортлистом.</p></details>
-      <details><summary>Мене не буде на ефірі. Що робити?</summary><p>Запис буде. Але EVO Wiki Live визначається грою наживо — її можна виграти лише на ефірі.</p></details>
+      <details><summary>Мене не буде на ефірі. Що робити?</summary><p>Запис буде. Але EVO Wiki визначається грою наживо — її можна виграти лише на ефірі.</p></details>
     </div>
     <a class="btn ghost back-vote" id="back-vote" href="#vote">← Повернутися до голосування</a>
   </div>
@@ -658,7 +658,7 @@ const BLOCKS = [
   { part:'Частина I', title:'Нагородження та інтерактив', accent:'#d9a441', suit:'♥',
     text:'Офіційна частина: оголошення переможців та ігри разом з ефіром.',
     cta:['#nominations','Усі номінації ↓'],
-    items:[['Нагородження','EVO Legend, статистичні й ком\'юніті номінації'],['EVO Wiki Live','квіз наживо у 3 раунди — переможець отримує номінацію'],['Ігри з ефіром','«Вгадай гравця», EVO Bingo, Decode — граємо всі разом']] },
+    items:[['Нагородження','EVO Legend, статистичні й ком\'юніті номінації'],['EVO Wiki','квіз наживо у 3 раунди — переможець отримує номінацію'],['Ігри з ефіром','«Вгадай гравця», EVO Bingo, Decode — граємо всі разом']] },
   { part:'Частина II', title:'Афтерпаті', accent:'#d9a441', suit:'♠',
     text:'Неформальна частина: тематичні кімнати, ігри й спілкування.',
     cta:['prizes','Обрати формат вечора →'],
@@ -677,6 +677,15 @@ const PERIOD = '1 грудня 2025 — 30 листопада 2026';
 const LEGEND = { name:'EVO Legend', for:'Людина, яка за рік зробила для Еволюції найбільше — за столами і поза ними.',
   who:'Адмінсклад на основі статистики', pillars:['Результати','Професіоналізм','Наставництво','Вклад у ком\'юніті'] };
 const ICONS = {
+  blog:'<path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h4"/>',
+  heart:'<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>',
+  help:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.5"/><path d="M6 6l3.5 3.5M14.5 14.5L18 18M18 6l-3.5 3.5M9.5 14.5L6 18"/>',
+  fold:'<rect x="4" y="5" width="11" height="15" rx="2"/><path d="M8 3h10a2 2 0 0 1 2 2v13"/><path d="M7 9l5 7M12 9l-5 7"/>',
+  chat:'<path d="M4 5h16v11H10l-5 4v-4H4z"/><path d="M8 10h8"/>',
+  cards:'<rect x="3.5" y="6" width="10" height="14" rx="1.5" transform="rotate(-10 8.5 13)"/><rect x="10.5" y="4" width="10" height="14" rx="1.5" transform="rotate(8 15.5 11)"/>',
+  quiz:'<circle cx="12" cy="12" r="8.5"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><path d="M12 16.5h.01"/>',
+  dice:'<rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1"/><circle cx="15" cy="9" r="1"/><circle cx="9" cy="15" r="1"/><circle cx="15" cy="15" r="1"/><circle cx="12" cy="12" r="1"/>',
+  bars:'<path d="M5 20V11M10 20V5M15 20v-8M20 20V8"/>',
   profit:'<path d="M4 17l6-6 4 4 7-8"/><path d="M15 7h6v6"/>',
   roi:'<path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>',
   pro:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/>',
@@ -696,25 +705,24 @@ const SERIOUS = [
 /* Пул ком'юніті номінацій. fixed:true — завжди на ефірі, не в голосуванні. */
 /* FIXED — особливі номінації ефіру (без висування): квіз наживо і конкурс ставок. */
 const FIXED = [
-  { ico:'🧠', name:'EVO Wiki Live', text:'Хто знає про EVO і покер найбільше. Переможця визначає квіз наживо на ефірі.',
-    rounds:['EVO Lore','Poker Brain','Deep Wiki'], tag:'Квіз наживо' },
-  { ico:'🎲', name:'EVO Lucky Gambler', text:'Переможець конкурсу ставок серед гравців EVO і REVO: найбільше фішок після оголошення переможців.', tag:'Конкурс ставок' },
+  { icon:'quiz', name:'EVO Wiki', for:'Квіз наживо на ефірі', text:'Хто знає про EVO і покер найбільше. Переможця визначає квіз наживо на ефірі: EVO Lore, Poker Brain, Deep Wiki.', live:true },
+  { icon:'dice', name:'EVO Lucky Gambler', for:'Конкурс ставок', text:'Переможець конкурсу ставок серед гравців EVO і REVO: найбільше фішок після оголошення переможців.', live:true },
 ];
 /* Порядок — за оцінкою (score, 0–10), найвищі зверху. */
 const INFORMAL = [
-  { score:9,   ico:'📝', kind:'vote', name:'Блог року', text:'Найцікавіший блог гравця: чесно, регулярно і про справжній шлях.' },
+  { score:9,   ico:'📝', kind:'vote', name:'Блог року', for:'Найцікавіший блог гравця', icon:'blog', text:'Найцікавіший блог гравця: чесно, регулярно і про справжній шлях.' },
   { score:9,   ico:'🌱', kind:'stat', name:'Новачок року', text:'Пройшов REVO з самого нуля — від ABI $2 — і вже високо в EVO.' },
-  { score:8,   ico:'♥', kind:'vote', name:'Серце EVO', text:'Людина, з якою в EVO тепліше: підтримає, підбадьорить, вислухає.' },
+  { score:8,   ico:'♥', kind:'vote', name:'Серце EVO', for:'Людина, з якою в EVO тепліше', icon:'heart', text:'Людина, з якою в EVO тепліше: підтримає, підбадьорить, вислухає.' },
   { score:8,   ico:'🍀', kind:'stat', name:'Run Good', text:'Найбільше везіння за рік: результат вище за all-in EV.' },
   { score:8,   ico:'🧊', kind:'stat', name:'Cooler King', text:'Найменше везіння за рік: результат нижче за all-in EV.' },
-  { score:6.5, ico:'🛟', kind:'vote', name:'Техпідтримка року', text:'Практична допомога: розбереться з софтом, румами, налаштуваннями й організаційними питаннями.' },
-  { score:6.5, ico:'🛑', kind:'vote', name:'Fold of the Year', text:'Найкращий фолд року.' },
+  { score:6.5, ico:'🛟', kind:'vote', name:'Техпідтримка року', for:'Практична допомога гравцям', icon:'help', text:'Практична допомога: розбереться з софтом, румами, налаштуваннями й організаційними питаннями.' },
+  { score:6.5, ico:'🛑', kind:'vote', name:'Fold of the Year', for:'Найкращий фолд року', icon:'fold', text:'Найкращий фолд року.' },
   { score:6,   ico:'👑', kind:'stat', name:'Late EV King', text:'Найкраща гра на пізніх стадіях: найвищий EV на рівнях 9+ за рік.' },
   { score:6,   ico:'🎯', kind:'stat', name:'Total EV Prince', text:'Найвищий загальний EV за рік — найкращі рішення незалежно від везіння.' },
-  { score:6,   ico:'💬', kind:'vote', name:'Активіст року', text:'Рухає життя EVO: найпомітніший у чатах, войсах та івентах.' },
+  { score:6,   ico:'💬', kind:'vote', name:'Активіст року', for:'Рухає життя EVO', icon:'chat', text:'Рухає життя EVO: найпомітніший у чатах, войсах та івентах.' },
   { score:6,   ico:'💥', kind:'stat', name:'Занос року', text:'Найбільший разовий виграш за рік.' },
   { score:5.5, ico:'📈', kind:'stat', name:'Камбек року', text:'Найглибша просадка — і новий максимум після неї.' },
-  { score:5,   ico:'🃏', kind:'vote', name:'Hand of the Year', text:'Найкращий розіграш року — за рішення, не за розмір банку.' },
+  { score:5,   ico:'🃏', kind:'vote', name:'Hand of the Year', for:'Найкращий розіграш року', icon:'cards', text:'Найкращий розіграш року — за рішення, не за розмір банку.' },
 ].sort((a, b) => b.score - a.score);
 /* Ком'юніті номінації — kind:'vote': претендентів висувають гравці (Nomination Week), переможця обирають голосуванням, на них ставки.
    kind:'stat' — переможець за статистикою року, показуються в блоці статистичних. */
@@ -877,12 +885,12 @@ $('#blocks').innerHTML = BLOCKS.map((b, i) => `
   </article>${i === 0 ? '<div class="duo-join" aria-hidden="true"><span>→</span></div>' : ''}`).join('');
 
 /* --- номінації --- */
-const nomCard = n => { const t = el('article', { class:'tile' });
-  t.innerHTML = `<button class="tile-info" type="button" aria-label="Детальніше про ${esc(n.name)}">i</button>
-    <div class="tile-pop" role="tooltip">${esc(n.info)}</div>
-    <div class="t-text"><h3>${esc(n.name)}</h3><p class="for">${esc(n.for)}</p></div>
+const nomCard = n => { const t = el('article', { class:'tile' + (n.live ? ' live' : '') }), info = n.info || n.text;
+  t.innerHTML = `${n.pop || (info && info !== n.for) ? `<button class="tile-info" type="button" aria-label="Детальніше про ${esc(n.name)}">i</button>
+    <div class="tile-pop" role="tooltip">${n.pop || esc(info)}</div>` : ''}
+    <div class="t-text">${n.live ? '<span class="live-tag">● Live</span>' : ''}<h3>${esc(n.name)}</h3><p class="for">${esc(n.for)}</p></div>
     <span class="glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[n.icon] || ''}</svg></span>`;
-  t.querySelector('.tile-info').addEventListener('click', e => { e.stopPropagation(); const on = !t.classList.contains('pop-open');
+  if (t.querySelector('.tile-info')) t.querySelector('.tile-info').addEventListener('click', e => { e.stopPropagation(); const on = !t.classList.contains('pop-open');
     document.querySelectorAll('.tile.pop-open').forEach(x => x.classList.remove('pop-open')); t.classList.toggle('pop-open', on); });
   return t; };
 document.addEventListener('click', () => document.querySelectorAll('.tile.pop-open').forEach(x => x.classList.remove('pop-open')));
@@ -896,9 +904,9 @@ $('#legend').innerHTML = `<article class="legend">
   </div>
 </article>`;
 $('#serious').append(...SERIOUS.filter(n => n.show).map(nomCard));
-$('#community').append(...COMMUNITY.map(n => el('div', { class:'card' }, `<div class="ico">${n.ico}</div><div><h3>${esc(n.name)}</h3><p>${esc(n.text)}</p></div>`)));
-$('#fixed').innerHTML = FIXED.map(n =>
-  `<div class="wiki-strip"><em class="fx-tag">${esc(n.tag)}</em><b>${esc(n.name)}</b><span>${esc(n.text)}</span></div>`).join('');
+$('#community').append(...COMMUNITY.map(nomCard));
+$('#fixed').append(...FIXED.map(nomCard), nomCard({ name:'Бонусні статистичні', icon:'bars', for:STAT_MORE.map(n => n.name).join(' · '),
+  pop:`<ul class="pop-list">${STAT_MORE.map(n => `<li><b>${esc(n.name)}</b> — ${esc(n.text)}</li>`).join('')}</ul>` }));
 document.querySelectorAll('.car-block').forEach(blk => {
   const list = STAT_MORE;
   if (!list.length) { blk.hidden = true; return; }
