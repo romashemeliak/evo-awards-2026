@@ -350,6 +350,9 @@ a.mile:hover h3{color:var(--acc)}
 .locked{margin-top:36px;display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}
 @media(max-width:820px){.locked{grid-template-columns:1fr}}
 .locked .msg{font:700 clamp(20px,2.6vw,28px)/1.25 Unbounded,sans-serif}
+#nominees .locked{margin-top:0}
+.locked-text h2{margin-bottom:36px}
+.locked .ncard.example{width:100%;max-width:440px;justify-self:center}
 .locked .msg + p{color:var(--muted);margin-top:12px}
 
 /* rules */
@@ -989,11 +992,13 @@ if (SHOW_NOMINEES && groups.length) {
     `<div class="nomgroup"><h3>${esc(nom)}</h3><div class="ncards">${list.map((x, i) => nomineeCard(x, i)).join('')}</div></div>`).join('')}</div>`;
 } else {
   $('#nominees-body').innerHTML = `<div class="locked">
-    <div><p class="msg">Претенденти будуть оголошені наприкінці листопада, коли завершиться Рік EVO 2026.</p>
+    <div class="locked-text"><p class="msg">Претенденти будуть оголошені наприкінці листопада, коли завершиться Рік EVO 2026.</p>
       <div class="stage-legend">${STAGE_COLORS.map((c, i) => `<span><i style="background:${c}"></i>${STAGE_ROMAN[i]} етап</span>`).join('')}</div>
       <a class="btn" href="nominees.html" style="margin-top:24px">Усі претенденти →</a></div>
     ${nomineeCard({ nick:'Нікнейм', rank:'—', abi:'', distance:'—', bestCash:'—', fact:'Цікавий факт зі статистики гравця' }, 0, true)}
   </div>`;
+  // заголовок секції — у ліву колонку, щоб картка-приклад стояла по центру всього блоку
+  $('#nominees .locked-text').prepend($('#nominees .kicker'), $('#nominees h2'));
 }
 
 /* --- поява блоків --- */
