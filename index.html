@@ -678,6 +678,8 @@ const PERIOD = '1 грудня 2025 — 30 листопада 2026';
 const LEGEND = { name:'EVO Legend', for:'Людина, яка за рік зробила для Еволюції найбільше — за столами і поза ними.',
   who:'Адмінсклад на основі статистики', pillars:['Результати','Професіоналізм','Наставництво','Вклад у ком\'юніті'] };
 const ICONS = {
+  spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>',
+  coach:'<path d="M2.5 9L12 4.5 21.5 9 12 13.5z"/><path d="M6.5 11v4.5c1.5 1.6 3.5 2.5 5.5 2.5s4-.9 5.5-2.5V11"/><path d="M21.5 9v5"/>',
   bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/>',
   blog:'<path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h4"/>',
   heart:'<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>',
@@ -714,16 +716,16 @@ const FIXED = [
 const INFORMAL = [
   { score:9,   ico:'📝', kind:'vote', name:'Блог року', for:'Найцікавіший блог гравця', icon:'blog', text:'Найцікавіший блог гравця: чесно, регулярно і про справжній шлях.' },
   { score:9,   ico:'🌱', kind:'stat', name:'Новачок року', text:'Пройшов REVO з самого нуля — від ABI $2 — і вже високо в EVO.' },
-  { score:8,   ico:'♥', kind:'vote', name:'Серце EVO', for:'Людина, з якою в EVO тепліше', icon:'heart', text:'Людина, з якою в EVO тепліше: підтримає, підбадьорить, вислухає.' },
+  { score:8,   ico:'♥', kind:'vote', name:'Серце EVO', for:'Людина, до якої йдеш з будь-чим', icon:'heart', text:'Людина, до якої йдеш з будь-чим: підтримає, підкаже, допоможе розібратися — словом, порадою чи ділом.' },
+  { score:7.5, ico:'✨', kind:'vote', name:'Харизма EVO', for:'Заряджає всіх навколо', icon:'spark', text:'Людина з енергією: запалює чати й войси, смішить, з нею цікаво. Серце EVO — про підтримку, Харизма — про атмосферу.' },
+  { score:7,   ico:'🎓', kind:'vote', name:'Тренер року', for:'Найбільше дав своїм учням', icon:'coach', text:'Тренер, який за рік найбільше дав своїм учням: розбори, заняття, ріст гравців.' },
   { score:8,   ico:'🍀', kind:'stat', name:'Run Good', text:'Найбільше везіння за рік: результат вище за all-in EV.' },
   { score:8,   ico:'🧊', kind:'stat', name:'Cooler King', text:'Найменше везіння за рік: результат нижче за all-in EV.' },
   { score:6.5, ico:'🛑', kind:'vote', name:'Фолд року', for:'Найкращий фолд року', icon:'fold', link:true, text:'Найкращий фолд року.' },
   { score:6,   ico:'👑', kind:'stat', name:'Late EV King', text:'Найкраща гра на пізніх стадіях: найвищий EV на рівнях 9+ за рік. На дистанції від 100 тис. лейтових рук за рік.' },
   { score:6,   ico:'🎯', kind:'stat', name:'EV Prince', text:'Найвищий загальний EV за рік — найкращі рішення незалежно від везіння. На дистанції від 200 тис. рук за рік.' },
-  { score:6,   ico:'💬', kind:'vote', name:'Активіст року', for:'Рухає життя EVO', icon:'chat', text:'Рухає життя EVO: найпомітніший у чатах, войсах та івентах.' },
   { score:6,   ico:'💥', kind:'stat', name:'Занос року', text:'Найбільший разовий виграш за рік.' },
   { score:5.5, ico:'📈', kind:'stat', name:'Камбек року', text:'Найглибша просадка — і новий максимум після неї.' },
-  { score:5,   ico:'🃏', kind:'vote', name:'Роздача року', for:'Найкраща роздача року', icon:'cards', link:true, text:'Найкраща роздача року — за рішення, не за розмір банку.' },
 ].sort((a, b) => b.score - a.score);
 /* Ком'юніті номінації — kind:'vote': претендентів висувають гравці (Nomination Week), переможця обирають голосуванням, на них ставки.
    kind:'stat' — переможець за статистикою року, показуються в блоці статистичних. */
@@ -908,9 +910,8 @@ $('#legend').innerHTML = `<article class="legend">
   </div>
 </article>`;
 $('#serious').append(...SERIOUS.filter(n => n.show).map(nomCard));
-/* На сторінці замість Активіста і Роздачі року — три місця під номінації, які запропонують учасники. */
-const IDEA_SLOTS = ['Активіст року', 'Роздача року'], IDEA = { name:'Ваші ідеї', for:'Номінація, яку запропонують учасники', icon:'bulb', idea:true };
-$('#community').append(...COMMUNITY.filter(n => !IDEA_SLOTS.includes(n.name)).map(nomCard), ...[1, 2, 3].map(() => nomCard(IDEA)));
+/* Шосте місце поки порожнє — під номінацію, яку ще оберуть. */
+$('#community').append(...COMMUNITY.map(nomCard), nomCard({ name:'Ваші ідеї', for:'Номінація, яку запропонують учасники', icon:'bulb', idea:true }));
 $('#fixed').append(...FIXED.map(nomCard), nomCard({ name:'Додаткові номінації', icon:'bars', for:`${STAT_MORE.length} номінацій за даними року`,
   pop:`<ul class="pop-list">${STAT_MORE.map(n => `<li><b>${esc(n.name)}</b> — ${esc(n.text)}</li>`).join('')}</ul>` }));
 document.querySelectorAll('.car-block').forEach(blk => {
