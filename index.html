@@ -409,6 +409,19 @@ footer a:hover{color:var(--text)}
 .period-badge .cal{width:18px;height:18px;color:var(--acc);flex:none}
 .main-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .main-grid.big{grid-template-columns:repeat(4,1fr)}
+.year-gears{display:flex;align-items:center;gap:4px;margin-top:28px;color:var(--acc);font:700 15px/1 Manrope,sans-serif;letter-spacing:.06em}
+.year-gears svg{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linejoin:round}
+.year-gears .g1{width:40px;height:40px;animation:spin 6s linear infinite}
+.year-gears .g2{width:28px;height:28px;margin:18px 10px 0 -8px;animation:spin 4s linear infinite reverse}
+.year-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:24px}
+.ystat{display:flex;flex-direction:column;gap:8px;padding:20px 22px;border-radius:16px;border:1px dashed rgba(217,164,65,.35);background:rgba(255,255,255,.02)}
+.ylab{font:700 16px/1.2 Unbounded,sans-serif}
+.yval{display:flex;align-items:center;gap:8px;font:700 14px/1 Manrope,sans-serif;color:var(--acc);letter-spacing:.04em}
+.yval svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;animation:spin 5s linear infinite}
+.ydesc{font-size:13px;color:var(--muted)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:900px){.year-grid{grid-template-columns:1fr 1fr}}
+@media(prefers-reduced-motion:reduce){.year-gears svg,.yval svg{animation:none}}
 .tile.idea{border-style:dashed;background:transparent}
 .tile.idea h3{color:var(--muted)}
 .main-grid.big .tile{padding:28px 22px 28px 24px;min-height:132px}
@@ -489,6 +502,7 @@ footer a:hover{color:var(--text)}
       <!-- <li><a href="#program">Програма</a></li>  тимчасово прибрано разом із блоком -->
       <li><a href="#nominations">Номінації</a></li>
       <li><a href="#nominees">Номінанти</a></li>
+      <li><a href="#year">Підсумки</a></li>
       <li><a href="#rules">Ставки</a></li>
     </ul>
     <div class="nav-acct" id="nav-acct"></div>
@@ -564,6 +578,16 @@ footer a:hover{color:var(--text)}
   </div>
 </section>
 
+<section id="year">
+  <div class="wrap">
+    <div class="kicker">12 грудня</div>
+    <h2>Підсумки року<br>в цифрах</h2>
+    <p class="lead">Презентація року EVO: скільки зіграно, як росли гравці і які рекорди встановлено. Дані рахуються за весь рік — до кінця листопада.</p>
+    <div class="year-gears" aria-hidden="true"><svg class="g1" viewBox="0 0 24 24"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><svg class="g2" viewBox="0 0 24 24"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Calculating…</span></div>
+    <div class="year-grid" id="year-grid"></div>
+  </div>
+</section>
+
 <section id="rules">
   <div class="wrap">
     <div class="kicker">Ставки</div>
@@ -628,7 +652,7 @@ const MILESTONES = [
   { date:'2026-11-09', until:'2026-11-15', title:'Нагорода і формат', poll:'prizes' },
   { date:'2026-11-16', until:'2026-11-22', title:'Nomination Week', poll:'nominate' },
   { date:'2026-11-23', until:'2026-11-29', title:'Ком\'юніті голосування', poll:'final' },
-  { date:'2026-12-12', title:'Підсумки року в цифрах' },   // презентація результатів року
+  { date:'2026-12-12', title:'Підсумки року в цифрах', href:'#year' },   // презентація результатів року
   { date:'2026-12-22', title:'EVO Awards', final:true },
 ];
 
@@ -791,9 +815,9 @@ function renderRoad() {
        <span class="when">${when(m)}</span>
        <h3>${esc(m.title)}</h3>
        <span class="date">${span(m)}</span>
-       ${m.poll ? `<span class="go">${state(m) === 'now' ? 'Голосувати →' : state(m) === 'done' ? 'Підсумки →' : 'Детальніше →'}</span>` : ''}`;
+       ${m.href ? '<span class="go">Детальніше →</span>' : ''}${m.poll ? `<span class="go">${state(m) === 'now' ? 'Голосувати →' : state(m) === 'done' ? 'Підсумки →' : 'Детальніше →'}</span>` : ''}`;
     const cls = `mile ${state(m)}${m.final ? ' final' : ''}${m === cur ? ' cur' : ''}`;
-    return m.poll ? `<a class="${cls}" href="#poll-${m.poll}" data-poll="${m.poll}">${inner}</a>` : `<div class="${cls}">${inner}</div>`; }).join('');
+    return m.poll ? `<a class="${cls}" href="#poll-${m.poll}" data-poll="${m.poll}">${inner}</a>` : m.href ? `<a class="${cls}" href="${m.href}">${inner}</a>` : `<div class="${cls}">${inner}</div>`; }).join('');
 }
 renderRoad(); setInterval(renderRoad, 60 * 60 * 1000);
 
@@ -911,6 +935,11 @@ $('#legend').innerHTML = `<article class="legend">
 </article>`;
 $('#serious').append(...SERIOUS.filter(n => n.show).map(nomCard));
 /* Шосте місце поки порожнє — під номінацію, яку ще оберуть. */
+/* «Підсумки року в цифрах»: поки дані рахуються — лише назви метрик. */
+const YEAR_STATS = [['Турніри', 'зіграно за рік'], ['Роздачі', 'за столами'], ['Години', 'за грою'], ['Нокаути', 'вибито суперників'],
+  ['Рангапи', 'підвищень рангу'], ['REVO → EVO', 'переходів у основний склад'], ['Гравці', 'у складі EVO'], ['Найбільший виграш', 'за один турнір']];
+$('#year-grid').innerHTML = YEAR_STATS.map(([t, d]) => `<div class="ystat"><span class="ylab">${esc(t)}</span>
+  <span class="yval"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Calculating…</span><span class="ydesc">${esc(d)}</span></div>`).join('');
 $('#community').append(...COMMUNITY.map(nomCard), nomCard({ name:'Ваші ідеї', for:'Номінація, яку запропонують учасники', icon:'bulb', idea:true }));
 $('#fixed').append(...FIXED.map(nomCard), nomCard({ name:'Додаткові номінації', icon:'bars', for:`${STAT_MORE.length} номінацій за даними року`,
   pop:`<ul class="pop-list">${STAT_MORE.map(n => `<li><b>${esc(n.name)}</b> — ${esc(n.text)}</li>`).join('')}</ul>` }));
