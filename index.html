@@ -546,7 +546,7 @@ footer a:hover{color:var(--text)}
       <div class="main-grid big" id="serious"></div>
       <div class="sec-label"><span>Ком'юніті номінації</span><em class="decider-mini">Претендентів висувають учасники, переможця обирають голосуванням</em></div>
       <div class="main-grid" id="community"></div>
-      <div class="sec-label"><span>Також на ефірі</span><em class="decider-mini">Квіз, конкурс ставок і бонусні статистичні номінації</em></div>
+      <div class="sec-label"><span>Також на ефірі</span><em class="decider-mini">Квіз, конкурс ставок і додаткові номінації</em></div>
       <div class="main-grid three" id="fixed"></div>
       <div class="inf-head">
         <p><b>Nomination Week</b> — висуваєш претендентів у кожній ком'юніті номінації. Потім — ком'юніті голосування за переможців.</p>
@@ -911,7 +911,7 @@ $('#serious').append(...SERIOUS.filter(n => n.show).map(nomCard));
 /* На сторінці замість Активіста і Роздачі року — три місця під номінації, які запропонують учасники. */
 const IDEA_SLOTS = ['Активіст року', 'Роздача року'], IDEA = { name:'Ваші ідеї', for:'Номінація, яку запропонують учасники', icon:'bulb', idea:true };
 $('#community').append(...COMMUNITY.filter(n => !IDEA_SLOTS.includes(n.name)).map(nomCard), ...[1, 2, 3].map(() => nomCard(IDEA)));
-$('#fixed').append(...FIXED.map(nomCard), nomCard({ name:'Бонусні статистичні номінації', icon:'bars', for:`${STAT_MORE.length} номінацій за даними року`,
+$('#fixed').append(...FIXED.map(nomCard), nomCard({ name:'Додаткові номінації', icon:'bars', for:`${STAT_MORE.length} номінацій за даними року`,
   pop:`<ul class="pop-list">${STAT_MORE.map(n => `<li><b>${esc(n.name)}</b> — ${esc(n.text)}</li>`).join('')}</ul>` }));
 document.querySelectorAll('.car-block').forEach(blk => {
   const list = STAT_MORE;
