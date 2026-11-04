@@ -410,10 +410,9 @@ footer a:hover{color:var(--text)}
 .main-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .main-grid.big{grid-template-columns:repeat(4,1fr)}
 .main-grid.big .tile{padding:28px 22px 28px 24px;min-height:132px}
+.main-grid:not(.big) .tile{min-height:120px}   /* однаковий розмір карток ком'юніті й «Також на ефірі» */
 .main-grid.big .tile h3{font-size:21px}
 .main-grid.big .tile .glyph{width:40px;height:40px}
-.tile.live{border-color:rgba(217,164,65,.55);background:radial-gradient(120% 140% at 100% 0%,rgba(217,164,65,.16),transparent 60%),linear-gradient(180deg,#2e271f,#221d18)}
-.live-tag{display:inline-block;margin-bottom:8px;padding:3px 8px;border-radius:999px;background:var(--acc);color:#0b0c0c;font:800 10px/1 Manrope,sans-serif;letter-spacing:.12em;text-transform:uppercase}
 .pop-list{margin:0;padding-left:16px;display:grid;gap:6px}
 .pop-list b{color:var(--text)}
 @media(max-width:1180px){.main-grid.big{grid-template-columns:1fr 1fr}}
@@ -545,7 +544,7 @@ footer a:hover{color:var(--text)}
       <div class="main-grid big" id="serious"></div>
       <div class="sec-label"><span>Ком'юніті номінації</span><em class="decider-mini">Претендентів висувають гравці, переможця обирають голосуванням</em></div>
       <div class="main-grid" id="community"></div>
-      <div class="sec-label"><span>Також на ефірі</span><em class="decider-mini">Live-номінації і бонусні статистичні</em></div>
+      <div class="sec-label"><span>Також на ефірі</span><em class="decider-mini">Квіз, конкурс ставок і бонусні статистичні</em></div>
       <div class="main-grid three" id="fixed"></div>
       <div class="inf-head">
         <p><b>Nomination Week</b> — висуваєш претендентів у кожній ком'юніті номінації. Потім — ком'юніті голосування за переможців.</p>
@@ -886,10 +885,10 @@ $('#blocks').innerHTML = BLOCKS.map((b, i) => `
   </article>${i === 0 ? '<div class="duo-join" aria-hidden="true"><span>→</span></div>' : ''}`).join('');
 
 /* --- номінації --- */
-const nomCard = n => { const t = el('article', { class:'tile' + (n.live ? ' live' : '') }), info = n.info || n.text;
+const nomCard = n => { const t = el('article', { class:'tile' }), info = n.info || n.text;
   t.innerHTML = `${n.pop || (info && info !== n.for) ? `<button class="tile-info" type="button" aria-label="Детальніше про ${esc(n.name)}">i</button>
     <div class="tile-pop" role="tooltip">${n.pop || esc(info)}</div>` : ''}
-    <div class="t-text">${n.live ? '<span class="live-tag">● Live</span>' : ''}<h3>${esc(n.name)}</h3><p class="for">${esc(n.for)}</p></div>
+    <div class="t-text"><h3>${esc(n.name)}</h3><p class="for">${esc(n.for)}</p></div>
     <span class="glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[n.icon] || ''}</svg></span>`;
   if (t.querySelector('.tile-info')) t.querySelector('.tile-info').addEventListener('click', e => { e.stopPropagation(); const on = !t.classList.contains('pop-open');
     document.querySelectorAll('.tile.pop-open').forEach(x => x.classList.remove('pop-open')); t.classList.toggle('pop-open', on); });
@@ -906,7 +905,7 @@ $('#legend').innerHTML = `<article class="legend">
 </article>`;
 $('#serious').append(...SERIOUS.filter(n => n.show).map(nomCard));
 $('#community').append(...COMMUNITY.map(nomCard));
-$('#fixed').append(...FIXED.map(nomCard), nomCard({ name:'Бонусні статистичні', icon:'bars', for:STAT_MORE.map(n => n.name).join(' · '),
+$('#fixed').append(...FIXED.map(nomCard), nomCard({ name:'Бонусні статистичні', icon:'bars', for:`${STAT_MORE.length} номінацій за даними року`,
   pop:`<ul class="pop-list">${STAT_MORE.map(n => `<li><b>${esc(n.name)}</b> — ${esc(n.text)}</li>`).join('')}</ul>` }));
 document.querySelectorAll('.car-block').forEach(blk => {
   const list = STAT_MORE;
