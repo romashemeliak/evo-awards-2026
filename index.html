@@ -461,10 +461,14 @@ footer a:hover{color:var(--text)}
 .period-badge .cal{width:18px;height:18px;color:var(--acc);flex:none}
 .main-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .main-grid.big{grid-template-columns:repeat(4,1fr)}
-.year-gears{display:flex;align-items:center;gap:4px;margin-top:28px;color:var(--acc);font:700 15px/1 Manrope,sans-serif;letter-spacing:.06em}
+.year-wip{display:flex;align-items:center;gap:24px;margin-top:32px;max-width:760px;padding:24px 28px;border-radius:var(--r-panel,20px);border:1px dashed rgba(217,164,65,.45);background:rgba(217,164,65,.05)}
+.year-wip b{display:block;font:700 18px/1.25 Unbounded,sans-serif;color:var(--acc)}
+.year-wip p{margin-top:8px;font-size:15px;line-height:1.55;color:var(--muted)}
+@media(max-width:560px){.year-wip{flex-direction:column;align-items:flex-start;gap:14px;padding:20px}}
+.year-gears{display:flex;align-items:center;gap:4px;flex:none;color:var(--acc)}
 .year-gears svg{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linejoin:round}
 .year-gears .g1{width:40px;height:40px;animation:spin 6s linear infinite}
-.year-gears .g2{width:28px;height:28px;margin:18px 10px 0 -8px;animation:spin 4s linear infinite reverse}
+.year-gears .g2{width:28px;height:28px;margin:18px 0 0 -8px;animation:spin 4s linear infinite reverse}
 .year-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:24px}
 .ystat{display:flex;flex-direction:column;gap:8px;padding:20px 22px;border-radius:16px;border:1px dashed rgba(217,164,65,.35);background:rgba(255,255,255,.02)}
 .ylab{font:700 16px/1.2 Unbounded,sans-serif}
@@ -678,7 +682,11 @@ footer a:hover{color:var(--text)}
   <div class="wrap">
     <div class="kicker">12 грудня</div>
     <h2>Підсумки року<br>в цифрах</h2>
-    <div class="year-gears" aria-hidden="true"><svg class="g1" viewBox="0 0 24 24"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><svg class="g2" viewBox="0 0 24 24"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Calculating…</span></div>
+    <div class="year-wip">
+      <div class="year-gears" aria-hidden="true"><svg class="g1" viewBox="0 0 24 24"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></div>
+      <div><b>Відкриється 12 грудня</b>
+        <p>Цифри за Рік EVO 2026 зараз рахуються: рік завершується 30 листопада, після цього дані перевіряються. Повна статистика з'явиться тут 12 грудня.</p></div>
+    </div>
     <div class="year-grid" id="year-grid" hidden></div>   <!-- метрики приховані до появи даних -->
   </div>
 </section>
