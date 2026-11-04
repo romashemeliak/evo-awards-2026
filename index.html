@@ -647,7 +647,7 @@ const POLLS = [
   { id:'nominate', opens:'2026-11-16', closes:'2026-11-22', title:'Nomination Week', engine:'own',
     text:'Висуваєш претендентів у кожній ком\'юніті номінації.',
     asks:['Претенденти','Коротко — чому'],
-    form:[ { id:'nominees', type:'nominate', optional:false, title:'Кого висуваєш', hint:'Можна заповнити лише ті номінації, де маєш кандидата. Висувати можна будь-кого: гравців, тренерів, адмінів — і себе.', items:'INFORMAL' } ] },
+    form:[ { id:'nominees', type:'nominate', optional:false, title:'Кого висуваєш', hint:'Можна заповнити лише ті номінації, де маєш кандидата. Для Fold і Hand of the Year — посилання на допис з рукою на нашому Discord-сервері. Висувати можна будь-кого: гравців, тренерів, адмінів — і себе.', items:'INFORMAL' } ] },
   { id:'final', opens:'2026-11-23', closes:'2026-11-29', title:'Голосування за переможців', engine:'own', bets:true,
     text:'Обираємо переможців ком\'юніті номінацій серед претендентів шортлисту — і ставимо фішки на тих, хто переможе.',
     asks:['Переможець у кожній номінації'] },
@@ -716,19 +716,20 @@ const INFORMAL = [
   { score:8,   ico:'🍀', kind:'stat', name:'Run Good', text:'Найбільше везіння за рік: результат вище за all-in EV.' },
   { score:8,   ico:'🧊', kind:'stat', name:'Cooler King', text:'Найменше везіння за рік: результат нижче за all-in EV.' },
   { score:6.5, ico:'🛟', kind:'vote', name:'Техпідтримка року', for:'Практична допомога гравцям', icon:'help', text:'Практична допомога: розбереться з софтом, румами, налаштуваннями й організаційними питаннями.' },
-  { score:6.5, ico:'🛑', kind:'vote', name:'Fold of the Year', for:'Найкращий фолд року', icon:'fold', text:'Найкращий фолд року.' },
+  { score:6.5, ico:'🛑', kind:'vote', name:'Fold of the Year', for:'Найкращий фолд року', icon:'fold', link:true, text:'Найкращий фолд року.' },
   { score:6,   ico:'👑', kind:'stat', name:'Late EV King', text:'Найкраща гра на пізніх стадіях: найвищий EV на рівнях 9+ за рік.' },
   { score:6,   ico:'🎯', kind:'stat', name:'Total EV Prince', text:'Найвищий загальний EV за рік — найкращі рішення незалежно від везіння.' },
   { score:6,   ico:'💬', kind:'vote', name:'Активіст року', for:'Рухає життя EVO', icon:'chat', text:'Рухає життя EVO: найпомітніший у чатах, войсах та івентах.' },
   { score:6,   ico:'💥', kind:'stat', name:'Занос року', text:'Найбільший разовий виграш за рік.' },
   { score:5.5, ico:'📈', kind:'stat', name:'Камбек року', text:'Найглибша просадка — і новий максимум після неї.' },
-  { score:5,   ico:'🃏', kind:'vote', name:'Hand of the Year', for:'Найкращий розіграш року', icon:'cards', text:'Найкращий розіграш року — за рішення, не за розмір банку.' },
+  { score:5,   ico:'🃏', kind:'vote', name:'Hand of the Year', for:'Найкращий розіграш року', icon:'cards', link:true, text:'Найкращий розіграш року — за рішення, не за розмір банку.' },
 ].sort((a, b) => b.score - a.score);
 /* Ком'юніті номінації — kind:'vote': претендентів висувають гравці (Nomination Week), переможця обирають голосуванням, на них ставки.
    kind:'stat' — переможець за статистикою року, показуються в блоці статистичних. */
 const COMMUNITY = INFORMAL.filter(n => n.kind === 'vote'), STAT_MORE = INFORMAL.filter(n => n.kind === 'stat');
 POLLS.forEach(p => (p.form || []).forEach(q => { if (q.items !== 'INFORMAL') return;
-  q.notes = Object.fromEntries(COMMUNITY.map(n => [n.name, n.text])); q.items = COMMUNITY.map(n => n.name); }));
+  q.notes = Object.fromEntries(COMMUNITY.map(n => [n.name, n.text])); q.items = COMMUNITY.map(n => n.name);
+  q.links = COMMUNITY.filter(n => n.link).map(n => n.name); }));   // link:true — висування лише з посиланням на допис у нашому Discord
 
 /* Номінанти — заповнюється після шортлисту.
    Формат: { 'Назва номінації': [ {nick, avatar, rank, abi, distance, bestCash, fact} ] }

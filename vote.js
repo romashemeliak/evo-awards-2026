@@ -258,6 +258,7 @@ async function renderOwnPoll(card, p) {
   });
 }
 
+const DISCORD_POST = /^https:\/\/(?:(?:ptb|canary)\.)?discord(?:app)?\.com\/channels\/\d+\/\d+\/\d+\/?$/;   // посилання на повідомлення
 const noteOf = (q, o) => q.notes && q.notes[o] ? `<small class="c-note">${esc(q.notes[o])}</small>` : '';
 
 function qHtml(q, val) {
@@ -274,7 +275,9 @@ function qHtml(q, val) {
   if (q.type === 'nominate') return `<fieldset class="q nominate" data-q="${q.id}">${head}<div class="nom-grid">${q.items.map(it => { const x = (v || {})[it] || {};
     return `<div class="nom-row" data-item="${esc(it)}"><span class="nom-name">${esc(it)}${noteOf(q, it)}</span>
       <input class="who" list="roster-all" placeholder="Кого висуваєш" value="${esc(x.who || '')}" maxlength="60">
-      <input class="why" placeholder="Коротко — чому" value="${esc(x.why || '')}" maxlength="300"></div>`; }).join('')}</div></fieldset>`;
+      ${(q.links || []).includes(it)
+        ? `<input class="link-in" type="url" inputmode="url" placeholder="Посилання на допис у Discord" value="${esc(x.link || '')}" maxlength="300">`
+        : `<input class="why" placeholder="Коротко — чому" value="${esc(x.why || '')}" maxlength="300">`}</div>`; }).join('')}</div></fieldset>`;
   return '';
 }
 
@@ -292,9 +295,12 @@ function collect(form, p) {
     else if (q.type === 'multi') { const c = [...fs.querySelectorAll('input:checked')].map(x => x.value); if (c.length) out[q.id] = c; }
     else if (q.type === 'text') { const t = fs.querySelector('textarea').value.trim(); if (t) out[q.id] = t; }
     else if (q.type === 'nominate') { const m = {};
-      for (const row of fs.querySelectorAll('.nom-row')) { const who = row.querySelector('.who').value.trim(), why = row.querySelector('.why').value.trim();
-        if (!who) continue;
-        m[row.dataset.item] = why ? { who, why } : { who }; }
+      for (const row of fs.querySelectorAll('.nom-row')) { const who = row.querySelector('.who').value.trim(), li = row.querySelector('.link-in');
+        const why = li ? '' : row.querySelector('.why').value.trim(), link = li ? li.value.trim() : '';
+        if (!who && !link) continue;
+        if (li && !DISCORD_POST.test(link)) return { error: `«${row.dataset.item}»: встав посилання на допис з рукою на нашому Discord-сервері (Копіювати посилання на повідомлення).` };
+        if (!who) return { error: `«${row.dataset.item}»: вкажи, хто зіграв цю руку.` };
+        m[row.dataset.item] = link ? { who, link } : why ? { who, why } : { who }; }
       if (Object.keys(m).length) out[q.id] = m; }
     if (!q.optional && out[q.id] === undefined) return { error: `Заповни: «${q.title}».` };
   }
