@@ -58,7 +58,7 @@ function mockBackend(players) {
   if (!db) {
     const names = players.map(p => p.nick);
     const pick = (k, n) => Array.from({ length: n }, (_, i) => names[(k * 7 + i * 13) % names.length]);
-    const noms = ['Блог року', 'EVO ♥', 'Рятівник року', 'Fold of the Year', 'Always Online', 'Hand of the Year', 'Petfluencer', 'Meme Lord'];
+    const noms = ['Блог року', 'Серце EVO', 'Fold of the Year', 'Техпідтримка року', 'Активіст року', 'Hand of the Year'];
     db = { budget: 1000, me: null, signedIn: false, answers: {}, bets: [],
       roster: players.map(p => ({ player: p.nick, team: p.team })),
       markets: [...noms.map((t, k) => ({ id: 'm' + (k + 1), title: t, ord: k, winner: null, options: pick(k, 4 + (k % 2)) })),
@@ -203,7 +203,7 @@ function renderAuthBox() {
 }
 /* Ролі учасника (обирає при першому вході) і хто голосує в якому опитуванні — як polls.roles у schema.sql. */
 const ROLES = { ADMIN: 'Адмін', EVO: 'EVO', REVO: 'REVO', FRIEND: 'Друг' };
-const POLL_ROLES = { prizes: ['ADMIN', 'EVO', 'REVO'], noms: ['ADMIN', 'EVO', 'REVO'], nominate: ['EVO', 'REVO'], final: ['ADMIN', 'EVO', 'REVO'] };
+const POLL_ROLES = { prizes: ['ADMIN', 'EVO', 'REVO'], nominate: ['EVO', 'REVO'], final: ['ADMIN', 'EVO', 'REVO'] };
 const LUCKY_TEAMS = ['EVO', 'REVO'];   // EVO Lucky Gambler — лише гравці; адміни, тренери й друзі ставлять, але не в розіграші
 const canVote = (poll, role) => !POLL_ROLES[poll] || POLL_ROLES[poll].includes(role);
 const teamLabel = t => ROLES[t] || (t === 'STAFF' ? 'Адмін' : t);
@@ -318,8 +318,7 @@ async function renderFinal(card, p) {
   let markets, pools, mine;
   try { [markets, pools, mine] = await Promise.all([Vote.api.markets(), Vote.api.pools(), Vote.api.myBets()]); }
   catch (x) { slot.innerHTML = `<div class="form-empty">${esc(errText(x))}</div>`; return; }
-  // test* — у тестовому блоці; testf* — тестовий шортлист у «Голосуванні за переможців» до 08.11
-  markets = markets.filter(m => p.id === 'test' ? m.id.startsWith('test') && !m.id.startsWith('testf') : !m.id.startsWith('test') || m.id.startsWith('testf'));
+  markets = markets.filter(m => !m.id.startsWith('test'));   // тестові номінації з бази не показуємо
   const canBet = Vote.me.can_bet !== false, voteHere = canVote(p.id, Vote.me.team);   // друзі — лише ставки, без голосу
   if (!markets.length) { slot.innerHTML = `<div class="form-empty">Шортлист з'явиться тут на старті блоку — анонс буде в Discord.</div>`; return; }
   const votes = (Vote.answers[p.id] && Vote.answers[p.id].payload && Vote.answers[p.id].payload.votes) || {};
