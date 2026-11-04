@@ -59,7 +59,7 @@ function mockBackend(players) {
   if (!db) {
     const names = players.map(p => p.nick);
     const pick = (k, n) => Array.from({ length: n }, (_, i) => names[(k * 7 + i * 13) % names.length]);
-    const noms = ['Блог року', 'Серце EVO', 'Харизма EVO', 'Тренер року', 'Фолд року'];
+    const noms = ['Найкращий блог', 'Серце EVO', 'Харизма EVO', 'Тренер року', 'Фолд року'];
     db = { budget: 1000, me: null, signedIn: false, answers: {}, bets: [],
       roster: players.map(p => ({ player: p.nick, team: p.team })),
       markets: [...noms.map((t, k) => ({ id: 'm' + (k + 1), title: t, ord: k, winner: null, options: pick(k, 4 + (k % 2)) })),
