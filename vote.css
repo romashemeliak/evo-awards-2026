@@ -83,6 +83,12 @@
 .sticky-save{position:sticky;bottom:10px;z-index:3;padding:12px;border-radius:12px;background:color-mix(in srgb,var(--bg-2) 92%,transparent);border:1px solid var(--line);backdrop-filter:blur(6px)}
 
 .board-card{margin-top:28px;padding:clamp(16px,3vw,26px);border:1px solid rgba(217,164,65,.35);border-radius:var(--radius);background:linear-gradient(160deg,rgba(217,164,65,.07),var(--bg-2) 55%)}
+.lb tr.lb-row{cursor:pointer}
+.lb tr.lb-row:hover td{background:rgba(217,164,65,.06)}
+.lb .lb-det td{background:var(--panel,rgba(0,0,0,.18));white-space:normal}
+.lb-det ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:13px}
+.lb-det .plus-c{color:var(--green)}
+.lb-det .minus-c{color:#ff6b6f}
 .lb-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
 .lb-head h3{font:700 clamp(20px,3vw,26px)/1.2 Unbounded,sans-serif;margin-top:4px}
 .board-wrap{margin-top:14px;max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:12px}

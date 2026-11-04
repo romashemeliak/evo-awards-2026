@@ -501,7 +501,7 @@ footer a:hover{color:var(--text)}
     <h1>EVO Awards<span class="yr">2026</span></h1>
     <div class="hero-grid">
       <div class="hero-text">
-        <p class="sub">Онлайн-церемонія для <strong>гравців і команди EVO</strong>. Відзначаємо ріст, стабільність і людей, завдяки яким Еволюція така сильна, як сьогодні. Нагороду, формат вечора і переможців ком'юніті номінацій визначаємо разом.</p>
+        <p class="sub">Онлайн-церемонія для <strong>гравців і команди EVO</strong>. Відзначаємо ріст, стабільність і людей, завдяки яким Еволюція така сильна, як сьогодні. Нагороди, формат вечора і переможців ком'юніті номінацій визначаємо разом.</p>
       <div class="road-wrap"><h3 class="road-h">Календар голосувань</h3>
         <div class="road" id="road" aria-label="Шлях до EVO Awards"></div></div>
       </div>
@@ -542,9 +542,9 @@ footer a:hover{color:var(--text)}
       <div id="legend"></div>
       <div class="sec-label"><span>Статистичні номінації</span><em class="decider-mini">Переможець визначається на основі статистики</em></div>
       <div class="main-grid big" id="serious"></div>
-      <div class="sec-label"><span>Ком'юніті номінації</span><em class="decider-mini">Претендентів висувають гравці, переможця обирають голосуванням</em></div>
+      <div class="sec-label"><span>Ком'юніті номінації</span><em class="decider-mini">Претендентів висувають учасники, переможця обирають голосуванням</em></div>
       <div class="main-grid" id="community"></div>
-      <div class="sec-label"><span>Також на ефірі</span><em class="decider-mini">Квіз, конкурс ставок і бонусні статистичні</em></div>
+      <div class="sec-label"><span>Також на ефірі</span><em class="decider-mini">Квіз, конкурс ставок і бонусні статистичні номінації</em></div>
       <div class="main-grid three" id="fixed"></div>
       <div class="inf-head">
         <p><b>Nomination Week</b> — висуваєш претендентів у кожній ком'юніті номінації. Потім — ком'юніті голосування за переможців.</p>
@@ -574,18 +574,17 @@ footer a:hover{color:var(--text)}
       <div class="step"><i>04</i><b>Підсумки на ефірі</b><p>Після оголошення переможців у всіх номінаціях виграші надійдуть на твій баланс, а за підсумками з'явиться лідерборд.</p></div>
     </div>
     <div class="bet-example"><b>Приклад</b><p>У номінації поставили 10&nbsp;000 фішок, з них 2&nbsp;000 — на того, хто переміг. Ти поставив на нього 200 — отримаєш 200 / 2&nbsp;000 × 10&nbsp;000 = <strong>1&nbsp;000 фішок</strong>.</p></div>
-    <div class="bet-example lucky"><b>EVO Lucky Gambler</b><p>Ставити можуть усі: гравці, адміни, тренери й друзі школи. Номінацію EVO Lucky Gambler отримує гравець EVO або REVO з найбільшим балансом після ефіру — адміни, тренери й друзі в розіграші не беруть участі.</p></div>
+    <div class="bet-example lucky"><b>Lucky Gambler</b><p>Ставити можуть усі: гравці, адміни, тренери й друзі школи. Номінацію Lucky Gambler отримує гравець EVO або REVO з найбільшим балансом після ефіру — адміни, тренери й друзі в розіграші не беруть участі.</p></div>
 
     <h3 class="rules-sub">Як рахується статистика</h3>
     <div class="rules">
       <div class="rule"><b>Рік EVO</b><p>1 грудня 2025 — 30 листопада 2026.</p></div>
-      <div class="rule"><b>Лише турніри в складі EVO</b><p>Рахуються турніри, зіграні у складі EVO, за тими самими правилами, що й на перегляді рангів.</p></div>
-      <div class="rule"><b>Допуск</b><p>Від 2&nbsp;000 турнірів за рік, зіграних у складі EVO (ре-ентрі рахуються). Без порогу — номінації, де дистанція не важлива, наприклад Top Profit.</p></div>
-      <div class="rule"><b>Голосування і висування</b><p>Один учасник — один голос, вхід через Discord. Претендентів висувають гравці EVO і REVO — можна і себе.</p></div>
+      <div class="rule"><b>Лише турніри в складі EVO</b><p>Рахуються турніри, зіграні у складі EVO.</p></div>
+      <div class="rule"><b>Допуск</b><p>Від 2&nbsp;000 турнірів за рік, зіграних у складі EVO. Без порогу — номінації, де дистанція не важлива, наприклад Топ Profit.</p></div>
+      <div class="rule"><b>Голосування і висування</b><p>Один учасник — один голос, вхід через Discord.</p></div>
     </div>
 
     <div class="faq">
-      <details><summary>Мій нік уже зайнятий. Що робити?</summary><p>Напиши адміну в Discord — перевіримо і виправимо.</p></details>
       <details><summary>Що отримають переможці?</summary><p>Це вирішуєте ви — <a href="#poll-prizes" data-poll="prizes" style="color:var(--acc)">проголосуй в опитуванні про нагороди</a>. Формат нагород визначиться за підсумками опитування, деталі будуть оголошені разом зі шортлистом.</p></details>
       <details><summary>Мене не буде на ефірі. Що робити?</summary><p>Запис буде. Але EVO Wiki визначається грою наживо — її можна виграти лише на ефірі.</p></details>
     </div>
@@ -638,15 +637,15 @@ const POLLS = [
   { id:'prizes', opens:'2026-11-09', closes:'2026-11-15', title:'Нагорода і формат', engine:'own',
     text:'Що отримають переможці і яким буде вечір: хто дивиться ефір разом з EVO і що робимо на афтерпаті.',
     asks:['Нагорода','Формат вечора','Афтерпаті'],
-    form:[ { id:'prize', type:'single', title:'Що ти хотів би отримати, якщо переможеш?', options:['Класичний кубок або статуетку','Щось практичне (мерч, софт, сертифікат, інші колекційні подарунки)','Мені не принципово'] },
+    form:[ { id:'prize', type:'single', title:'Що ти хотів би отримати, якщо переможеш?', options:['Класичний кубок або статуетку','Щось практичне (мерч, софт, сертифікат, інше — вкажи свій варіант нижче)','Мені не принципово'] },
            { id:'prize_note', type:'text', optional:true, title:'Свій варіант нагороди або коментар', rows:2 },
            { id:'format', type:'single', title:'Яким має бути вечір?', options:['Камерним — лише для гравців і команди','Близькі можуть дивитися нагородження, афтерпаті — лише для команди','Близькі можуть дивитися нагородження і долучитися до афтерпаті','Мені не принципово'] },
-           { id:'after', type:'multi', optional:true, title:'Що цікаво на афтерпаті', options:['Тематичні кімнати','Тімбілдинг','Настільні ігри','Кіберспорт','Просто поговорити'] },
-           { id:'evening_note', type:'text', optional:true, title:'Що варто врахувати у вечорі?', rows:2 } ] },
+           { id:'after', type:'multi', optional:true, title:'Активність на афтерпаті', options:['Настільні ігри','Тімбілдинг, спілкування','Комп\'ютерні ігри','Інше'] },
+           { id:'evening_note', type:'text', optional:true, title:'Свій варіант афтерпаті або коментар', rows:2 } ] },
   { id:'nominate', opens:'2026-11-16', closes:'2026-11-22', title:'Nomination Week', engine:'own',
     text:'Висуваєш претендентів у кожній ком\'юніті номінації.',
     asks:['Претенденти','Коротко — чому'],
-    form:[ { id:'nominees', type:'nominate', optional:false, title:'Кого висуваєш', hint:'Можна заповнити лише ті номінації, де маєш кандидата. Для Fold і Hand of the Year — посилання на допис з рукою на нашому Discord-сервері. Висувати можна будь-кого: гравців, тренерів, адмінів — і себе.', items:'INFORMAL' } ] },
+    form:[ { id:'nominees', type:'nominate', optional:false, title:'Кого висуваєш', hint:'Можна заповнити лише ті номінації, де маєш кандидата. Для Фолду і Роздачі року — посилання на допис з роздачею на Discord-сервері. Висувати можна будь-кого: гравців, тренерів, адмінів.', items:'INFORMAL' } ] },
   { id:'final', opens:'2026-11-23', closes:'2026-11-29', title:'Ком\'юніті голосування', engine:'own', bets:true,
     text:'Обираємо переможців ком\'юніті номінацій серед претендентів шортлисту — і ставимо фішки на тих, хто переможе.',
     asks:['Переможець у кожній номінації'] },
@@ -691,11 +690,11 @@ const ICONS = {
   abi:'<path d="M12 20V5"/><path d="M6 11l6-6 6 6"/>',
 };
 const SERIOUS = [
-  { show:true, name:'Top Profit', icon:'profit', for:'Найбільший прибуток року', who:'Статистика',
+  { show:true, name:'Топ Profit', icon:'profit', for:'Найбільший прибуток року', who:'Статистика',
     info:'Сума виграшів у турнірах, зіграних у складі EVO за рік: 1 грудня 2025 — 30 листопада 2026.' },
-  { show:true, name:'Top ROI', icon:'roi', for:'Найвища прибутковість року', who:'Статистика',
+  { show:true, name:'Топ ROI', icon:'roi', for:'Найвища прибутковість року', who:'Статистика',
     info:'Найвищий ROI серед гравців EVO, які зіграли за рік щонайменше 2000 турнірів.' },
-  { show:true, name:'Професіонал року', icon:'pro', for:'Найпрофесійніший підхід до гри', who:'Статистика',
+  { show:true, name:'Покер Pro', icon:'pro', for:'Найпрофесійніший підхід до гри', who:'Статистика',
     info:'Найпрофесійніший підхід до гри за рік: виконана дистанція, якість рішень, регулярність і дисципліна сесій.' },
   { show:true, name:'ABIатор', icon:'abi', for:'Найшвидший ріст року', who:'Статистика',
     info:'Найбільше зростання за рангами за рік.' },
@@ -705,7 +704,7 @@ const SERIOUS = [
 /* FIXED — особливі номінації ефіру (без висування): квіз наживо і конкурс ставок. */
 const FIXED = [
   { icon:'quiz', name:'EVO Wiki', for:'Квіз наживо на ефірі', text:'Хто знає про EVO і покер найбільше. Переможця визначає квіз наживо на ефірі: EVO Lore, Poker Brain, Deep Wiki.', live:true },
-  { icon:'dice', name:'EVO Lucky Gambler', for:'Конкурс ставок', text:'Переможець конкурсу ставок серед гравців EVO і REVO: найбільше фішок після оголошення переможців.', live:true },
+  { icon:'dice', name:'Lucky Gambler', for:'Конкурс ставок', text:'Переможець конкурсу ставок серед гравців EVO і REVO: найбільше фішок після оголошення переможців.', live:true },
 ];
 /* Порядок — за оцінкою (score, 0–10), найвищі зверху. */
 const INFORMAL = [
@@ -714,14 +713,13 @@ const INFORMAL = [
   { score:8,   ico:'♥', kind:'vote', name:'Серце EVO', for:'Людина, з якою в EVO тепліше', icon:'heart', text:'Людина, з якою в EVO тепліше: підтримає, підбадьорить, вислухає.' },
   { score:8,   ico:'🍀', kind:'stat', name:'Run Good', text:'Найбільше везіння за рік: результат вище за all-in EV.' },
   { score:8,   ico:'🧊', kind:'stat', name:'Cooler King', text:'Найменше везіння за рік: результат нижче за all-in EV.' },
-  { score:6.5, ico:'🛟', kind:'vote', name:'Техпідтримка року', for:'Практична допомога гравцям', icon:'help', text:'Практична допомога: розбереться з софтом, румами, налаштуваннями й організаційними питаннями.' },
-  { score:6.5, ico:'🛑', kind:'vote', name:'Fold of the Year', for:'Найкращий фолд року', icon:'fold', link:true, text:'Найкращий фолд року.' },
-  { score:6,   ico:'👑', kind:'stat', name:'Late EV King', text:'Найкраща гра на пізніх стадіях: найвищий EV на рівнях 9+ за рік.' },
-  { score:6,   ico:'🎯', kind:'stat', name:'Total EV Prince', text:'Найвищий загальний EV за рік — найкращі рішення незалежно від везіння.' },
+  { score:6.5, ico:'🛑', kind:'vote', name:'Фолд року', for:'Найкращий фолд року', icon:'fold', link:true, text:'Найкращий фолд року.' },
+  { score:6,   ico:'👑', kind:'stat', name:'Late EV King', text:'Найкраща гра на пізніх стадіях: найвищий EV на рівнях 9+ за рік. На дистанції від 100 тис. лейтових рук за рік.' },
+  { score:6,   ico:'🎯', kind:'stat', name:'EV Prince', text:'Найвищий загальний EV за рік — найкращі рішення незалежно від везіння. На дистанції від 200 тис. рук за рік.' },
   { score:6,   ico:'💬', kind:'vote', name:'Активіст року', for:'Рухає життя EVO', icon:'chat', text:'Рухає життя EVO: найпомітніший у чатах, войсах та івентах.' },
   { score:6,   ico:'💥', kind:'stat', name:'Занос року', text:'Найбільший разовий виграш за рік.' },
   { score:5.5, ico:'📈', kind:'stat', name:'Камбек року', text:'Найглибша просадка — і новий максимум після неї.' },
-  { score:5,   ico:'🃏', kind:'vote', name:'Hand of the Year', for:'Найкращий розіграш року', icon:'cards', link:true, text:'Найкращий розіграш року — за рішення, не за розмір банку.' },
+  { score:5,   ico:'🃏', kind:'vote', name:'Роздача року', for:'Найкраща роздача року', icon:'cards', link:true, text:'Найкраща роздача року — за рішення, не за розмір банку.' },
 ].sort((a, b) => b.score - a.score);
 /* Ком'юніті номінації — kind:'vote': претендентів висувають гравці (Nomination Week), переможця обирають голосуванням, на них ставки.
    kind:'stat' — переможець за статистикою року, показуються в блоці статистичних. */
@@ -800,7 +798,7 @@ const VOTED_KEY = 'evo_awards_voted';
 const votedSet = () => { try { return new Set(JSON.parse(store(VOTED_KEY) || '[]')); } catch (e) { return new Set(); } };
 const hasVoted = id => votedSet().has(id);
 function markVoted(id) { const v = votedSet(); v.add(id); store(VOTED_KEY, JSON.stringify([...v]));
-  const chip = document.querySelector('#poll-' + id + ' .meta .chip'); if (chip) { chip.className = 'chip done'; chip.textContent = '✓ Ти проголосував'; }
+  const chip = document.querySelector('#poll-' + id + ' .meta .chip'); if (chip) { chip.className = 'chip done'; chip.textContent = '✓ Голос прийнято'; }
   const card = document.getElementById('poll-' + id), p = POLLS.find(x => x.id === id);
   if (card && p && !p.bets) { if (p.engine === 'own' && window.showOwnThanks) showOwnThanks(card, p, Vote.answers[p.id]); else showThanks(card, p); }
   renderFab(); }
@@ -808,7 +806,7 @@ function markVoted(id) { const v = votedSet(); v.add(id); store(VOTED_KEY, JSON.
 function showThanks(card, p) {
   const next = POLLS.find(x => x.id !== p.id && x.kind !== 'results' && x.status === 'open' && !hasVoted(x.id));
   card.querySelector('.slot').innerHTML = `<div class="thanks"><div class="ok">✓</div><div>
-    <h4>Голос враховано</h4><p>Дякуємо! Підсумки — на ефірі EVO Awards ${dLabel(EVENT_DATE)}.</p>
+    <h4>Дякуємо за голос!</h4><p>Підсумки — на ефірі EVO Awards ${dLabel(EVENT_DATE)}.</p>
     ${next ? `<div class="poll-actions"><a class="btn vote-btn" href="#poll-${next.id}" data-poll="${next.id}">Наступне: ${esc(next.title)} →</a></div>` : ''}
   </div></div>`;
 }
@@ -830,7 +828,9 @@ function renderFab() {
   else { fab.className = 'fab'; back.hidden = true; }
   fab.hidden = !(n) || voteInView;
 }
-POLLS.forEach(p => { const t = todayNum(); p.status = t < dayNum(p.opens) ? 'soon' : t > dayNum(p.closes) ? 'closed' : 'open'; });
+/* Тест «ніби вже відбувається»: до OPEN_ALL_UNTIL усі голосування відкриті (у базі — test_week.sql, після — clear_test.sql). */
+const OPEN_ALL_UNTIL = '2026-11-08', TEST_RUN = todayNum() <= dayNum(OPEN_ALL_UNTIL);
+POLLS.forEach(p => { const t = todayNum(); p.status = TEST_RUN ? 'open' : t < dayNum(p.opens) ? 'soon' : t > dayNum(p.closes) ? 'closed' : 'open'; });
 POLLS.forEach((p, i) => {
   const [cls, lbl] = p.kind === 'results' ? (p.status === 'soon' ? ['soon', 'Скоро'] : ['res', 'Результати']) : (STATUS[p.status] || STATUS.soon);
   // майбутні й пройдені — вузькі, щоб акцент був на відкритих
@@ -839,7 +839,7 @@ POLLS.forEach((p, i) => {
     <button class="poll-head" aria-expanded="false" aria-controls="pb-${p.id}">
       <span class="idx">${String(i + 1).padStart(2, '0')}</span>
       <span><h3>${esc(p.title)}</h3><p>${esc(p.text)}</p></span>
-      <span class="meta">${hasVoted(p.id) && p.kind !== 'results' ? '<span class="chip done">✓ Ти проголосував</span>' : `<span class="chip ${cls}">${lbl}</span>`}<span class="dl">${dLabel(p.opens).split(' ')[0]}–${dLabel(p.closes)}</span></span>
+      <span class="meta">${hasVoted(p.id) && p.kind !== 'results' ? '<span class="chip done">✓ Голос прийнято</span>' : `<span class="chip ${cls}">${lbl}</span>`}<span class="dl">${dLabel(p.opens).split(' ')[0]}–${dLabel(p.closes)}</span></span>
     </button>
     <div class="poll-body" id="pb-${p.id}">
       ${p.kind !== 'results' && p.results && p.status !== 'soon' ? `<div class="results-slot">${p.results}</div>` : ''}
@@ -860,7 +860,7 @@ function fillSlot(card, p) {
       : `<div class="form-empty">Результати з'являться тут ${dLabel(p.opens)} — анонс буде в Discord.</div>`; return; }
   if (p.engine === 'own' && p.status === 'open') { if (window.renderOwnPoll) renderOwnPoll(card, p); else card.querySelector('.slot').innerHTML = '<div class="form-empty">Підключаємось…</div>'; return; }
   if (hasVoted(p.id)) { showThanks(card, p); return; }
-  if (p.status !== 'open') { slot.innerHTML = `<div class="form-empty">${p.status === 'closed' ? 'Опитування завершено. Дякуємо за голос!' : 'Відкриється ' + dLabel(p.opens) + ' — анонс буде в Discord.'}</div>`; return; }
+  if (p.status !== 'open') { slot.innerHTML = `<div class="form-empty">${p.status === 'closed' ? 'Опитування завершено. Дякуємо за голос!' : 'Відкриється ' + dLabel(p.opens) + ' — анонс в Discord.'}</div>`; return; }
 }
 // перше відкрите опитування — розгорнуте одразу
 document.addEventListener('click', e => {
@@ -905,7 +905,7 @@ $('#legend').innerHTML = `<article class="legend">
 </article>`;
 $('#serious').append(...SERIOUS.filter(n => n.show).map(nomCard));
 $('#community').append(...COMMUNITY.map(nomCard));
-$('#fixed').append(...FIXED.map(nomCard), nomCard({ name:'Бонусні статистичні', icon:'bars', for:`${STAT_MORE.length} номінацій за даними року`,
+$('#fixed').append(...FIXED.map(nomCard), nomCard({ name:'Бонусні статистичні номінації', icon:'bars', for:`${STAT_MORE.length} номінацій за даними року`,
   pop:`<ul class="pop-list">${STAT_MORE.map(n => `<li><b>${esc(n.name)}</b> — ${esc(n.text)}</li>`).join('')}</ul>` }));
 document.querySelectorAll('.car-block').forEach(blk => {
   const list = STAT_MORE;

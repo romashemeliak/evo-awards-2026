@@ -46,6 +46,7 @@ function supabaseBackend() {
     myBets: () => sel(sb.from('bets').select('market_id,option,amount')),
     placeBets: (m, bets) => rpc('place_bets', { p_market: m, p_bets: bets }),
     leaderboard: () => rpc('leaderboard'),
+    betResults: () => rpc('bet_results'),
   };
 }
 
@@ -58,7 +59,7 @@ function mockBackend(players) {
   if (!db) {
     const names = players.map(p => p.nick);
     const pick = (k, n) => Array.from({ length: n }, (_, i) => names[(k * 7 + i * 13) % names.length]);
-    const noms = ['Блог року', 'Серце EVO', 'Fold of the Year', 'Техпідтримка року', 'Активіст року', 'Hand of the Year'];
+    const noms = ['Блог року', 'Серце EVO', 'Фолд року', 'Активіст року', 'Роздача року'];
     db = { budget: 1000, me: null, signedIn: false, answers: {}, bets: [],
       roster: players.map(p => ({ player: p.nick, team: p.team })),
       markets: [...noms.map((t, k) => ({ id: 'm' + (k + 1), title: t, ord: k, winner: null, options: pick(k, 4 + (k % 2)) })),
@@ -107,6 +108,13 @@ function mockBackend(players) {
         const st = staked(u.player); return { player: u.player, team: u.team, staked: st, payout: Math.round(payout * 100) / 100,
           balance: Math.round((db.budget - st + payout) * 100) / 100, won, settled }; });
       return A(rows.sort((a, b) => b.balance - a.balance || a.player.localeCompare(b.player))); },
+    betResults: () => { const out = [], users = [...(db.me ? [db.me] : []), ...db.others];
+      db.markets.filter(m => m.winner).forEach(m => { const bs = db.bets.filter(b => b.market_id === m.id); if (!bs.length) return;
+        const tot = bs.reduce((s, b) => s + b.amount, 0), onW = bs.filter(b => b.option === m.winner).reduce((s, b) => s + b.amount, 0);
+        bs.forEach(b => { const u = users.find(x => x.player === b.user) || { team:'' };
+          out.push({ player: b.user, team: u.team, market: m.title, ord: m.ord, option: b.option, staked: b.amount,
+            payout: Math.round((onW ? (b.option === m.winner ? b.amount * tot / onW : 0) : b.amount) * 100) / 100 }); }); });
+      return A(out); },
     // лише для тесту: оголосити переможців усіх номінацій
     _settle: () => { db.markets.forEach(m => { const ps = {}; db.bets.filter(b => b.market_id === m.id).forEach(b => ps[b.option] = (ps[b.option] || 0) + b.amount);
       m.winner = Object.keys(ps).sort((a, b) => ps[b] - ps[a])[0] || m.options[0]; }); save(db); },
@@ -151,7 +159,7 @@ async function refreshMe() {
   const v = votedSet();
   POLLS.filter(p => p.engine === 'own').forEach(p => { if (Vote.answers[p.id]) v.add(p.id); else v.delete(p.id);
     const chip = document.querySelector('#poll-' + p.id + ' .meta .chip'); if (!chip) return;
-    if (Vote.answers[p.id]) { chip.className = 'chip done'; chip.textContent = '✓ Ти проголосував'; }
+    if (Vote.answers[p.id]) { chip.className = 'chip done'; chip.textContent = '✓ Голос прийнято'; }
     else if (chip.classList.contains('done')) { const [c, l] = STATUS[p.status] || STATUS.soon; chip.className = 'chip ' + c; chip.textContent = l; } });
   store(VOTED_KEY, JSON.stringify([...v]));
   renderFab();
@@ -169,12 +177,12 @@ function renderNavAcct() {
   } else if (!Vote.me) {
     box.innerHTML = `<a class="btn sm" href="#vote">Заверши вхід</a><button class="link" type="button" data-act="signout">Вийти</button>`;
   } else {
-    const chips = Vote.me.can_bet === false ? '' : `<span class="acct-chips" title="Фішок вільно з ${fmtN(Vote.me.budget)}"><span class="coin sm"></span>${fmtN(Vote.me.budget - Vote.me.staked)}</span>`;
+    const chips = Vote.me.can_bet === false ? '' : `<span class="acct-chips" title="Фішок доступно з ${fmtN(Vote.me.budget)}"><span class="coin sm"></span>${fmtN(Vote.me.budget - Vote.me.staked)}</span>`;
     box.innerHTML = `<div class="acct"><button class="acct-pill" type="button" aria-haspopup="true" aria-label="Акаунт">
         <span class="acct-ava">${esc((Vote.me.player || '?').trim().charAt(0).toUpperCase())}</span>${chips || `<span class="acct-nick">${esc(Vote.me.player)}</span>`}<span class="caret">▾</span></button>
       <div class="acct-menu">
         <div class="row"><span class="acct-nick" title="Discord: ${esc(Vote.sess.name || '')}">${esc(Vote.me.player)}</span><span class="chip team ${Vote.me.team === 'REVO' ? 'revo' : ''}">${esc(teamLabel(Vote.me.team))}</span></div>
-        ${chips ? `<div class="row"><span>Фішок вільно</span>${chips}</div>` : ''}
+        ${chips ? `<div class="row"><span>Фішок доступно</span>${chips}</div>` : ''}
         <button class="link" type="button" data-act="signout">Вийти</button>
       </div></div>`;
     const acct = box.querySelector('.acct');   // на телефоні наведення немає — відкривається тапом
@@ -190,7 +198,7 @@ function renderAuthBox() {
   if (Vote.error) { box.innerHTML = `<div class="auth-row"><span class="muted">${esc(Vote.error)}</span></div>`; return; }
   if (!Vote.ready) { box.innerHTML = `<div class="auth-row"><span class="muted">Підключаємось…</span></div>`; return; }
   if (!Vote.sess.signedIn) {
-    box.innerHTML = `<div class="auth-row"><div><b>Увійди, щоб голосувати і ставити фішки</b><small>Вхід через Discord — щоб кожен гравець голосував один раз. Хто за кого голосував, не публікується.</small></div>
+    box.innerHTML = `<div class="auth-row"><div><b>Увійди, щоб голосувати і ставити фішки</b><small>Вхід через Discord, голосування анонімне.</small></div>
       <button class="btn discord" type="button" data-act="signin">${DISCORD_SVG}Увійти через Discord</button></div>`;
   } else if (!Vote.me) {
     box.innerHTML = `<div class="auth-row claim"><div><b>Останній крок входу: хто ти і твій нік</b><small>Discord: ${esc(Vote.sess.name || '')}. Роль і нік зберігаються один раз — при наступних входах їх не питаємо. Змінити може лише адмін.</small></div>
@@ -202,9 +210,9 @@ function renderAuthBox() {
   } else box.innerHTML = '';   // після входу акаунт і фішки — у верхній панелі
 }
 /* Ролі учасника (обирає при першому вході) і хто голосує в якому опитуванні — як polls.roles у schema.sql. */
-const ROLES = { ADMIN: 'Адмін', EVO: 'EVO', REVO: 'REVO', FRIEND: 'Друг' };
-const POLL_ROLES = { prizes: ['ADMIN', 'EVO', 'REVO'], nominate: ['EVO', 'REVO'], final: ['ADMIN', 'EVO', 'REVO'] };
-const LUCKY_TEAMS = ['EVO', 'REVO'];   // EVO Lucky Gambler — лише гравці; адміни, тренери й друзі ставлять, але не в розіграші
+const ROLES = { EVO: 'EVO', REVO: 'REVO', ADMIN: 'Адмін', FRIEND: 'Друг' };
+const POLL_ROLES = {};   // голосують і висувають усі учасники: гравці, адміни, тренери, друзі (polls.roles у базі — так само)
+const LUCKY_TEAMS = ['EVO', 'REVO'];   // Lucky Gambler — лише гравці; адміни, тренери й друзі ставлять, але не в розіграші
 const canVote = (poll, role) => !POLL_ROLES[poll] || POLL_ROLES[poll].includes(role);
 const teamLabel = t => ROLES[t] || (t === 'STAFF' ? 'Адмін' : t);
 const DISCORD_SVG = '<svg width="20" height="16" viewBox="0 0 71 55" aria-hidden="true"><path fill="currentColor" d="M60.1 4.9A58.5 58.5 0 0 0 45.6.4a40 40 0 0 0-1.8 3.7 54 54 0 0 0-16.2 0A40 40 0 0 0 25.8.4 58.4 58.4 0 0 0 11.3 4.9C2.1 18.6-.4 32 .8 45.2a58.9 58.9 0 0 0 18 9.1 43 43 0 0 0 3.8-6.3 38 38 0 0 1-6-2.9l1.5-1.1a42 42 0 0 0 35.8 0l1.5 1.1a38 38 0 0 1-6 2.9 43 43 0 0 0 3.8 6.3 58.7 58.7 0 0 0 18-9.1C72.6 30 68.8 16.7 60.1 4.9ZM23.7 37.1c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2 6.5 3.3 6.4 7.2c0 4-2.8 7.2-6.4 7.2Zm23.6 0c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2 6.5 3.3 6.4 7.2c0 4-2.8 7.2-6.4 7.2Z"/></svg>';
@@ -231,8 +239,8 @@ async function renderOwnPoll(card, p) {
   const gate = msg => { slot.innerHTML = `<div class="form-empty">${msg}</div>`; };
   if (!enabled()) return gate('Форма відкриється тут ' + dLabel(p.opens) + ' — анонс буде в Discord.');
   if (!Vote.ready) return gate(Vote.error ? esc(Vote.error) : 'Підключаємось…');
-  if (Vote.sess.signedIn && !Vote.me) return gate(`Заверши вхід <a href="#vote" class="inline-link">вгорі цього блоку</a>: обери роль і впиши нік.`);
-  if (!Vote.sess.signedIn) return gate(`Щоб проголосувати, <a href="#vote" class="inline-link">увійди через Discord</a> вгорі цього блоку.`);
+  if (Vote.sess.signedIn && !Vote.me) return gate(`Заверши вхід <a href="#vote" class="inline-link">вгорі блоку голосування</a>: обери роль і впиши нік.`);
+  if (!Vote.sess.signedIn) return gate(`Щоб проголосувати, <button type="button" class="link inline-link" data-act="signin">увійди через Discord</button>.`);
   const prev = Vote.answers[p.id];
   if (prev && !card.dataset.editing && !p.bets) return showOwnThanks(card, p, prev);
   if (!canVote(p.id, Vote.me.team) && !(p.bets && Vote.me.can_bet !== false)) return gate(p.id === 'nominate'
@@ -298,8 +306,8 @@ function collect(form, p) {
       for (const row of fs.querySelectorAll('.nom-row')) { const who = row.querySelector('.who').value.trim(), li = row.querySelector('.link-in');
         const why = li ? '' : row.querySelector('.why').value.trim(), link = li ? li.value.trim() : '';
         if (!who && !link) continue;
-        if (li && !DISCORD_POST.test(link)) return { error: `«${row.dataset.item}»: встав посилання на допис з рукою на нашому Discord-сервері (Копіювати посилання на повідомлення).` };
-        if (!who) return { error: `«${row.dataset.item}»: вкажи, хто зіграв цю руку.` };
+        if (li && !DISCORD_POST.test(link)) return { error: `«${row.dataset.item}»: встав посилання на допис з роздачею на Discord-сервері (Копіювати посилання на повідомлення).` };
+        if (!who) return { error: `«${row.dataset.item}»: вкажи, хто зіграв цю роздачу.` };
         m[row.dataset.item] = link ? { who, link } : why ? { who, why } : { who }; }
       if (Object.keys(m).length) out[q.id] = m; }
     if (!q.optional && out[q.id] === undefined) return { error: `Заповни: «${q.title}».` };
@@ -324,9 +332,9 @@ async function renderFinal(card, p) {
   let markets, pools, mine;
   try { [markets, pools, mine] = await Promise.all([Vote.api.markets(), Vote.api.pools(), Vote.api.myBets()]); }
   catch (x) { slot.innerHTML = `<div class="form-empty">${esc(errText(x))}</div>`; return; }
-  markets = markets.filter(m => !m.id.startsWith('test'));   // тестові номінації з бази не показуємо
+  markets = markets.filter(m => !m.id.startsWith('test') || (typeof TEST_RUN !== 'undefined' && TEST_RUN));   // тестовий шортлист — лише під час тесту
   const canBet = Vote.me.can_bet !== false, voteHere = canVote(p.id, Vote.me.team);   // друзі — лише ставки, без голосу
-  if (!markets.length) { slot.innerHTML = `<div class="form-empty">Шортлист з'явиться тут на старті блоку — анонс буде в Discord.</div>`; return; }
+  if (!markets.length) { slot.innerHTML = `<div class="form-empty">Шортлист з'явиться тут після Nomination Week — анонс буде в Discord.</div>`; return; }
   const votes = (Vote.answers[p.id] && Vote.answers[p.id].payload && Vote.answers[p.id].payload.votes) || {};
   const won = Object.fromEntries(markets.map(m => [m.id, !!m.winner]));
   const pool = {}, tot = {}; pools.filter(r => won[r.market_id]).forEach(r => { pool[r.market_id + '|' + r.option] = +r.pool; tot[r.market_id] = (tot[r.market_id] || 0) + +r.pool; });
@@ -335,7 +343,7 @@ async function renderFinal(card, p) {
   slot.innerHTML = `<div class="bet-head">
       <div><b>${!voteHere ? 'Ставки' : canBet ? 'Голос і ставки' : 'Голос'}</b><p class="hint">${!voteHere ? 'Голосують гравці й адміни школи, а ти можеш поставити фішки на того, хто, на твою думку, переможе.' : `${canBet ? '' : 'Для твого акаунта ставки вимкнені — лише голос. '}У кожній номінації обери, за кого голосуєш. Окремо можеш поставити фішки на того, хто, на твою думку, переможе — не обов'язково на того, за кого голосуєш.`}
       Банк номінації ділиться між тими, хто вгадав, пропорційно ставкам. Суми ставок інших учасників не видно до оголошення переможців.</p></div>
-      <div class="chips-bal big"${canBet ? '' : ' hidden'}><span class="coin"></span><b data-free>${fmtN(budget - Vote.me.staked)}</b><small>фішок вільно з ${fmtN(budget)}</small></div></div>
+      <div class="chips-bal big"${canBet ? '' : ' hidden'}><span class="coin"></span><b data-free>${fmtN(budget - Vote.me.staked)}</b><small>фішок доступно з ${fmtN(budget)}</small></div></div>
     <form class="own-form final${canBet ? '' : ' no-bets'}" novalidate>${markets.map(m => mkHtml(m, votes, pool, tot, my, canBet, voteHere)).join('')}
       <div class="poll-actions sticky-save"><button class="btn" type="submit">${!voteHere ? 'Зберегти ставки' : canBet ? 'Зберегти голос і ставки' : 'Зберегти голос'}</button><span class="form-msg"></span></div></form>`;
   const form = slot.querySelector('form');
@@ -400,14 +408,23 @@ async function renderBoard() {
   if (!settled && !MOCK) { box.hidden = true; return; }        // до оголошення переможців чужі ставки не показуємо
   box.hidden = false;
   const meP = Vote.me && Vote.me.player;
-  const top = rows.filter(r => r.staked > 0 || r.settled > 0);
+  const top = rows.filter(r => r.staked > 0 || r.settled > 0), budget = (Vote.me && Vote.me.budget) || 1000;
+  let det = {}; if (settled) try { (await Vote.api.betResults()).forEach(d => (det[d.player] = det[d.player] || []).push(d)); } catch (e) { det = {}; }
+  const detHtml = r => { const ds = det[r.player] || [], byM = {};
+    ds.forEach(d => { const k = d.market; byM[k] = byM[k] || { ord: d.ord, staked: 0, payout: 0, opts: [] }; byM[k].staked += +d.staked; byM[k].payout += +d.payout; byM[k].opts.push(`${fmtN(d.staked)} на ${esc(d.option)}`); });
+    const lines = Object.entries(byM).sort((a, b) => a[1].ord - b[1].ord).map(([m, x]) => { const net = Math.round(x.payout - x.staked);
+      return `<li><b>${esc(m)}</b>: ${x.opts.join(', ')} → отримав ${fmtN(Math.round(x.payout))} <span class="${net >= 0 ? 'plus-c' : 'minus-c'}">(${net >= 0 ? '+' : '−'}${fmtN(Math.abs(net))})</span></li>`; });
+    return `<ul>${lines.join('') || '<li>Ставок у номінаціях з переможцем немає.</li>'}<li>Не поставлено: <b>${fmtN(budget - r.staked)}</b> фішок</li></ul>`; };
   box.innerHTML = `<div class="lb-head"><div><div class="kicker">Фішки</div><h3>${settled ? 'Хто вгадав переможців' : 'Ставки на переможців'}</h3>
-      <p class="hint">${settled ? 'Баланс після оголошення переможців: невитрачені фішки + виграші. EVO Lucky Gambler — гравець EVO або REVO з найбільшим балансом.' : `Учасників зі ставками: ${top.length}. Переможців оголосимо на ефірі ${dLabel(EVENT_DATE)} — тоді тут з'явиться підсумок.`}</p></div>
+      <p class="hint">${settled ? 'Баланс після оголошення переможців: невитрачені фішки + виграші. Lucky Gambler — гравець EVO або REVO з найбільшим балансом.' : `Учасників зі ставками: ${top.length}. Переможців оголосимо на ефірі ${dLabel(EVENT_DATE)} — тоді тут з'явиться підсумок.`}</p></div>
       ${MOCK ? '<div class="poll-actions"><button class="btn ghost" type="button" id="mock-settle">Тест: оголосити переможців</button><button class="btn ghost" type="button" id="mock-reset">Тест: скинути дані</button></div>' : ''}</div>
-    ${top.length ? `<div class="board-wrap"><table class="lb"><thead><tr><th>#</th><th>Гравець</th><th>Команда</th><th class="r">${settled ? 'Баланс' : 'Вільно'}</th><th class="r">У ставках</th>${settled ? '<th class="r">Вгадано</th>' : ''}</tr></thead><tbody>
-      ${top.map((r, i) => `<tr class="${r.player === meP ? 'me' : ''}"><td>${i + 1}</td><td>${esc(r.player)}${LUCKY_TEAMS.includes(r.team) ? '' : ' <small class="muted">поза Lucky Gambler</small>'}</td><td><span class="chip team ${r.team === 'REVO' ? 'revo' : ''}">${esc(teamLabel(r.team))}</span></td>
-        <td class="r"><b>${fmtN(settled ? r.balance : r.balance)}</b></td><td class="r">${fmtN(r.staked)}</td>${settled ? `<td class="r">${r.won} з ${r.settled}</td>` : ''}</tr>`).join('')}
+    ${top.length ? `<div class="board-wrap"><table class="lb"><thead><tr><th>#</th><th>Нік</th><th>Роль</th><th class="r">${settled ? 'Баланс' : 'Доступно'}</th><th class="r">У ставках</th><th class="r">Не поставлено</th>${settled ? '<th class="r">Вгадано</th>' : ''}</tr></thead><tbody>
+      ${top.map((r, i) => `<tr class="lb-row ${r.player === meP ? 'me' : ''}" data-i="${i}"><td>${i + 1}</td><td>${esc(r.player)}${LUCKY_TEAMS.includes(r.team) ? '' : ' <small class="muted">поза Lucky Gambler</small>'}</td><td><span class="chip team ${r.team === 'REVO' ? 'revo' : ''}">${esc(teamLabel(r.team))}</span></td>
+        <td class="r"><b>${fmtN(r.balance)}</b></td><td class="r">${fmtN(r.staked)}</td><td class="r">${fmtN(budget - r.staked)}</td>${settled ? `<td class="r">${r.won} з ${r.settled}</td>` : ''}</tr>
+        ${settled ? `<tr class="lb-det" data-for="${i}" hidden><td colspan="7">${detHtml(r)}</td></tr>` : ''}`).join('')}
       </tbody></table></div>` : '<div class="form-empty">Ставок ще немає — стань першим.</div>'}`;
+  box.querySelectorAll('tr.lb-row').forEach(tr => tr.addEventListener('click', () => { const d = box.querySelector(`tr.lb-det[data-for="${tr.dataset.i}"]`); if (d) d.hidden = !d.hidden; }));
+  if (settled) { const h = box.querySelector('.lb-head .hint'); if (h) h.textContent += ' Натисни на рядок — деталі по номінаціях.'; }
   if (MOCK) { const s = document.getElementById('mock-settle'); if (s) s.onclick = () => { Vote.api._settle(); location.reload(); };
     const r = document.getElementById('mock-reset'); if (r) r.onclick = () => { Vote.api._reset(); location.reload(); }; }
 }
