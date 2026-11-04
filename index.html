@@ -98,27 +98,12 @@ section{padding:clamp(56px,9vw,110px) 0;position:relative}
 .hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
 
 .nav-date .cal{flex:none;color:var(--acc)}
-.now-card{margin-top:28px;max-width:560px;display:grid;gap:8px}
-.now-card:empty{display:none}
-.now-h{font:700 12px/1 Manrope,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--acc)}
-.now-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 14px;padding:14px 16px;border-radius:12px;border:1px solid rgba(217,164,65,.45);background:rgba(217,164,65,.08);text-decoration:none;color:var(--text);transition:background .15s}
-.now-row:hover{background:rgba(217,164,65,.16)}
-.now-row b{font-weight:700}
-.now-row span{grid-column:1;font-size:13px;color:var(--muted)}
-.now-row i{grid-column:2;grid-row:1/3;font-style:normal;font-weight:700;color:var(--acc)}
-.now-more{font-size:14px;color:var(--muted);text-decoration:underline;justify-self:start}
-.now-more:hover{color:var(--text)}
 .fold>summary{display:block;list-style:none;cursor:pointer;position:relative;padding-right:56px}
 .fold>summary::-webkit-details-marker{display:none}
 .fold>summary::after{content:"+";position:absolute;right:0;top:50%;transform:translateY(-50%);width:40px;height:40px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;font:500 22px/1 Manrope,sans-serif;color:var(--muted);transition:border-color .15s,color .15s}
 .fold>summary:hover::after{border-color:var(--text);color:var(--text)}
 .fold[open]>summary::after{content:"−"}
 .fold-hint{display:block;margin-top:12px;font-size:15px;color:var(--muted)}
-.road-fold{margin-top:clamp(36px,5vw,56px);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
-.road-fold>summary{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
-.road-fold .fold-t{font:700 15px/1.3 Unbounded,sans-serif}
-.road-fold .fold-now{font-size:14px;color:var(--muted)}
-.road-fold .road{margin-top:28px}
 .countdown{position:relative;overflow:hidden;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:26px 28px;border-radius:20px;border:1px solid rgba(217,164,65,.28);background:radial-gradient(120% 90% at 50% 0%,rgba(217,164,65,.16),transparent 60%),var(--card)}
 .countdown .label{font:700 11px/1 Manrope,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
 .countdown .what{display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line);font-size:14px;font-weight:700}
@@ -147,6 +132,17 @@ section{padding:clamp(56px,9vw,110px) 0;position:relative}
 .mile .date{display:block;margin-top:4px;font-size:13px;color:#d8cdbb}
 .mile p{margin-top:6px;font-size:13px;color:var(--muted)}
 .mile.done h3,.mile.done .date{color:var(--muted)}
+a.mile{display:block;text-decoration:none;color:inherit;border-radius:14px;padding:0 6px 12px;transition:background .15s}
+a.mile:hover{background:rgba(217,164,65,.06)}
+a.mile:hover h3{color:var(--acc)}
+.mile .go{display:inline-block;margin-top:8px;font-size:13px;font-weight:700;color:var(--muted)}
+.mile.cur .go,a.mile:hover .go{color:var(--acc)}
+.mile .mark{position:absolute;left:50%;top:-30px;transform:translateX(-50%);padding:4px 10px;border-radius:999px;background:var(--acc);color:#0b0c0c;font:800 10px/1 Manrope,sans-serif;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap}
+.mile.cur .dot{background:var(--acc);border-color:var(--acc);box-shadow:0 0 0 6px rgba(217,164,65,.2)}
+.mile.cur .when,.mile.cur h3{color:var(--acc)}
+.road-wrap{margin-top:28px;padding:22px 22px 10px;border:1px solid var(--line);border-radius:var(--radius);background:rgba(255,255,255,.02)}
+.road-h{font:700 15px/1.3 Unbounded,sans-serif}
+.road-wrap .road{margin-top:44px}
 @media(max-width:760px){
   .road{grid-template-columns:1fr;gap:22px;padding-left:34px}
   .road-track{left:15px;right:auto;top:8px;bottom:8px;width:4px;height:auto}
@@ -155,6 +151,9 @@ section{padding:clamp(56px,9vw,110px) 0;position:relative}
   .mile .dot{position:absolute;left:-28px;top:0;margin:0}
   .mile.final .dot{left:-32px;margin:0}
   .mile .when{margin-top:0}
+  a.mile{padding:0 0 8px}
+  .mile .mark{position:static;transform:none;display:inline-block;margin:0 8px 6px 0}
+  .road-wrap .road{margin-top:20px}
 }
 
 /* polls */
@@ -495,12 +494,11 @@ footer a:hover{color:var(--text)}
     <div class="hero-grid">
       <div class="hero-text">
         <p class="sub">Онлайн-церемонія для <strong>гравців і команди EVO</strong>. Відзначаємо ріст, стабільність і людей, завдяки яким Еволюція така сильна, як сьогодні. Нагороду, формат вечора і переможців ком'юніті номінацій визначаємо разом.</p>
-        <div class="now-card" id="now-card"></div>
+      <div class="road-wrap"><h3 class="road-h">Календар голосувань</h3>
+        <div class="road" id="road" aria-label="Шлях до EVO Awards"></div></div>
       </div>
       <div class="countdown" id="countdown" aria-live="polite"></div>
     </div>
-    <details class="fold road-fold"><summary><span class="fold-t">Календар голосувань</span><span class="fold-now" id="road-now"></span></summary>
-      <div class="road" id="road" aria-label="Шлях до EVO Awards"></div></details>
   </div>
 </section>
 
@@ -624,13 +622,13 @@ const EVENT_TIME = null; // напр. '19:00' — тоді з'явиться в 
 // Показувати картки номінантів (вмикаємо після оголошення шортлисту).
 const SHOW_NOMINEES = false;
 
-/* Шлях до ефіру. date — початок етапу (YYYY-MM-DD), until — кінець, якщо етап триває кілька днів.
+/* Календар голосувань. date — початок етапу (YYYY-MM-DD), until — кінець; poll — куди веде клік.
    Дати, окрім кінця періоду і ефіру, — робоча чернетка. */
 const MILESTONES = [
-  { date:'2026-11-09', until:'2026-11-15', title:'Блок 1', text:'Нагорода і вечір' },
-  { date:'2026-11-16', until:'2026-11-22', title:'Блок 2', text:'Nomination Week' },
-  { date:'2026-11-23', until:'2026-11-29', title:'Блок 3', text:'Голосування за переможців' },
-  { date:'2026-12-22', title:'EVO Awards', text:'Нагородження, ігри, афтерпаті', final:true },
+  { date:'2026-11-09', until:'2026-11-15', title:'Нагорода і вечір', poll:'prizes' },
+  { date:'2026-11-16', until:'2026-11-22', title:'Nomination Week', poll:'nominate' },
+  { date:'2026-11-23', until:'2026-11-29', title:'Голосування за переможців', poll:'final' },
+  { date:'2026-12-22', title:'EVO Awards', final:true },
 ];
 
 /* Опитування — усі власні (vote.js + Supabase); хто голосує — POLL_ROLES у vote.js і polls.roles у базі.
@@ -771,18 +769,19 @@ function renderRoad() {
     if (st === 'now') return m.until ? 'Зараз · ще ' + days(dayNum(m.until) - today + 1) : 'Сьогодні';
     return 'Через ' + days(s); };
   const span = m => m.until ? `${dLabel(m.date).split(' ')[0]}–${dLabel(m.until)}` : dLabel(m.date);
-  const cur = MILESTONES.find(m => state(m) === 'now') || MILESTONES.find(m => state(m) === 'next');
-  $('#road-now').textContent = cur ? (state(cur) === 'now' ? 'Зараз: ' : 'Далі: ') + cur.title + ' · ' + cur.text + ' · ' + when(cur).replace('Зараз · ', '') : '';
+  // позначка на календарі: те, що відкрито зараз, а якщо нічого — найближче наступне
+  const cur = MILESTONES.find(m => !m.final && state(m) === 'now') || MILESTONES.find(m => !m.final && state(m) === 'next');
   $('#road').style.setProperty('--n', MILESTONES.length);
   $('#road').style.setProperty('--pos', pos);
-  $('#road').innerHTML = `<div class="road-track"><i></i></div>` + MILESTONES.map(m =>
-    `<div class="mile ${state(m)}${m.final ? ' final' : ''}">
-       <span class="dot"></span>
+  $('#road').innerHTML = `<div class="road-track"><i></i></div>` + MILESTONES.map(m => {
+    const mark = m === cur ? (state(m) === 'now' ? 'Відкрито' : 'Наступне') : '';
+    const inner = `<span class="dot"></span>${mark ? `<span class="mark">${mark}</span>` : ''}
        <span class="when">${when(m)}</span>
        <h3>${esc(m.title)}</h3>
        <span class="date">${span(m)}</span>
-       <p>${esc(m.text)}</p>
-     </div>`).join('');
+       ${m.poll ? `<span class="go">${state(m) === 'now' ? 'Голосувати →' : state(m) === 'done' ? 'Підсумки →' : 'Детальніше →'}</span>` : ''}`;
+    const cls = `mile ${state(m)}${m.final ? ' final' : ''}${m === cur ? ' cur' : ''}`;
+    return m.poll ? `<a class="${cls}" href="#poll-${m.poll}" data-poll="${m.poll}">${inner}</a>` : `<div class="${cls}">${inner}</div>`; }).join('');
 }
 renderRoad(); setInterval(renderRoad, 60 * 60 * 1000);
 
@@ -822,7 +821,6 @@ function renderFab() {
     fab.innerHTML = `Наступне голосування через ${days(n.days)}`; delete back.dataset.poll; back.hidden = false; }
   else { fab.className = 'fab'; back.hidden = true; }
   fab.hidden = !(n) || voteInView;
-  if ($('#now-card') && $('#now-card').childElementCount) renderNow();
 }
 POLLS.forEach(p => { const t = todayNum(); p.status = t < dayNum(p.opens) ? 'soon' : t > dayNum(p.closes) ? 'closed' : 'open'; });
 POLLS.forEach((p, i) => {
@@ -865,15 +863,6 @@ document.addEventListener('click', e => {
 });
 if ('IntersectionObserver' in window) new IntersectionObserver(es => { voteInView = es[0].isIntersecting; renderFab(); }, { threshold: .15 }).observe($('#vote'));
 renderFab();
-/* Картка «Зараз відкрито» на першому екрані — щоб, повернувшись на сторінку, одразу бачити актуальне. */
-function renderNow() {
-  const open = POLLS.filter(p => p.kind !== 'results' && p.status === 'open'), n = nextVote();
-  $('#now-card').innerHTML = open.length
-    ? `<div class="now-h">Зараз відкрито</div>${open.slice(0, 3).map(p => `<a class="now-row" href="#poll-${p.id}" data-poll="${p.id}"><b>${esc(p.title)}</b><span>${hasVoted(p.id) ? '✓ ти проголосував' : 'до ' + dLabel(p.closes)}</span><i>→</i></a>`).join('')}
-       ${open.length > 3 ? `<a class="now-more" href="#vote">Ще ${open.length - 3} — у блоці голосування ↓</a>` : ''}`
-    : n && n.soon ? `<div class="now-h">Наступне голосування</div><a class="now-row" href="#vote"><b>${esc(n.soon.title)}</b><span>з ${dLabel(n.soon.opens)}</span><i>→</i></a>` : '';
-}
-renderNow();
 const firstOpen = document.querySelector('.poll.is-open .poll-head');
 if (firstOpen) firstOpen.click();
 
