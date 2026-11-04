@@ -236,7 +236,7 @@ async function renderOwnPoll(card, p) {
   const prev = Vote.answers[p.id];
   if (prev && !card.dataset.editing && !p.bets) return showOwnThanks(card, p, prev);
   if (!canVote(p.id, Vote.me.team) && !(p.bets && Vote.me.can_bet !== false)) return gate(p.id === 'nominate'
-    ? 'Претендентів висувають гравці EVO і REVO.' + (Vote.me.team === 'ADMIN' ? ' Голосування за переможців — з ' + dLabel((POLLS.find(x => x.id === 'final') || p).opens) + '.' : '')
+    ? 'Претендентів висувають гравці EVO і REVO.' + (Vote.me.team === 'ADMIN' ? ' Ком\'юніті голосування — з ' + dLabel((POLLS.find(x => x.id === 'final') || p).opens) + '.' : '')
     : 'Це опитування — для гравців і адмінів школи.');
   if (p.bets) return renderFinal(card, p);
   if (!Vote.roster.length && p.form.some(q => q.type === 'nominate')) Vote.roster = await Vote.api.roster();
