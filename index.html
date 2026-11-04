@@ -430,6 +430,10 @@ footer a:hover{color:var(--text)}
 .car-dots{display:flex;justify-content:center;gap:8px;margin-top:16px}
 .car-dots button{width:8px;height:8px;padding:0;border-radius:50%;border:0;background:var(--line);cursor:pointer}
 .car-dots button.on{background:var(--acc)}
+.sub-row em{font-style:normal;font-weight:500;letter-spacing:0;text-transform:none;margin-left:10px;color:var(--muted)}
+.car-block + .car-block{margin-top:22px}
+.choice-group{margin:14px 0 2px;font:700 12px/1 Manrope,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.choice-group:first-child{margin-top:4px}
 .sub-row{margin:0 0 10px;font:700 12px/1 Manrope,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .fixed-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
 @media(max-width:760px){.fixed-list{grid-template-columns:1fr}}
@@ -516,18 +520,29 @@ footer a:hover{color:var(--text)}
       <div id="legend"></div>
       <div class="sec-label"><span>Статистичні номінації</span><em class="decider-mini">Переможець визначається на основі статистики</em></div>
       <div class="main-grid" id="serious"></div>
-      <div class="sec-label"><span>Ком'юніті номінації</span><em class="decider-mini">Переможець визначається на основі голосування гравців та статистики</em></div>
+      <div class="sec-label"><span>Ком'юніті номінації</span><em class="decider-mini" id="pool-label">7 із них потраплять на ефір — обираєте ви</em></div>
       <p class="sub-row">Точно буде на ефірі</p>
       <div class="fixed-list" id="fixed"></div>
-      <p class="sub-row" id="pool-label">Обираєте ви</p>
-      <div class="car">
-        <button class="car-btn" type="button" data-dir="-1" aria-label="Попередні">←</button>
-        <div class="inf" id="informal"></div>
-        <button class="car-btn" type="button" data-dir="1" aria-label="Наступні">→</button>
+      <div class="car-block" data-kind="vote">
+        <p class="sub-row">За голосуванням <em>переможця обирають гравці</em></p>
+        <div class="car">
+          <button class="car-btn" type="button" data-dir="-1" aria-label="Попередні">←</button>
+          <div class="inf"></div>
+          <button class="car-btn" type="button" data-dir="1" aria-label="Наступні">→</button>
+        </div>
+        <div class="car-dots"></div>
       </div>
-      <div class="car-dots" id="car-dots"></div>
+      <div class="car-block" data-kind="stat">
+        <p class="sub-row">За статистикою <em>переможець — за даними року</em></p>
+        <div class="car">
+          <button class="car-btn" type="button" data-dir="-1" aria-label="Попередні">←</button>
+          <div class="inf"></div>
+          <button class="car-btn" type="button" data-dir="1" aria-label="Наступні">→</button>
+        </div>
+        <div class="car-dots"></div>
+      </div>
       <div class="inf-head">
-        <p id="inf-note"><b>Обираєте ви:</b> 17 кандидатів, на ефір потрапить 7 — разом з EVO Wiki Live і EVO Lucky Gambler буде 9.</p>
+        <p id="inf-note"><b>Обираєте ви:</b> 15 кандидатів, на ефір потрапить 7 — разом з EVO Wiki Live і EVO Lucky Gambler буде 9.</p>
         <a class="btn vote-btn" id="inf-btn" href="#poll-noms" data-poll="noms">Голосувати за номінації →</a>
       </div>
     </div>
@@ -549,7 +564,7 @@ footer a:hover{color:var(--text)}
     <p class="lead">Фішки — гра поверх голосування: вгадай переможців і збери найбільше фішок. На голосування вони не впливають.</p>
     <div class="steps">
       <div class="step"><i>01</i><b>1&nbsp;000 фішок</b><p>Кожен учасник отримує 1&nbsp;000 фішок на весь івент. Що не поставив — лишається в балансі.</p></div>
-      <div class="step"><i>02</i><b>Ставиш на переможців</b><p>У Блоці 3 (23–29 листопада) розподіляєш фішки між номінаціями на тих, хто, на твою думку, переможе. До 29 листопада ставки можна змінювати.</p></div>
+      <div class="step"><i>02</i><b>Ставиш на переможців</b><p>У Блоці 3 (23–29 листопада) розподіляєш фішки між номінаціями за голосуванням на тих, хто, на твою думку, переможе. На статистичні ставок немає — їхнього переможця видно з даних. До 29 листопада ставки можна змінювати.</p></div>
       <div class="step"><i>03</i><b>Банк номінації</b><p>Усі фішки номінації діляться між тими, хто вгадав переможця, пропорційно ставкам, без комісії. Коефіцієнт біля претендента — скільки фішок повернеться за кожну поставлену, якщо банк не зміниться.</p></div>
       <div class="step"><i>04</i><b>Підсумок на ефірі</b><p>Після оголошення переможців баланс — невитрачені фішки плюс виграші. Якщо на переможця не поставив ніхто, ставки повертаються.</p></div>
     </div>
@@ -635,9 +650,9 @@ const POLLS = [
     results:'', // HTML з результатами Блоку 1; показується над формою з дати opens
     asks:['Претенденти','Коротко — чому'],
     // items — номінації, що пройшли за підсумками Блоку 1 (замінити на 7 переможців, коли будуть результати)
-    form:[ { id:'nominees', type:'nominate', optional:false, title:'Кого висуваєш', hint:'Можна заповнити лише ті номінації, де маєш кандидата. Висувати можна будь-кого: гравців, тренерів, адмінів — і себе.', items:'INFORMAL' } ] },
+    form:[ { id:'nominees', type:'nominate', optional:false, title:'Кого висуваєш', hint:'Висування — лише в номінаціях за голосуванням (у статистичних претендентів визначають дані). Можна заповнити лише ті, де маєш кандидата. Висувати можна будь-кого: гравців, тренерів, адмінів — і себе.', items:'INFORMAL' } ] },
   { id:'final', opens:'2026-11-23', closes:'2026-11-29', title:'Голосування за переможців', engine:'own', bets:true,
-    text:'Обираємо переможців ком\'юніті номінацій серед претендентів шортлисту — і ставимо фішки на тих, хто переможе.',
+    text:'Обираємо переможців ком\'юніті номінацій за голосуванням серед претендентів шортлисту — і ставимо фішки на тих, хто переможе.',
     asks:['Переможець у кожній номінації'] },
   { id:'guests', opens:'2026-12-01', closes:'2026-12-06', title:'Вечір: учасники й афтерпаті', engine:'own',
     text:'Хто дивиться ефір разом з EVO і що робимо після нього — під це будуть кімнати на афтерпаті.',
@@ -694,46 +709,48 @@ const FIXED = [
     rounds:['EVO Lore','Poker Brain','Deep Wiki'] },
   { ico:'🎲', name:'EVO Lucky Gambler', text:'Переможець конкурсу ставок серед гравців EVO і REVO: найбільше фішок після оголошення переможців.' },
 ];
-/* Порядок — за оцінкою (score, 0–10), найвищі зверху. */
+/* Порядок — за оцінкою (score, 0–10), найвищі зверху. kind: 'vote' — переможця обирають голосуванням (висування, ставки),
+   'stat' — переможець за статистикою року (без висування і ставок: його можна передбачити з даних). */
 const INFORMAL = [
-  { score:9,   ico:'📝', name:'Блог року', text:'Найцікавіший блог гравця: чесно, регулярно і про справжній шлях.' },
-  { score:9,   ico:'🌱', name:'Новачок року', text:'Пройшов REVO з самого нуля — від ABI $2 — і вже високо в EVO.' },
-  { score:8,   ico:'♥', red:true, name:'EVO ♥', text:'Людина, з якою в EVO тепліше: підтримає, підбадьорить, допоможе.' },
-  { score:8,   ico:'🍀', name:'Run Good', text:'Найбільше везіння за рік: результат вище за all-in EV.' },
-  { score:8,   ico:'🧊', name:'Cooler King', text:'Найменше везіння за рік: результат нижче за all-in EV.' },
-  { score:7,   ico:'🎓', name:'Тренер року', text:'Найбільше допомагає зі стратегією і аналізом гри.' },
-  { score:6.5, ico:'🛟', name:'Рятівник року', text:'Допоможе з усім навколо покеру: софт, руми, налаштування, організаційні питання.' },
-  { score:6.5, ico:'🛑', name:'Fold of the Year', text:'Найкращий фолд року.' },
-  { score:6,   ico:'👑', name:'Late EV King', text:'Найкраща гра на пізніх стадіях: найвищий EV на рівнях 9+ за рік.' },
-  { score:6,   ico:'🎯', name:'Total EV Prince', text:'Найвищий загальний EV за рік — найкращі рішення незалежно від везіння.' },
-  { score:6,   ico:'💬', name:'Always Online', text:'Найпомітніший у житті EVO: чати, войси, івенти.' },
-  { score:6,   ico:'💥', name:'Занос року', text:'Найбільший разовий виграш за рік.' },
-  { score:5.5, ico:'📈', name:'Камбек року', text:'Найглибша просадка — і новий максимум після неї.' },
-  { score:5,   ico:'🃏', name:'Hand of the Year', text:'Найкращий розіграш року — за рішення, не за розмір банку.' },
-  { score:4,   ico:'🐾', name:'Petfluencer', text:'Улюбленець, який уже став частиною команди.' },
-  { score:3,   ico:'🎤', name:'Mic Drop', text:'Найсильніші аргументи в покерних обговореннях.' },
-  { score:2.5, ico:'😂', name:'Meme Lord', text:'Найкращі меми про покер і EVO.' },
+  { score:9,   ico:'📝', kind:'vote', name:'Блог року', text:'Найцікавіший блог гравця: чесно, регулярно і про справжній шлях.' },
+  { score:9,   ico:'🌱', kind:'stat', name:'Новачок року', text:'Пройшов REVO з самого нуля — від ABI $2 — і вже високо в EVO.' },
+  { score:8,   ico:'♥', red:true, kind:'vote', name:'EVO ♥', text:'Людина, з якою в EVO тепліше: підтримає, підбадьорить, допоможе.' },
+  { score:8,   ico:'🍀', kind:'stat', name:'Run Good', text:'Найбільше везіння за рік: результат вище за all-in EV.' },
+  { score:8,   ico:'🧊', kind:'stat', name:'Cooler King', text:'Найменше везіння за рік: результат нижче за all-in EV.' },
+  { score:6.5, ico:'🛟', kind:'vote', name:'Рятівник року', text:'Допоможе з усім навколо покеру: софт, руми, налаштування, організаційні питання.' },
+  { score:6.5, ico:'🛑', kind:'vote', name:'Fold of the Year', text:'Найкращий фолд року.' },
+  { score:6,   ico:'👑', kind:'stat', name:'Late EV King', text:'Найкраща гра на пізніх стадіях: найвищий EV на рівнях 9+ за рік.' },
+  { score:6,   ico:'🎯', kind:'stat', name:'Total EV Prince', text:'Найвищий загальний EV за рік — найкращі рішення незалежно від везіння.' },
+  { score:6,   ico:'💬', kind:'vote', name:'Always Online', text:'Найпомітніший у житті EVO: чати, войси, івенти.' },
+  { score:6,   ico:'💥', kind:'stat', name:'Занос року', text:'Найбільший разовий виграш за рік.' },
+  { score:5.5, ico:'📈', kind:'stat', name:'Камбек року', text:'Найглибша просадка — і новий максимум після неї.' },
+  { score:5,   ico:'🃏', kind:'vote', name:'Hand of the Year', text:'Найкращий розіграш року — за рішення, не за розмір банку.' },
+  { score:4,   ico:'🐾', kind:'vote', name:'Petfluencer', text:'Улюбленець, який уже став частиною команди.' },
+  { score:2.5, ico:'😂', kind:'vote', name:'Meme Lord', text:'Найкращі меми про покер і EVO.' },
 ].sort((a, b) => b.score - a.score);
 
 /* Підсумок Блоку 1 — 7 номінацій, що пройшли (scripts/awards_2026/voting/noms_tally.py друкує готовий рядок).
    Порожньо — ще не підбили: на сторінці весь пул. text — новий опис для ефіру (необов'язково).
    ?chosen=test — перегляд, як усе зміниться, на тестових голосах (CHOSEN_TEST). */
 const CHOSEN = [];
-const CHOSEN_TEST = [{name: "EVO ♥", votes: 2}, {name: "Fold of the Year", votes: 2}, {name: "Занос року", votes: 2}, {name: "Блог року", votes: 1}, {name: "Камбек року", votes: 1}, {name: "Petfluencer", votes: 1}, {name: "Тренер року", votes: 1}];
+const CHOSEN_TEST = [{name: "EVO ♥", votes: 2}, {name: "Fold of the Year", votes: 2}, {name: "Занос року", votes: 2}, {name: "Блог року", votes: 1}, {name: "Камбек року", votes: 1}, {name: "Petfluencer", votes: 1}, {name: "Meme Lord", votes: 1}];
 const CHOSEN_PREVIEW = new URLSearchParams(location.search).get('chosen') === 'test';
 const ON_AIR = (CHOSEN_PREVIEW ? CHOSEN_TEST : CHOSEN).map(c => { const n = INFORMAL.find(x => x.name === c.name) || { name:c.name, ico:'★', text:'' };
   return { ...n, votes:c.votes, text:c.text || n.text }; });
 const ON_AIR_SET = ON_AIR.length > 0;
 
 POLLS.forEach(p => (p.form || []).forEach(q => {
-  // «які залишаємо» — завжди весь пул; висування — лише номінації, що пройшли (коли підсумок є)
-  const list = q.items === 'INFORMAL' && ON_AIR_SET ? ON_AIR : INFORMAL;
+  // «які залишаємо» — увесь пул двома групами; висування — лише номінації за голосуванням (з тих, що пройшли, коли підсумок є)
+  const list = q.items === 'INFORMAL' ? (ON_AIR_SET ? ON_AIR : INFORMAL).filter(n => n.kind === 'vote') : INFORMAL;
+  if (q.options === 'INFORMAL') q.groups = [['За голосуванням', INFORMAL.filter(n => n.kind === 'vote').map(n => n.name)], ['За статистикою', INFORMAL.filter(n => n.kind === 'stat').map(n => n.name)]];
   if (q.options === 'INFORMAL' || q.items === 'INFORMAL') q.notes = Object.fromEntries(list.map(n => [n.name, n.text]));
   if (q.options === 'INFORMAL') q.options = list.map(n => n.name); if (q.items === 'INFORMAL') q.items = list.map(n => n.name); }));
 { const nom = POLLS.find(x => x.id === 'nominate'), h = x => String(x).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' })[c]);
   const golos = n => n % 10 === 1 && n % 100 !== 11 ? 'голос' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 'голоси' : 'голосів';
+  const li = k => ON_AIR.filter(n => n.kind === k).map(n => `<li><span>${h(n.name)}</span><em>${n.votes} ${golos(n.votes)}</em></li>`).join('');
   if (ON_AIR_SET && nom && !nom.results) nom.results = `<b>На ефірі — ці 7 ком'юніті номінацій</b>
-    <ol class="chosen-list">${ON_AIR.map(n => `<li><span>${h(n.name)}</span><em>${n.votes} ${golos(n.votes)}</em></li>`).join('')}</ol>
+    <p class="hint">За голосуванням — висуваєш претендентів нижче:</p><ol class="chosen-list">${li('vote')}</ol>
+    ${li('stat') ? `<p class="hint">За статистикою — претендентів визначать дані року:</p><ol class="chosen-list">${li('stat')}</ol>` : ''}
     <p class="hint">І завжди — EVO Wiki Live та EVO Lucky Gambler.</p>`;
   if (CHOSEN_PREVIEW && nom) nom.status = 'open'; }
 
@@ -927,18 +944,20 @@ if (ON_AIR_SET) { $('#inf-note').innerHTML = '<b>За підсумками го�
   $('#pool-label').textContent = 'Пройшли голосування';
   const b = $('#inf-btn'); b.href = '#poll-nominate'; b.dataset.poll = 'nominate'; b.textContent = 'Висунути претендентів →'; }
 $('#fixed').innerHTML = FIXED.map(n => `<div class="wiki-strip"><b>${esc(n.name)}</b><span>${esc(n.text)}</span></div>`).join('');
-$('#informal').append(...(ON_AIR_SET ? ON_AIR : INFORMAL).map(n => el('div', { class:'card' },
-  `<div class="ico">${n.ico}</div><div><h3>${esc(n.name)}</h3><p>${esc(n.text)}</p></div>`)));
-{ const row = $('#informal'), dots = $('#car-dots'), btns = document.querySelectorAll('.car-btn');
-  const pages = () => Math.max(1, Math.round(row.scrollWidth / row.clientWidth));
-  const page = () => Math.round(row.scrollLeft / row.clientWidth);
+document.querySelectorAll('.car-block').forEach(blk => {
+  const list = (ON_AIR_SET ? ON_AIR : INFORMAL).filter(n => n.kind === blk.dataset.kind);
+  if (!list.length) { blk.hidden = true; return; }
+  const row = blk.querySelector('.inf'), dots = blk.querySelector('.car-dots'), btns = blk.querySelectorAll('.car-btn');
+  row.append(...list.map(n => el('div', { class:'card' }, `<div class="ico">${n.ico}</div><div><h3>${esc(n.name)}</h3><p>${esc(n.text)}</p></div>`)));
+  const pages = () => row.clientWidth ? Math.max(1, Math.round(row.scrollWidth / row.clientWidth)) : 1;   // 0 — блок ще без ширини
+  const page = () => row.clientWidth ? Math.round(row.scrollLeft / row.clientWidth) : 0;
   const sync = () => { const n = pages(), i = Math.min(page(), n - 1);
     if (dots.children.length !== n) dots.innerHTML = Array.from({ length:n }, (_, k) => `<button type="button" aria-label="Сторінка ${k + 1}"></button>`).join('');
     [...dots.children].forEach((d, k) => d.classList.toggle('on', k === i));
     btns[0].disabled = row.scrollLeft < 4; btns[1].disabled = row.scrollLeft + row.clientWidth > row.scrollWidth - 4; };
   btns.forEach(b => b.addEventListener('click', () => row.scrollBy({ left: +b.dataset.dir * row.clientWidth })));
   dots.addEventListener('click', e => { const k = [...dots.children].indexOf(e.target); if (k >= 0) row.scrollTo({ left: k * row.clientWidth }); });
-  row.addEventListener('scroll', sync, { passive:true }); addEventListener('resize', sync); sync(); }
+  row.addEventListener('scroll', sync, { passive:true }); new ResizeObserver(sync).observe(row); sync(); });
 document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('.tabs button').forEach(x => {
     const on = x === b; x.setAttribute('aria-selected', on);

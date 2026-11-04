@@ -58,7 +58,7 @@ function mockBackend(players) {
   if (!db) {
     const names = players.map(p => p.nick);
     const pick = (k, n) => Array.from({ length: n }, (_, i) => names[(k * 7 + i * 13) % names.length]);
-    const noms = ['Блог року', 'EVO ♥', 'Тренер року', 'Рятівник року', 'Fold of the Year', 'Always Online', 'Hand of the Year', 'Новачок року'];
+    const noms = ['Блог року', 'EVO ♥', 'Рятівник року', 'Fold of the Year', 'Always Online', 'Hand of the Year', 'Petfluencer', 'Meme Lord'];
     db = { budget: 1000, me: null, signedIn: false, answers: {}, bets: [],
       roster: players.map(p => ({ player: p.nick, team: p.team })),
       markets: [...noms.map((t, k) => ({ id: 'm' + (k + 1), title: t, ord: k, winner: null, options: pick(k, 4 + (k % 2)) })),
@@ -265,8 +265,10 @@ function qHtml(q, val) {
   const head = `<legend>${esc(q.title)} ${opt}</legend>${q.hint ? `<p class="hint">${esc(q.hint)}</p>` : ''}`;
   if (q.type === 'single') return `<fieldset class="q" data-q="${q.id}">${head}<div class="choices">${q.options.map((o, i) =>
     `<label class="choice"><input type="radio" name="${name}" value="${esc(o)}" ${v === o ? 'checked' : ''}><span class="key">${String.fromCharCode(65 + i)}</span><span>${esc(o)}</span></label>`).join('')}</div></fieldset>`;
-  if (q.type === 'multi') return `<fieldset class="q" data-q="${q.id}" data-max="${q.max || 99}">${head}<div class="choices multi">${q.options.map(o =>
-    `<label class="choice"><input type="checkbox" name="${name}" value="${esc(o)}" ${(v || []).includes(o) ? 'checked' : ''}><span class="box"></span><span class="c-t">${esc(o)}${noteOf(q, o)}</span></label>`).join('')}</div>
+  const box = o => `<label class="choice"><input type="checkbox" name="${name}" value="${esc(o)}" ${(v || []).includes(o) ? 'checked' : ''}><span class="box"></span><span class="c-t">${esc(o)}${noteOf(q, o)}</span></label>`;
+  if (q.type === 'multi') return `<fieldset class="q" data-q="${q.id}" data-max="${q.max || 99}">${head}${q.groups
+      ? q.groups.map(([g, opts]) => `<p class="choice-group">${esc(g)}</p><div class="choices multi">${opts.map(box).join('')}</div>`).join('')
+      : `<div class="choices multi">${q.options.map(box).join('')}</div>`}
     ${q.max ? `<p class="count" data-count="${q.id}"></p>` : ''}</fieldset>`;
   if (q.type === 'text') return `<fieldset class="q" data-q="${q.id}">${head}<textarea name="${name}" rows="${q.rows || 3}" maxlength="${q.maxlength || 600}" placeholder="${esc(q.placeholder || '')}">${esc(v || '')}</textarea></fieldset>`;
   if (q.type === 'nominate') return `<fieldset class="q nominate" data-q="${q.id}">${head}<div class="nom-grid">${q.items.map(it => { const x = (v || {})[it] || {};
