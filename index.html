@@ -7,7 +7,7 @@
 <meta name="description" content="EVO Awards 2026 — підсумки року школи Еволюція: голосування, програма ефіру, номінації та номінанти.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0b0c0c;
@@ -490,6 +490,50 @@ footer a:hover{color:var(--text)}
 .inf-head p b{color:var(--text)}
 .btn.vote-btn{padding:12px 18px;font-size:14px}
 @media(max-width:560px){.board{padding:12px;border-radius:18px}.legend{padding:24px 18px}.period-badge b{font-size:13px}.board .inf .card{flex-direction:column;align-items:flex-start;gap:10px}.board .inf .ico{order:0}.tile{padding:18px}.tile .glyph{width:28px;height:28px;margin-right:16px}}
+
+/* ===== Дизайн-система сторінки (04.11): одна шкала замість десятків локальних значень =====
+   Шрифти: Unbounded — заголовки, Manrope — текст. Розміри тексту: 11 (мітки) · 13 (підписи) · 14 (текст у картках) · 16 (основний) · 18 (лід).
+   Заголовки карток: 17 (звичайні) · 20 (головні). Радіуси: 10 (кнопки) · 14 (картки) · 20 (великі панелі) · 999 (пігулки).
+   Відступи: 8 · 12 · 16 · 24 · 40. */
+:root{--r-card:14px;--r-panel:20px;--fs-label:11px;--fs-cap:13px;--fs-card:14px;--fs-body:16px;--fs-lead:18px}
+.lead{font-size:var(--fs-lead);line-height:1.55}
+.rules-link{display:inline;margin-left:4px;white-space:nowrap}
+/* мітки секцій — один стиль: kicker, підписи блоків, «Основна нагорода», підписи лічильника й календаря */
+.kicker,.sec-label span,.legend .tag{font:800 var(--fs-label)/1 Manrope,sans-serif;letter-spacing:.2em}
+.countdown .label,.mile .when{font-size:var(--fs-label);font-weight:800;letter-spacing:.14em}
+.decider-mini,.sec-label em{font-size:var(--fs-cap);font-weight:600}
+.board .sec-label{margin:40px 0 16px}
+.board .sec-label.first{margin-top:0}
+/* великі панелі */
+.board{margin-top:40px;border-radius:var(--r-panel);background:var(--bg-2)}
+.legend{border-radius:16px}
+.countdown,.road-wrap{border-radius:var(--r-panel)}
+/* картки номінацій: іконка зверху, назва і підпис на всю ширину, «i» — у правому верхньому куті */
+.tile{flex-direction:column;align-items:flex-start;gap:0;padding:22px;border-radius:var(--r-card);min-height:0}
+.tile .glyph{order:-1;width:30px;height:30px;margin:0 0 18px}
+.tile .t-text{width:100%;padding-right:8px}
+.tile h3{font:700 17px/1.2 Unbounded,sans-serif}
+.tile .for{margin-top:6px;font-size:var(--fs-card);line-height:1.45}
+.main-grid .tile,.main-grid:not(.big) .tile{min-height:0}
+.main-grid.big .tile{padding:26px 24px;min-height:0}
+.main-grid.big .tile h3{font-size:20px}
+.main-grid.big .tile .glyph{width:34px;height:34px;margin-bottom:22px}
+.tile-pop,.pop-list li{font-size:var(--fs-card)}
+.tile-info{top:14px;right:14px}
+/* інші картки — той самий радіус і текст */
+.ncard,.ystat,.bet-note,.poll,.auth-row,.form-empty{border-radius:var(--r-card)}
+.board .inf .card{border-radius:var(--r-card)}
+.board .inf .card p{font-size:var(--fs-card)}
+.step b,.ylab{font-size:17px;line-height:1.2}
+.rule b,.bet-note b{font-size:15px}
+.step p,.rule p,.bet-note p,.poll-head p{font-size:var(--fs-card);line-height:1.5}
+.ydesc,.poll-head .dl,.auth-row small{font-size:var(--fs-cap)}
+.legend .crit-line{font-size:clamp(15px,1.6vw,18px)}
+/* календар: назви етапів у один-два рядки, без тісноти */
+.mile h3{font-size:14px;line-height:1.25;margin-top:10px}
+.mile .date{font-size:12px}
+.mile .go{font-size:12px;margin-top:6px}
+.road-h{font-size:14px}
 </style>
 <link rel="stylesheet" href="vote.css">
 </head>
@@ -536,7 +580,6 @@ footer a:hover{color:var(--text)}
   <div class="wrap">
     <div class="kicker">Голосування</div>
     <h2>Долучайся<br>до голосування</h2>
-    <svg class="brush" viewBox="0 0 360 22" preserveAspectRatio="none" aria-hidden="true"><path d="M4 12 C80 4 180 18 356 8" stroke="#d9a441" stroke-width="10" fill="none" stroke-linecap="round" filter="url(#rough)"/></svg>
     <p class="lead">Щотижня — нове опитування, яке займе 2–3 хвилини. Голосування анонімне. <a class="rules-link" href="#rules">Правила →</a></p>
 
     <div class="auth" id="auth"></div>
@@ -975,7 +1018,8 @@ document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click
 /* --- номінанти --- */
 const SUITS = ['♠', '♥', '♦', '♣'];
 const arrow = a => Array.isArray(a) ? `${esc(a[0])} → ${esc(a[1])}` : esc(a ?? '—');
-const STAGE_COLORS = ['#2ecc71', '#1f8b4c', '#e07bbf', '#ff1fb8', '#9e1b42']; // етапи I–V (ранги 1–4, 5–8, 9–12, 13–16, 17+): I–IV — як ролі в Discord, V — бургунді
+const STAGE_COLORS = ['#9c6b3f', '#c4843a', '#d9a441', '#ecd089', '#f7f0dc']; // етапи I–V (ранги 1–4, 5–8, 9–12, 13–16, 17+): бронза → мідь → золото сайту → світле золото → платина
+const REVO_COLOR = '#7fa6b8', ADMIN_COLOR = '#c9614f';   // REVO — сталево-блакитний, адмінсклад — теракота
 const STAGE_ROMAN = ['I', 'II', 'III', 'IV', 'V'];
 const stageOf = r => Math.min(5, Math.max(1, Math.ceil(Number(r) / 4) || 1));
 function nomineeCard(x, i, example) {
@@ -998,7 +1042,7 @@ if (SHOW_NOMINEES && groups.length) {
 } else {
   $('#nominees-body').innerHTML = `<div class="locked">
     <div class="locked-text"><p class="msg">Претенденти будуть оголошені наприкінці листопада, коли завершиться Рік EVO 2026.</p>
-      <div class="stage-legend">${STAGE_COLORS.map((c, i) => `<span><i style="background:${c}"></i>${STAGE_ROMAN[i]} етап</span>`).join('')}</div>
+      <div class="stage-legend"><span><i style="background:${REVO_COLOR}"></i>REVO</span>${STAGE_COLORS.map((c, i) => `<span><i style="background:${c}"></i>${STAGE_ROMAN[i]} етап</span>`).join('')}<span><i style="background:${ADMIN_COLOR}"></i>Адмінсклад</span></div>
       <a class="btn" href="nominees.html" style="margin-top:24px">Усі претенденти →</a></div>
     ${nomineeCard({ nick:'Нікнейм', rank:'—', abi:'', distance:'—', bestCash:'—', fact:'Цікавий факт зі статистики гравця' }, 0, true)}
   </div>`;

@@ -63,6 +63,14 @@ main{padding:24px 0 80px}
 .fact::before{content:"★ ";color:var(--gold)}
 .empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:50px 0}
 .pending .stats dd,.pending .fact{color:var(--muted)}
+/* адмінсклад */
+.staff-sec{margin-top:56px;padding-top:40px;border-top:1px solid var(--line)}
+.staff-sec h2{font:900 clamp(22px,3.4vw,32px)/1.1 Unbounded,sans-serif;text-transform:uppercase}
+.staff-sec h2 span{font:700 14px Manrope,sans-serif;color:var(--muted);vertical-align:middle;margin-left:6px}
+.staff-lead{color:var(--muted);margin:10px 0 20px;max-width:680px;font-size:15px}
+.ncard.staff{background:linear-gradient(180deg,color-mix(in srgb,var(--stage) 9%,var(--card)),var(--card))}
+.ncard.staff .about{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:14px;line-height:1.5;color:#ddd2c0}
+.ncard.staff .about.muted{color:var(--muted);font-style:italic}
 
 /* table view */
 table{width:100%;border-collapse:collapse;font-size:14px}
@@ -108,25 +116,29 @@ footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);f
   <span class="count" id="count"></span>
 </div></div>
 
-<main><div class="wrap"><div id="out"></div></div></main>
+<main><div class="wrap"><div id="out"></div>
+  <section id="staff" class="staff-sec" hidden><h2>Адмінсклад <span id="staff-count"></span></h2>
+    <p class="staff-lead">Адміни, тренери й модератори — люди, завдяки яким працює школа. Їх теж можна висувати в ком'юніті номінаціях.</p>
+    <div id="staff-out"></div></section>
+</div></main>
 
 <footer><div class="wrap" id="foot">© 2026 Еволюція · <a href="https://evopoker.pro/">evopoker.pro</a></div></footer>
 
 <script>
 /* Дані — players.json поруч зі сторінкою (генерує scripts/awards_2026/player_cards.py). */
-const STAGE_COLORS = ['#2ecc71', '#1f8b4c', '#e07bbf', '#ff1fb8', '#9e1b42'];
+const STAGE_COLORS = ['#9c6b3f', '#c4843a', '#d9a441', '#ecd089', '#f7f0dc'];   // як на головній
 const STAGE_ROMAN = ['I', 'II', 'III', 'IV', 'V'];
-const REVO_COLOR = '#4aa8e8';
+const REVO_COLOR = '#7fa6b8', ADMIN_COLOR = '#c9614f';
 const MONTHS = ['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'];
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt = n => Number(n || 0).toLocaleString('uk-UA');
 const money = v => v == null ? '—' : '$' + (v >= 100 ? Math.round(v).toLocaleString('uk-UA') : Number(v).toFixed(1));
-const stageOf = p => p.team === 'REVO' ? 0 : p.rank == null ? null : Math.min(5, Math.max(1, Math.ceil(p.rank / 4) || 1));
-const colorOf = p => { const s = stageOf(p); return s === 0 ? REVO_COLOR : s ? STAGE_COLORS[s - 1] : 'var(--line)'; };
-const labelOf = p => { const s = stageOf(p); return s === 0 ? 'REVO' : s ? STAGE_ROMAN[s - 1] + ' етап' : 'EVO'; };
+const stageOf = p => p.team === 'ADMIN' ? -1 : p.team === 'REVO' ? 0 : p.rank == null ? null : Math.min(5, Math.max(1, Math.ceil(p.rank / 4) || 1));
+const colorOf = p => { const s = stageOf(p); return s === -1 ? ADMIN_COLOR : s === 0 ? REVO_COLOR : s ? STAGE_COLORS[s - 1] : 'var(--line)'; };
+const labelOf = p => { const s = stageOf(p); return s === -1 ? 'Адмінсклад' : s === 0 ? 'REVO' : s ? STAGE_ROMAN[s - 1] + ' етап' : 'EVO'; };
 
-let ALL = [], state = { q: '', team: 'all', stages: new Set(), sort: 'nick', view: 'cards', dir: -1 };
+let STAFF = [], ALL = [], state = { q: '', team: 'all', stages: new Set(), sort: 'nick', view: 'cards', dir: -1 };
 try { const s = JSON.parse(localStorage.getItem('evo_nominees_view2') || '{}'); if (s.view) state.view = s.view; if (['rank', 'distance', 'abi', 'nick'].includes(s.sort)) state.sort = s.sort; } catch (e) {}
 const save = () => { try { localStorage.setItem('evo_nominees_view2', JSON.stringify({ view: state.view, sort: state.sort })); } catch (e) {} };
 
@@ -175,7 +187,27 @@ function table(list) {
     list.map(p => `<tr style="--stage:${colorOf(p)}"><td><span class="dot"></span>${esc(p.nick)}</td><td>${labelOf(p)}</td><td class="num">${p.team === 'REVO' ? '—' : (p.rank ?? '—')}</td><td class="num">${money(p.abi)}</td><td class="num">${p.distance ? fmt(p.distance) : '—'}</td><td class="fact-c">${esc(p.fact || '')}</td></tr>`).join('')
   }</tbody></table></div>`;
 }
+function staffCard(p) {
+  const av = p.avatar ? `<img src="${esc(p.avatar)}" alt="" loading="lazy">` : esc((p.nick || '?')[0].toUpperCase());
+  return `<article class="ncard staff" style="--stage:${ADMIN_COLOR}">
+    <div class="who"><div class="avatar">${av}</div><div><div class="nick">${esc(p.nick)}</div><div class="role"><b>Адмінсклад</b>${p.role ? ' · ' + esc(p.role) : ''}</div></div></div>
+    <p class="about${p.about ? '' : ' muted'}">${p.about ? esc(p.about) : 'Опис діяльності з\'явиться згодом'}</p>
+  </article>`;
+}
+function staffTable(list) {
+  return `<div class="tbl-wrap"><table><thead><tr><th>Нік</th><th>Роль</th><th>Діяльність</th></tr></thead><tbody>${
+    list.map(p => `<tr style="--stage:${ADMIN_COLOR}"><td><span class="dot"></span>${esc(p.nick)}</td><td>${esc(p.role || '—')}</td><td class="fact-c">${esc(p.about || '—')}</td></tr>`).join('')
+  }</tbody></table></div>`;
+}
+function renderStaff() {
+  const q = state.q.trim().toLowerCase(), list = STAFF.filter(p => !q || p.nick.toLowerCase().includes(q))
+    .sort((a, b) => a.nick.localeCompare(b.nick, 'uk', { sensitivity: 'base' }));
+  $('#staff').hidden = !list.length || state.team === 'EVO' || state.team === 'REVO' || state.stages.size > 0;
+  $('#staff-count').textContent = `${list.length}`;
+  $('#staff-out').innerHTML = state.view === 'table' ? staffTable(list) : `<div class="grid">${list.map(staffCard).join('')}</div>`;
+}
 function render() {
+  renderStaff();
   const list = sorted(filtered());
   $('#count').textContent = `${list.length} з ${ALL.length}`;
   $('#sort').value = state.sort;
@@ -189,7 +221,7 @@ $('#sort').addEventListener('change', e => { state.sort = e.target.value; state.
 stageButtons(); seg('#team', 'team'); seg('#view', 'view');
 
 fetch('players.json', { cache: 'no-cache' }).then(r => r.json()).then(d => {
-  ALL = d.players || [];
+  ALL = d.players || []; STAFF = d.staff || [];
   $('#lead').textContent = `Гравці, що зіграли від ${fmt(d.minDistance || 1000)} ентрі за рік у складі команди.`;
   if (d.asOf) { const [y, m, dd] = d.asOf.split('-').map(Number);
     $('#foot').insertAdjacentHTML('afterbegin', `Дані станом на ${dd} ${MONTHS[m - 1]} ${y}; фінальні — після завершення Року EVO 30 листопада. `); }

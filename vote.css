@@ -12,8 +12,8 @@
 .claim-form input,.own-form input:not([type=radio]):not([type=checkbox]),.own-form textarea{flex:1 1 220px;min-width:0;background:var(--field);border:1px solid var(--line);border-radius:10px;color:var(--text);font:500 15px Manrope,sans-serif;padding:11px 13px}
 .claim-form input:focus,.own-form input:focus,.own-form textarea:focus{outline:2px solid var(--acc);outline-offset:1px}
 .own-form textarea{width:100%;resize:vertical}
-.btn.discord{background:#5865f2;border-color:#5865f2}
-.btn.discord:hover{background:#4752c4}
+.btn.discord{background:var(--acc);border-color:var(--acc);color:#0b0c0c}   /* вхід через Discord — основна кнопка сайту, логотип лишається */
+.btn.discord:hover{background:#e6b456;border-color:#e6b456}
 .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
 .link{background:none;border:0;padding:0;color:var(--muted);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer;justify-self:start}
 .link:hover{color:var(--text)}
