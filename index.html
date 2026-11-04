@@ -509,16 +509,16 @@ footer a:hover{color:var(--text)}
 .board{margin-top:40px;border-radius:var(--r-panel);background:var(--bg-2)}
 .legend{border-radius:16px}
 .countdown,.road-wrap{border-radius:var(--r-panel)}
-/* картки номінацій: іконка зверху, назва і підпис на всю ширину, «i» — у правому верхньому куті */
-.tile{flex-direction:column;align-items:flex-start;gap:0;padding:22px;border-radius:var(--r-card);min-height:0}
-.tile .glyph{order:-1;width:30px;height:30px;margin:0 0 18px}
-.tile .t-text{width:100%;padding-right:8px}
+/* картки номінацій: текст зліва, іконка справа по центру висоти, «i» — маленька в правому верхньому куті */
+.tile{flex-direction:row;align-items:center;gap:16px;padding:24px 22px 24px 24px;border-radius:var(--r-card);min-height:112px}
+.tile .glyph{order:0;width:30px;height:30px;margin:10px 4px 0 0}
+.tile .t-text{flex:1;min-width:0}
 .tile h3{font:700 17px/1.2 Unbounded,sans-serif}
 .tile .for{margin-top:6px;font-size:var(--fs-card);line-height:1.45}
-.main-grid .tile,.main-grid:not(.big) .tile{min-height:0}
-.main-grid.big .tile{padding:26px 24px;min-height:0}
+.main-grid .tile,.main-grid:not(.big) .tile{min-height:112px}
+.main-grid.big .tile{padding:28px 22px 28px 24px;min-height:128px}
 .main-grid.big .tile h3{font-size:20px}
-.main-grid.big .tile .glyph{width:34px;height:34px;margin-bottom:22px}
+.main-grid.big .tile .glyph{width:34px;height:34px}
 .tile-pop,.pop-list li{font-size:var(--fs-card)}
 .tile-info{top:14px;right:14px}
 /* інші картки — той самий радіус і текст */
