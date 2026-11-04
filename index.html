@@ -163,6 +163,15 @@ section{padding:clamp(56px,9vw,110px) 0;position:relative}
 .polls{display:grid;gap:14px;margin-top:20px}
 .poll{border:1px solid var(--line);border-radius:var(--radius);background:var(--card);overflow:hidden}
 .poll.is-open{border-color:rgba(217,164,65,.45)}
+.poll.slim{background:transparent;opacity:.72;transition:opacity .15s}
+.poll.slim:hover,.poll.slim.expanded{opacity:1}
+.poll.slim .poll-head{padding:12px 20px;gap:14px}
+.poll.slim .poll-head h3{font-size:15px}
+.poll.slim .poll-head p{display:none}
+.poll.slim .poll-head .idx{font-size:15px;color:var(--muted)}
+.poll.slim .poll-head .meta{flex-direction:row-reverse;align-items:center;gap:12px}
+.poll.slim.expanded .poll-head p{display:block}
+@media(max-width:560px){.poll.slim .poll-head .meta{flex-direction:column;align-items:flex-end;gap:6px}}
 .poll-head{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:20px;cursor:pointer;width:100%;background:none;border:0;color:inherit;text-align:left;font:inherit}
 .poll-head .idx{font:900 22px/1 Unbounded,sans-serif;color:var(--acc);width:38px}
 .poll-head p{color:var(--muted);font-size:14px;margin-top:4px}
@@ -461,7 +470,7 @@ footer a:hover{color:var(--text)}
     <a class="logo" href="#top">EVO <b>AWARDS</b> 2026</a><span class="nav-date" title="Онлайн-ефір EVO Awards"><svg class="cal" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>22 грудня</span>
     <ul>
       <li><a href="#vote">Голосування</a></li>
-      <li><a href="#program">Програма</a></li>
+      <!-- <li><a href="#program">Програма</a></li>  тимчасово прибрано разом із блоком -->
       <li><a href="#nominations">Номінації</a></li>
       <li><a href="#nominees">Номінанти</a></li>
       <li><a href="#rules">Ставки</a></li>
@@ -502,7 +511,7 @@ footer a:hover{color:var(--text)}
   </div>
 </section>
 
-<section id="program">
+<section id="program" hidden>   <!-- тимчасово прибрано (04.11): програма вечора ще уточнюється -->
   <div class="wrap">
     <details class="fold"><summary><div class="kicker">Як це буде</div>
       <h2>Один вечір —<br>дві частини</h2><span class="fold-hint">Нагородження, інтерактив і афтерпаті</span></summary>
@@ -510,7 +519,7 @@ footer a:hover{color:var(--text)}
   </div>
 </section>
 
-<section id="nominations" style="background:var(--bg-2)">
+<section id="nominations">
   <div class="wrap">
     <div class="kicker">Номінації</div>
     <h2>Нагороди<br>2026</h2>
@@ -549,7 +558,7 @@ footer a:hover{color:var(--text)}
   </div>
 </section>
 
-<section id="nominees">
+<section id="nominees" style="background:var(--bg-2)">
   <div class="wrap">
     <div class="kicker">Номінанти</div>
     <h2>Шортлист</h2>
@@ -557,7 +566,7 @@ footer a:hover{color:var(--text)}
   </div>
 </section>
 
-<section id="rules" style="background:var(--bg-2)">
+<section id="rules">
   <div class="wrap">
     <div class="kicker">Ставки</div>
     <h2>Як працюють<br>ставки</h2>
@@ -860,7 +869,8 @@ POLLS.forEach(p => { const t = todayNum(); p.testing = p.engine === 'own' && p.i
   p.status = p.testing ? 'open' : t < dayNum(p.opens) ? 'soon' : t > dayNum(p.closes) ? 'closed' : 'open'; });
 POLLS.forEach((p, i) => {
   const [cls, lbl] = p.kind === 'results' ? (p.status === 'soon' ? ['soon', 'Скоро'] : ['res', 'Результати']) : (STATUS[p.status] || STATUS.soon);
-  const card = el('article', { class:'poll' + (p.status === 'open' && p.kind !== 'results' ? ' is-open' : ''), id:'poll-' + p.id });
+  // майбутні й пройдені — вузькі, щоб акцент був на відкритих
+  const card = el('article', { class:'poll' + (p.status === 'open' && p.kind !== 'results' ? ' is-open' : ' slim'), id:'poll-' + p.id });
   card.innerHTML = `
     <button class="poll-head" aria-expanded="false" aria-controls="pb-${p.id}">
       <span class="idx">${String(i + 1).padStart(2, '0')}</span>
