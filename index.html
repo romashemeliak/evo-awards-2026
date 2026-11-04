@@ -409,6 +409,8 @@ footer a:hover{color:var(--text)}
 .period-badge .cal{width:18px;height:18px;color:var(--acc);flex:none}
 .main-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .main-grid.big{grid-template-columns:repeat(4,1fr)}
+.tile.idea{border-style:dashed;background:transparent}
+.tile.idea h3{color:var(--muted)}
 .main-grid.big .tile{padding:28px 22px 28px 24px;min-height:132px}
 .main-grid:not(.big) .tile{min-height:120px}   /* однаковий розмір карток ком'юніті й «Також на ефірі» */
 .main-grid.big .tile h3{font-size:21px}
@@ -676,6 +678,7 @@ const PERIOD = '1 грудня 2025 — 30 листопада 2026';
 const LEGEND = { name:'EVO Legend', for:'Людина, яка за рік зробила для Еволюції найбільше — за столами і поза ними.',
   who:'Адмінсклад на основі статистики', pillars:['Результати','Професіоналізм','Наставництво','Вклад у ком\'юніті'] };
 const ICONS = {
+  bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/>',
   blog:'<path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h4"/>',
   heart:'<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>',
   help:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.5"/><path d="M6 6l3.5 3.5M14.5 14.5L18 18M18 6l-3.5 3.5M9.5 14.5L6 18"/>',
@@ -886,7 +889,7 @@ $('#blocks').innerHTML = BLOCKS.map((b, i) => `
   </article>${i === 0 ? '<div class="duo-join" aria-hidden="true"><span>→</span></div>' : ''}`).join('');
 
 /* --- номінації --- */
-const nomCard = n => { const t = el('article', { class:'tile' }), info = n.info || n.text;
+const nomCard = n => { const t = el('article', { class:'tile' + (n.idea ? ' idea' : '') }), info = n.info || n.text;
   t.innerHTML = `${n.pop || (info && info !== n.for) ? `<button class="tile-info" type="button" aria-label="Детальніше про ${esc(n.name)}">i</button>
     <div class="tile-pop" role="tooltip">${n.pop || esc(info)}</div>` : ''}
     <div class="t-text"><h3>${esc(n.name)}</h3><p class="for">${esc(n.for)}</p></div>
@@ -905,7 +908,9 @@ $('#legend').innerHTML = `<article class="legend">
   </div>
 </article>`;
 $('#serious').append(...SERIOUS.filter(n => n.show).map(nomCard));
-$('#community').append(...COMMUNITY.map(nomCard));
+/* На сторінці замість Активіста і Роздачі року — три місця під номінації, які запропонують учасники. */
+const IDEA_SLOTS = ['Активіст року', 'Роздача року'], IDEA = { name:'Ваші ідеї', for:'Номінація, яку запропонують учасники', icon:'bulb', idea:true };
+$('#community').append(...COMMUNITY.filter(n => !IDEA_SLOTS.includes(n.name)).map(nomCard), ...[1, 2, 3].map(() => nomCard(IDEA)));
 $('#fixed').append(...FIXED.map(nomCard), nomCard({ name:'Бонусні статистичні номінації', icon:'bars', for:`${STAT_MORE.length} номінацій за даними року`,
   pop:`<ul class="pop-list">${STAT_MORE.map(n => `<li><b>${esc(n.name)}</b> — ${esc(n.text)}</li>`).join('')}</ul>` }));
 document.querySelectorAll('.car-block').forEach(blk => {
