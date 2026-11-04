@@ -1,4 +1,6 @@
 /* EVO Awards — власні форми, вхід і ставки (vote.js). Кольори — токени з index.html. */
+/* Усі опитування — одна схема: питання/номінація — панель --panel, варіант і поле — --field (без чистого чорного). */
+:root{--panel:rgba(0,0,0,.18);--field:rgba(255,255,255,.04);--line-hover:#5a4f42}
 .auth{margin-top:34px}
 .auth-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 20px;padding:18px 20px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg-2)}
 .auth-row b{font-weight:700}
@@ -7,7 +9,7 @@
 .auth-row.ok{border-color:rgba(63,208,107,.35)}
 .auth-row.claim{display:grid;grid-template-columns:1fr;gap:12px}
 .claim-form{display:flex;flex-wrap:wrap;gap:10px}
-.claim-form input,.own-form input:not([type=radio]):not([type=checkbox]),.own-form textarea{flex:1 1 220px;min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:10px;color:var(--text);font:500 15px Manrope,sans-serif;padding:11px 13px}
+.claim-form input,.own-form input:not([type=radio]):not([type=checkbox]),.own-form textarea{flex:1 1 220px;min-width:0;background:var(--field);border:1px solid var(--line);border-radius:10px;color:var(--text);font:500 15px Manrope,sans-serif;padding:11px 13px}
 .claim-form input:focus,.own-form input:focus,.own-form textarea:focus{outline:2px solid var(--acc);outline-offset:1px}
 .own-form textarea{width:100%;resize:vertical}
 .btn.discord{background:#5865f2;border-color:#5865f2}
@@ -34,14 +36,14 @@
 .coin.sm{width:16px;height:16px}
 
 .own-form{margin-top:18px;display:grid;gap:18px}
-.own-form .q{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:0;min-width:0}
+.own-form .q{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:0;min-width:0;background:var(--panel)}
 .own-form legend{padding:0 6px;font-weight:700}
 .own-form .opt-tag{font-weight:500;color:var(--muted);font-size:12px;margin-left:6px}
 .own-form .hint,.bet-head .hint,.lb-head .hint{margin-top:6px;color:var(--muted);font-size:13px;line-height:1.5}
 .choices{display:grid;gap:8px;margin-top:10px}
 .choices.multi{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));grid-auto-rows:1fr}
-.choice{display:flex;align-items:center;gap:12px;padding:11px 13px;border:1px solid var(--line);border-radius:10px;cursor:pointer;background:var(--bg);transition:border-color .15s}
-.choice:hover{border-color:#4a4a50}
+.choice{display:flex;align-items:center;gap:12px;padding:11px 13px;border:1px solid var(--line);border-radius:10px;cursor:pointer;background:var(--field);transition:border-color .15s,background .15s}
+.choice:hover{border-color:var(--line-hover)}
 .choice input{position:absolute;opacity:0;pointer-events:none}
 .choice .key,.choice .box{flex:none;width:24px;height:24px;border-radius:6px;border:1px solid var(--line);display:grid;place-items:center;font:700 12px Manrope,sans-serif;color:var(--muted)}
 .choice:has(input:checked){border-color:var(--acc);background:rgba(217,164,65,.1)}
@@ -59,7 +61,7 @@
 
 .bet-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:16px;margin-top:18px}
 .bet-head>div:first-child{flex:1 1 320px}
-.own-form.final .mk{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:0;min-width:0}
+.own-form.final .mk{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:0;min-width:0;background:var(--panel)}
 .mk legend{padding:0 6px;font:700 15px Unbounded,sans-serif}
 .mk .winner{margin:4px 0 8px;color:var(--gold)}
 .mk .opt{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px 14px;padding:9px 4px;border-top:1px solid var(--line);font-size:15px;color:var(--text);margin:0}
@@ -74,8 +76,8 @@
 .odds{color:var(--muted);font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
 .stake-box{display:flex;align-items:center;gap:6px}
 .own-form .stake-box input.stake{flex:none;width:86px;padding:8px 10px;text-align:right;font-variant-numeric:tabular-nums}
-.plus{background:var(--bg);border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:7px 8px;font:700 12px Manrope,sans-serif;cursor:pointer}
-.plus:hover{color:var(--text);border-color:#4a4a50}
+.plus{background:var(--field);border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:7px 8px;font:700 12px Manrope,sans-serif;cursor:pointer}
+.plus:hover{color:var(--text);border-color:var(--line-hover)}
 .mk.closed .stake,.mk.closed .pick{opacity:.6;cursor:default}
 @media(max-width:560px){.mk .opt{grid-template-columns:1fr auto}.mk .odds{grid-column:1;grid-row:2;padding-left:30px}.stake-box{grid-row:1/3;grid-column:2}}
 .sticky-save{position:sticky;bottom:10px;z-index:3;padding:12px;border-radius:12px;background:color-mix(in srgb,var(--bg-2) 92%,transparent);border:1px solid var(--line);backdrop-filter:blur(6px)}
