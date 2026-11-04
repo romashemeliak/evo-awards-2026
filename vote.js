@@ -328,12 +328,13 @@ async function renderFinal(card, p) {
   const canBet = Vote.me.can_bet !== false, voteHere = canVote(p.id, Vote.me.team);   // друзі — лише ставки, без голосу
   if (!markets.length) { slot.innerHTML = `<div class="form-empty">Шортлист з'явиться тут на старті блоку — анонс буде в Discord.</div>`; return; }
   const votes = (Vote.answers[p.id] && Vote.answers[p.id].payload && Vote.answers[p.id].payload.votes) || {};
-  const pool = {}, tot = {}; pools.forEach(r => { pool[r.market_id + '|' + r.option] = +r.pool; tot[r.market_id] = (tot[r.market_id] || 0) + +r.pool; });
+  const won = Object.fromEntries(markets.map(m => [m.id, !!m.winner]));
+  const pool = {}, tot = {}; pools.filter(r => won[r.market_id]).forEach(r => { pool[r.market_id + '|' + r.option] = +r.pool; tot[r.market_id] = (tot[r.market_id] || 0) + +r.pool; });
   const my = {}; mine.forEach(b => { my[b.market_id + '|' + b.option] = b.amount; });
   const budget = Vote.me.budget;
   slot.innerHTML = `<div class="bet-head">
       <div><b>${!voteHere ? 'Ставки' : canBet ? 'Голос і ставки' : 'Голос'}</b><p class="hint">${!voteHere ? 'Голосують гравці й адміни школи, а ти можеш поставити фішки на того, хто, на твою думку, переможе.' : `${canBet ? '' : 'Для твого акаунта ставки вимкнені — лише голос. '}У кожній номінації обери, за кого голосуєш. Окремо можеш поставити фішки на того, хто, на твою думку, переможе — не обов'язково на того, за кого голосуєш.`}
-      Банк номінації ділиться між тими, хто вгадав, пропорційно ставкам. Коефіцієнт — скільки фішок повернеться за кожну поставлену, якщо банк не зміниться.</p></div>
+      Банк номінації ділиться між тими, хто вгадав, пропорційно ставкам. Суми ставок інших учасників не видно до оголошення переможців.</p></div>
       <div class="chips-bal big"${canBet ? '' : ' hidden'}><span class="coin"></span><b data-free>${fmtN(budget - Vote.me.staked)}</b><small>фішок вільно з ${fmtN(budget)}</small></div></div>
     <form class="own-form final${canBet ? '' : ' no-bets'}" novalidate>${markets.map(m => mkHtml(m, votes, pool, tot, my, canBet, voteHere)).join('')}
       <div class="poll-actions sticky-save"><button class="btn" type="submit">${!voteHere ? 'Зберегти ставки' : canBet ? 'Зберегти голос і ставки' : 'Зберегти голос'}</button><span class="form-msg"></span></div></form>`;
@@ -341,7 +342,9 @@ async function renderFinal(card, p) {
   const recalc = () => {
     let sum = 0; form.querySelectorAll('.stake').forEach(i => { const n = Math.max(0, Math.floor(+i.value || 0)); sum += n; });
     const free = budget - sum; const f = slot.querySelector('[data-free]'); f.textContent = fmtN(free); f.closest('.chips-bal').classList.toggle('neg', free < 0);
+    // банки й коефіцієнти — лише після оголошення переможця: до того вони підказували б лідера (у базі market_pools теж їх не віддає)
     form.querySelectorAll('.mk').forEach(mk => { const mid = mk.dataset.m; let t = tot[mid] || 0;
+      if (!won[mid]) return;
       mk.querySelectorAll('.opt').forEach(o => { const k = mid + '|' + o.dataset.o; t += (Math.floor(+o.querySelector('.stake').value || 0)) - (my[k] || 0); });
       mk.querySelectorAll('.opt').forEach(o => { const k = mid + '|' + o.dataset.o, mineNow = Math.floor(+o.querySelector('.stake').value || 0);
         const pl = (pool[k] || 0) - (my[k] || 0) + mineNow; o.querySelector('.odds').textContent = pl > 0 ? `банк ${fmtN(pl)} · ×${(t / pl).toFixed(2)}` : `ще ніхто · ×—`; }); });
