@@ -342,7 +342,7 @@ fetch('players.json', { cache: 'no-cache' }).then(r => r.json()).then(d => {
   const hide = new Set((d.hidePlayers || []).map(low));
   ALL = (d.players || []).filter(p => !hide.has(low(p.nick))); STAFF = d.staff || []; SHORT = d.shortlists || [];
   COACHES = new Set((d.coaches || []).map(low)); NAMES = d.names || {};
-  $('#lead').innerHTML = `Гравці EVO і REVO, тренери та адмінсклад із їхніми результатами за рік.${QI(fmt(d.minDistance || 1000))} Будь-кого з них можна висунути в ком'юніті номінаціях.`;
+  $('#lead').textContent = `Усі активні гравці EVO і REVO, тренери та адмінсклад із результатами за рік. Будь-кого з них можна висунути в ком'юніті номінаціях.`;
   renderShort();
   if (d.asOf) { const [y, m, dd] = d.asOf.split('-').map(Number);
     $('#foot').insertAdjacentHTML('afterbegin', `Дані станом на ${dd} ${MONTHS[m - 1]} ${y}; фінальні — після завершення Року EVO 30 листопада. `); }
