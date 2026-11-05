@@ -13,24 +13,29 @@
 --red:#e3262b;--red-dim:#7a1517;--blue:#3d8bff;--green:#3fd06b;--gold:#e8c46a;
 --s1:#8c8576;--s2:#e07bbf;--s3:#e07bbf;--s4:#e8c46a;--s5:#8c8576;--s6:#9c9890;--good:#e07bbf;--warn:#e8c46a;--bad:#e8c46a;--adj:#e8c46a;--band:rgba(140,133,118,.3);--radius:14px}
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:70px}
-body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.55 Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--navh,46px) + 64px)}
+body{margin:0;background:radial-gradient(900px 420px at 18% -5%,rgba(227,38,43,.16),transparent 70%),radial-gradient(700px 380px at 95% 8%,rgba(232,196,106,.08),transparent 70%),var(--bg);background-attachment:fixed;color:var(--text);font:400 16px/1.6 Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+b,strong{font-weight:700;color:#fff}
+small{font-size:13px}
 .wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 80px}
 header{padding:48px 0 8px}
 .kicker{font:700 12px/1 Manrope,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-bottom:16px;display:flex;align-items:center;gap:10px}
 .kicker::before{content:"";width:22px;height:2px;background:var(--red)}
 h1,h2,h3{font-family:Unbounded,Manrope,sans-serif;letter-spacing:-.01em}
 h1{font-size:clamp(26px,4.4vw,44px);font-weight:900;line-height:1.05;margin:0 0 16px}
-h2{font-size:clamp(20px,3vw,30px);font-weight:900;text-transform:uppercase;line-height:1.1;margin:72px 0 16px;padding:0;border:0}
-h2::before{content:"";display:block;width:40px;height:3px;background:var(--red);margin-bottom:14px}
-h3{font-size:16px;font-weight:700;line-height:1.3;margin:28px 0 8px}
+h2{font-size:clamp(20px,2.6vw,26px);font-weight:900;text-transform:uppercase;line-height:1.15;margin:0 0 18px;padding:0;border:0;display:flex;align-items:baseline;gap:14px}
+h2::before{content:"";display:block;width:28px;height:3px;background:var(--red);flex:none;align-self:center}
+h2 .num{font:900 34px/1 Unbounded,sans-serif;color:var(--red);letter-spacing:0;margin-right:2px;opacity:.95}
+h2#terms,h2#s7,h2#calc{margin-top:72px}
+h3{font-size:15px;font-weight:700;line-height:1.35;margin:28px 0 10px;letter-spacing:0}
 p{margin:8px 0;max-width:72ch}
-.lead{font-size:17px;color:var(--text2);max-width:720px}
+.lead{font-size:17px;line-height:1.55;color:var(--text2);max-width:720px}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:24px 0 20px}
 .tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;text-align:center}
-.tile b{display:block;font:900 28px/1.1 Unbounded,sans-serif;letter-spacing:-.03em}
+.tile{background:linear-gradient(160deg,var(--surface2),var(--surface));}
+.tile b{display:block;font:900 30px/1.1 Unbounded,sans-serif;letter-spacing:-.03em;background:linear-gradient(90deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
 .tile span{display:block;margin-top:8px;font:700 11px/1.3 Manrope,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-.bar{position:sticky;top:0;z-index:5;background:rgba(10,10,11,.86);backdrop-filter:blur(10px);padding:10px 0;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
+.bar{position:sticky;top:var(--navh,46px);z-index:5;background:rgba(10,10,11,.9);backdrop-filter:blur(10px);padding:10px 0;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
 .bar label{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 select,button{font:inherit;font-size:14px;padding:7px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--text)}
 .seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:10px;overflow:hidden}
@@ -40,16 +45,18 @@ select,button{font:inherit;font-size:14px;padding:7px 12px;border-radius:8px;bor
 .chk{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--text2);margin:8px 0 2px}
 .chk input{vertical-align:-2px;margin-right:4px;accent-color:var(--red)}
 .chk .sw{display:inline-block;width:16px;height:3px;vertical-align:middle;margin-right:5px;border-radius:2px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin:16px 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin:16px 0;transition:border-color .2s}
+.card:hover{border-color:#3a3a40}
+.card>h3:first-child{display:flex;align-items:center;gap:10px}.card>h3:first-child::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--red);flex:none}
 .card h3{margin-top:0}
 .chart{position:relative;height:320px}
 .chart.tall{height:380px}
-.note{font-size:13.5px;color:var(--muted)}
+.note{font-size:13px;line-height:1.5;color:var(--muted);margin:8px 0 0}
 .callout{border-left:3px solid var(--blue);background:var(--surface);padding:12px 16px;border-radius:0 12px 12px 0;margin:14px 0;font-weight:500}
-.decision{border:1px solid var(--line);border-left:3px solid var(--green);background:var(--surface);padding:14px 18px;border-radius:0 var(--radius) var(--radius) 0;margin:14px 0}
-.decision h4{margin:0 0 8px;font:700 11px/1 Manrope,sans-serif;text-transform:uppercase;letter-spacing:.18em;color:var(--green)}
+.decision{border:1px solid rgba(63,208,107,.3);border-left:4px solid var(--green);background:radial-gradient(120% 100% at 0% 0%,rgba(63,208,107,.07),transparent 60%),var(--surface);padding:14px 18px;border-radius:0 var(--radius) var(--radius) 0;margin:14px 0}
+.decision h4{margin:0 0 10px;font:700 11px/1 Manrope,sans-serif;text-transform:uppercase;letter-spacing:.18em;color:var(--green)}
 .decision ul{margin:4px 0 0 18px;padding:0}
-.decision li{margin:6px 0}
+.decision li{margin:8px 0;line-height:1.55}
 .decision b{color:#fff}
 .main-card{padding:clamp(16px,3vw,28px);border-radius:20px;border:1px solid rgba(227,38,43,.35);background:radial-gradient(120% 90% at 50% 0%,rgba(227,38,43,.14),transparent 60%),var(--surface);position:relative;overflow:hidden}
 .main-card::after{content:"♠";position:absolute;right:-14px;bottom:-54px;font:900 170px/1 Unbounded,sans-serif;color:var(--red);opacity:.06;pointer-events:none}
@@ -58,7 +65,7 @@ ol.big li{counter-increment:n;position:relative;padding:16px 18px 16px 68px;back
 ol.big li::before{content:counter(n);position:absolute;left:20px;top:14px;font:900 26px/1 Unbounded,sans-serif;color:var(--red)}
 ol.big li b{color:#fff}
 @media (max-width:600px){ol.big li{padding-left:56px}ol.big li::before{left:14px;font-size:22px}}
-table{border-collapse:collapse;width:100%;font-size:14px;margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:14px;margin:10px 0;font-variant-numeric:tabular-nums}
 th,td{padding:8px 10px;border-bottom:1px solid var(--grid);text-align:right;white-space:nowrap}
 th:first-child,td:first-child{text-align:left}
 th{color:var(--muted);font:700 11px/1.3 Manrope,sans-serif;letter-spacing:.1em;text-transform:uppercase}
@@ -75,39 +82,47 @@ th{color:var(--muted);font:700 11px/1.3 Manrope,sans-serif;letter-spacing:.1em;t
 .out div:first-child{grid-column:1/-1;border-color:rgba(227,38,43,.4);background:radial-gradient(120% 100% at 50% 0%,rgba(227,38,43,.14),transparent 70%),var(--surface2)}
 .out b{display:block;font:900 24px/1.1 Unbounded,sans-serif;letter-spacing:-.02em}
 .out div:first-child b{font-size:32px}
-.out span{display:block;margin-top:6px;font-size:12.5px;color:var(--muted)}
+.out span{display:block;margin-top:6px;font-size:12px;color:var(--muted)}
 .ok{color:var(--good)}.no{color:var(--bad)}
-footer{margin-top:72px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
-.toc{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
-.toc a{font:700 11px/1 Manrope,sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:8px 12px;border-radius:999px;border:1px solid var(--line);color:var(--muted);text-decoration:none;white-space:nowrap}
-.toc a:hover{color:#fff;border-color:var(--text)}
-dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:8px 18px}
+footer{margin-top:72px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font:700 11px/1 Manrope,sans-serif;letter-spacing:.16em;text-transform:uppercase}
+.toc{position:sticky;top:0;z-index:6;display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin:18px 0 0;padding:10px 0;background:rgba(10,10,11,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.toc .tg{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+.toc .tl{font:700 10px/1 Manrope,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--red);margin-right:6px}
+.toc a{font:700 12px/1 Manrope,sans-serif;letter-spacing:.01em;padding:7px 8px;border-radius:8px;color:var(--text2);text-decoration:none;white-space:nowrap;border:1px solid transparent}
+.toc a i{font-style:normal;color:var(--muted);margin-right:5px;font-weight:700}
+.toc a:hover{color:#fff;background:rgba(255,255,255,.06)}
+.toc a.on{color:#fff;background:var(--surface2);border-color:var(--line);box-shadow:inset 0 -2px 0 var(--red)}.toc a.on i{color:var(--red)}
+@media (max-width:760px){.toc{flex-wrap:nowrap;overflow-x:auto;gap:4px 16px;scrollbar-width:none}.toc::-webkit-scrollbar{display:none}.toc .tg{flex-wrap:nowrap}}
+dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:10px 22px}
 dt{font-weight:700;white-space:nowrap;color:#fff}
 dd{margin:0;color:var(--text2)}
 @media (max-width:600px){dl{grid-template-columns:1fr}dd{margin-bottom:6px}}
-.blk{margin-top:64px}
+.blk{margin-top:72px}
 .law{border:1px solid rgba(232,196,106,.35);border-left:4px solid var(--gold);background:radial-gradient(120% 100% at 0% 0%,rgba(232,196,106,.08),transparent 60%),var(--surface);padding:16px 20px;border-radius:0 var(--radius) var(--radius) 0;margin:14px 0}
 .law h4,.decision h4,details.det summary h4{margin:0 0 8px;font:700 11px/1 Manrope,sans-serif;text-transform:uppercase;letter-spacing:.18em}
 .law h4{color:var(--gold)}
-.law p{font-size:17px;font-weight:500;max-width:none;margin:0}
+.law p{font-size:17px;line-height:1.55;font-weight:500;max-width:none;margin:0}
 .law p b{color:#fff}
 details.det{border:1px solid var(--line);border-radius:var(--radius);background:var(--bg2);margin:14px 0;padding:0 18px}
 details.det summary{cursor:pointer;list-style:none;padding:14px 0;display:flex;align-items:center;gap:12px;color:var(--text2)}
+details.det summary:hover h4{color:var(--text2)}
+details.det ul{padding-left:20px}details.det li{margin:6px 0;color:var(--text2)}details.det li b{color:var(--text)}
 details.det summary::-webkit-details-marker{display:none}
 details.det summary h4{margin:0;color:var(--muted)}
-details.det summary span{font-size:13.5px;color:var(--muted)}
+details.det summary span{font-size:13px;color:var(--muted)}
 details.det summary::after{content:"+";margin-left:auto;font:700 22px/1 Manrope,sans-serif;color:var(--muted)}
 details.det[open] summary::after{content:"−"}
 details.det[open] summary{border-bottom:1px solid var(--line)}
 details.det > :last-child{margin-bottom:18px}
 .decision h4{color:var(--green)}
-.bar .lv{display:flex;align-items:center;gap:8px}
+.bar .lv{display:flex;align-items:center;gap:8px}.bar .info{margin-left:2px}
 .bar .lv label{font-size:11px}
 .seg button.on{background:var(--red);color:#fff}
-h3.sub{margin:26px 0 10px;font-size:18px;font-family:Unbounded,sans-serif}
-.who{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.who .card:first-child{grid-column:1/-1}.who .card:first-child ul{columns:2;column-gap:28px}.who .card:first-child li{break-inside:avoid}.who .card h3{margin-top:0}.who li{margin:6px 0}
+h3.sub{margin:40px 0 12px;font-size:19px;font-family:Unbounded,sans-serif;text-transform:uppercase;letter-spacing:.02em}
+.who{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.who .card:first-child{grid-column:1/-1}.who .card:first-child ul{columns:2;column-gap:28px}.who .card:first-child li{break-inside:avoid}.who .card{margin:0;border-top:3px solid var(--red)}.who .card:nth-child(2){border-top-color:var(--s2)}.who .card:nth-child(3){border-top-color:var(--gold)}.who .card:nth-child(4){border-top-color:#8fc7ff}
+.who .card h3{margin:0 0 10px;padding-bottom:10px;border-bottom:1px solid var(--line);font-size:17px}.who .card>h3:first-child::before{display:none}.who ul{padding-left:18px;margin:0}.who li{margin:8px 0;line-height:1.5;color:var(--text2)}.who li b{color:var(--text)}
 @media(max-width:900px){.who{grid-template-columns:1fr}.who .card:first-child ul{columns:1}}
-.tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.08);color:var(--text2);margin-right:6px;vertical-align:middle}
+.tag{display:inline-block;font-size:10.5px;line-height:1;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.08);color:var(--text2);margin:0 8px 2px 0;vertical-align:middle}
 .tag.hi{background:rgba(232,196,106,.18);color:var(--gold)}.tag.lo{background:rgba(224,123,191,.18);color:var(--s2)}
 .tag.sun{background:rgba(120,190,255,.18);color:#8fc7ff}.tag.wk{background:rgba(160,160,180,.18);color:#c4c7d4}
 #day_note{display:none;margin:6px 0 0;color:#8fc7ff;font-weight:700}body.day-on #day_note{display:block}
@@ -118,7 +133,7 @@ h3.sub{margin:26px 0 10px;font-size:18px;font-family:Unbounded,sans-serif}
 .kv span{display:block;margin-top:4px;font-size:12px;color:var(--muted)}
 .info{position:relative;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;border:1px solid var(--muted);color:var(--muted);font:700 12px/1 Manrope,sans-serif;cursor:help;outline:none}
 .info:hover,.info:focus{color:#fff;border-color:#fff}
-.info .tip{display:none;position:absolute;top:28px;left:0;width:300px;max-width:80vw;background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:400 13px/1.45 Manrope,sans-serif;color:var(--text2);z-index:20;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.info .tip{display:none;position:absolute;top:28px;right:0;width:320px;max-width:min(80vw,320px);background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:400 13px/1.45 Manrope,sans-serif;color:var(--text2);z-index:20;box-shadow:0 8px 24px rgba(0,0,0,.4)}
 .info:hover .tip,.info:focus .tip{display:block}
 </style>
 </head>
@@ -134,10 +149,12 @@ h3.sub{margin:26px 0 10px;font-size:18px;font-family:Unbounded,sans-serif}
 <div class="tile"><b id="m_sess">—</b><span>ігрових сесій</span></div>
 <div class="tile"><b id="m_ev">—</b><span>середній EV школи, bb/100</span></div>
 </div>
-<nav class="toc">
-<a href="#terms">Терміни</a><a href="#who">Кому що</a><a href="#b1">1 Кількість столів</a><a href="#b2">2 Дорогі турніри</a><a href="#b3">3 Тривалість загрузки</a><a href="#b4">4 Час доби</a><a href="#b5">5 День тижня і неділя</a><a href="#b7">6 Глибина і стек</a><a href="#b8">7 Швидкість і формат</a><a href="#b6">8 Перерви</a><a href="#s7">Що контролює гравець</a><a href="#calc">Калькулятор</a>
-</nav>
 </header>
+<nav class="toc" id="toc">
+<div class="tg"><span class="tl">Основа</span><a href="#terms">Терміни</a><a href="#who">Кому що</a></div>
+<div class="tg"><span class="tl">Параметри</span><a href="#b1"><i>1</i>Столи</a><a href="#b2"><i>2</i>Бай-ін</a><a href="#b3"><i>3</i>Загрузка</a><a href="#b4"><i>4</i>Час доби</a><a href="#b5"><i>5</i>Неділя</a><a href="#b7"><i>6</i>Глибина і стек</a><a href="#b8"><i>7</i>Формат</a><a href="#b6"><i>8</i>Перерви</a></div>
+<div class="tg"><span class="tl">Інструменти</span><a href="#s7">Що контролює гравець</a><a href="#calc">Калькулятор</a></div>
+</nav>
 
 
 <h2 id="terms">Терміни</h2>
@@ -164,13 +181,12 @@ h3.sub{margin:26px 0 10px;font-size:18px;font-family:Unbounded,sans-serif}
 <div class="lv"><label>Команда</label><div class="seg" id="grp_team"><button data-g="EVO">EVO</button><button data-g="REVO">REVO</button></div></div>
 <div class="lv"><label>Рівень</label><div class="seg" id="grp_pool"><button data-g="I–II">I–II</button><button data-g="III+">III+</button></div></div>
 <div class="lv"><label>Етап</label><div class="seg" id="grp_stage"><button data-g="I">I</button><button data-g="II">II</button><button data-g="III">III</button><button data-g="IV">IV+</button></div></div>
-<div class="lv"><label>День</label><div class="seg" id="grp_day"><button data-d="усі дні" class="on">Усі дні</button><button data-d="неділя">Неділя</button><button data-d="інші дні">Інші дні</button></div></div>
-<span class="info" tabindex="0" aria-label="Підказка">i<span class="tip">День — неділя окремо від усіх інших днів (пн–сб): перемикає графіки столів, бай-іну, дорогих турнірів, старту сесії і темпу в блоках 1, 2, 4 і 7.<br><br>Рівень — етапи I, II разом і III, IV, V разом: інтервали вдвічі вужчі, ніж в окремого етапу. Кілька етапів разом — Ctrl/⌘ + клік, на телефоні — довге натискання.<br><br>Для окремих етапів, особливо IV+ (15 гравців), значення можуть бути шумними через малу вибірку.</span></span>
+<div class="lv"><label>День</label><div class="seg" id="grp_day"><button data-d="усі дні" class="on">Усі дні</button><button data-d="неділя">Неділя</button><button data-d="інші дні">Інші дні</button></div><span class="info" tabindex="0" aria-label="Підказка">i<span class="tip">День — неділя окремо від усіх інших днів (пн–сб): перемикає графіки столів, бай-іну, дорогих турнірів, старту сесії і темпу в блоках 1, 2, 4 і 7.<br><br>Рівень — етапи I, II разом і III, IV, V разом: інтервали вдвічі вужчі, ніж в окремого етапу. Кілька етапів разом — Ctrl/⌘ + клік, на телефоні — довге натискання.<br><br>Для окремих етапів, особливо IV+ (15 гравців), значення можуть бути шумними через малу вибірку.</span></span></div>
 </div>
 <p class="note" id="day_note"></p>
 
 <section class="blk" id="b1">
-<h2>1. Кількість столів</h2>
+<h2><span class="num">1</span>Кількість столів</h2>
 <div class="law"><h4>Закономірність</h4><p><b>Кількість столів — навичка.</b> На своїй звичній кількості столів гравці школи грають з EV 10–12 bb/100, скільки б столів це не було. Додавання столів над звичну кількість знижує EV, але з часом воно стає звичним та повертається до попередніх значень.</p></div>
 <details class="det"><summary><h4>Деталі аналізу</h4></summary>
 <ul>
@@ -204,7 +220,7 @@ h3.sub{margin:26px 0 10px;font-size:18px;font-family:Unbounded,sans-serif}
 </section>
 
 <section class="blk" id="b2">
-<h2>2. Дорогі турніри</h2>
+<h2><span class="num">2</span>Дорогі турніри</h2>
 <div class="law"><h4>Закономірність</h4><p><b>Дорогий турнір — приносить найбільший мінус із всіх параметрів.</b> Турнір дорожчий за 2.5× твого ABI ти граєш на 7.4 bb/100 гірше, помірно дорогий (1.5–2.5× ABI) — на 4.6 гірше. Що нижчий рівень і що більше столів поруч, то більший мінус. У неділю він менший, ніж в інші дні.</p></div>
 <details class="det"><summary><h4>Деталі аналізу</h4></summary>
 <ul>
@@ -227,7 +243,7 @@ h3.sub{margin:26px 0 10px;font-size:18px;font-family:Unbounded,sans-serif}
 </section>
 
 <section class="blk" id="b3">
-<h2>3. Тривалість загрузки</h2>
+<h2><span class="num">3</span>Тривалість загрузки</h2>
 <div class="law"><h4>Закономірність</h4><p><b>Довга загрузка не шкодить.</b> Турніри, зареєстровані на 5–8-й годині сесії, не гірші за зареєстровані в перші години, а догравання на 8–12-й годині не просідає.</p></div>
 <details class="det"><summary><h4>Деталі аналізу</h4></summary>
 <ul>
@@ -252,7 +268,7 @@ h3.sub{margin:26px 0 10px;font-size:18px;font-family:Unbounded,sans-serif}
 </section>
 
 <section class="blk" id="b4">
-<h2>4. Час доби</h2>
+<h2><span class="num">4</span>Час доби</h2>
 <div class="law"><h4>Закономірність</h4><p><b>Час доби майже не впливає на EV, але впливає на ABI.</b> Для III+ ABI сесій зі стартом о 17–20 за Києвом удвічі вищий, ніж у ранкових і денних, для I–II — трохи вищий, для REVO — однаковий.</p></div>
 <div class="card"><h3>ABI за годиною старту сесії</h3>
 <div class="chart"><canvas id="c_abi_hour"></canvas></div><p class="note">За київським часом.</p>
@@ -279,7 +295,7 @@ h3.sub{margin:26px 0 10px;font-size:18px;font-family:Unbounded,sans-serif}
 </section>
 
 <section class="blk" id="b5">
-<h2>5. День тижня і неділя</h2>
+<h2><span class="num">5</span>День тижня і неділя</h2>
 <div class="law"><h4>Закономірність</h4><p><b>Якість гри майже однакова в усі дні тижня, а неділя — особливий день.</b> У неділю п'ята частина всіх роздач школи, ABI удвічі вищий, і гра трохи краща.</p></div>
 <details class="det"><summary><h4>Деталі аналізу</h4></summary>
 <ul><li>Фактичне EV за днями практично не відрізняється.</li><li>Нормоване EV (сама якість гри): будні −0.3, субота +0.2, неділя +0.6. Вихідні мають вищий пріоритет.</li><li>Чому фактичне EV у неділю не вище, хоча гра краща: неділя — день дорогих турнірів (10% роздач проти 3% у будні). Дорогі турніри з'їдають виграш у якості.</li><li>Неділя — найдовший день: медіанна сесія 7.7 год проти 7.0 у вівторок, і сесій у неділю найбільше.</li><li>ABI за днями: будні $30-$34, сб $37, нд $61. Неділя — удвічі дорожча за будні, субота — трохи дорожча.</li><li>Дорогий турнір (2.5×ABI+) у неділю коштує гравцю −5.5 bb/100 проти −8.8 в інші дні — мінус менший, але це все одно мінус.</li><li>Столи понад звичне в неділю: +1 +0.2, +2 +0.6, +4 і більше −1.6. В інші дні +1 −0.8, +2 −1.0. Неділя прощає більше, але +4 і більше столів й тут у мінусі.</li></ul>
@@ -314,7 +330,7 @@ h3.sub{margin:26px 0 10px;font-size:18px;font-family:Unbounded,sans-serif}
 
 
 <section class="blk" id="b7">
-<h2>6. Глибина турніру і стек</h2>
+<h2><span class="num">6</span>Глибина турніру і стек</h2>
 <div class="law"><h4>Закономірність</h4><p><b>EV падає з глибиною турніру: 16.8 bb/100 на 1–4 рівнях, 7.8 на 9–12 і 4.1 на 21+.</b> Дві третини цього падіння пояснює наш коротший стек. Кількість регулярів з глибиною практично не змінюється.</p></div>
 <details class="det"><summary><h4>Деталі аналізу</h4></summary>
 <ul>
@@ -347,7 +363,7 @@ h3.sub{margin:26px 0 10px;font-size:18px;font-family:Unbounded,sans-serif}
 </section>
 
 <section class="blk" id="b8">
-<h2>7. Швидкість і формат турніру</h2>
+<h2><span class="num">7</span>Швидкість і формат турніру</h2>
 <div class="law"><h4>Закономірність</h4><p><b>У Turbo школа грає сильніше, ніж у звичайних турнірах, а найслабший формат — Freeze.</b> Це правило інших днів: у неділю перевага Turbo зникає.</p></div>
 <details class="det"><summary><h4>Деталі аналізу</h4></summary>
 <ul><li><b>Turbo +1.8 bb/100 проти Normal, Super Turbo +3.0</b> (нормоване EV; у фактичному 13.4 і 14.5 проти 10.6).</li><li>Формати: Freeze 10.1 (нормоване −1.5), KO 11.1 (нормоване +0.2), PKO 11.5 (нормоване +0.5), Mystery 10.5 (нормоване −0.3) bb/100.</li><li>Сателіти: 10.6 проти 11.0 bb/100 у звичайних (нормоване +0.7), але це лише 889 237 роздач.</li></ul>
@@ -365,7 +381,7 @@ h3.sub{margin:26px 0 10px;font-size:18px;font-family:Unbounded,sans-serif}
 
 
 <section class="blk" id="b6">
-<h2>8. Перерви в грі</h2>
+<h2><span class="num">8</span>Перерви в грі</h2>
 <div class="law"><h4>Закономірність</h4><p><b>Перша сесія після перерви гірша, і що довша перерва, то гірша.</b> Після паузи до двох тижнів різниця не надто відчутна, далі вона росте і через місяць складає близько −3.5 bb/100.</p></div>
 <details class="det"><summary><h4>Деталі аналізу</h4></summary>
 <ul>
@@ -796,6 +812,13 @@ document.querySelectorAll('.bar .seg button[data-g]').forEach(b=>{
 document.querySelectorAll('details.det').forEach(d=>d.addEventListener('toggle', ()=>{ if(d.open) requestAnimationFrame(()=>Object.values(charts).forEach(c=>{ try{ c.resize(); }catch(_){} })); }));
 ['k_tab','k_reg','k_days'].forEach(id=>document.getElementById(id).addEventListener('input', calc));
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
+(function(){ const nav = document.getElementById('toc'); if(!nav) return;
+  const setH = () => document.documentElement.style.setProperty('--navh', nav.offsetHeight + 'px'); setH(); window.addEventListener('resize', setH);
+  const links = [...nav.querySelectorAll('a[href^="#"]')]; const ids = links.map(a=>a.getAttribute('href').slice(1));
+  const secs = ids.map(id=>document.getElementById(id)).filter(Boolean);
+  const mark = () => { const y = window.scrollY + nav.offsetHeight + 80; let cur = null; for(const el of secs){ if(el.offsetTop <= y) cur = el.id; }
+    links.forEach(a=>a.classList.toggle('on', a.getAttribute('href') === '#' + cur)); };
+  window.addEventListener('scroll', mark, {passive:true}); mark(); })();
 render();
 </script>
 </body>
