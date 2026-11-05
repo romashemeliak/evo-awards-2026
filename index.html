@@ -754,7 +754,7 @@ const SHOW_NOMINEES = false;
 /* Календар голосувань. date — початок етапу (YYYY-MM-DD), until — кінець; poll — куди веде клік.
    Дати, окрім кінця періоду і ефіру, — робоча чернетка. */
 const MILESTONES = [
-  { date:'2026-11-09', until:'2026-11-15', title:'Нагорода і формат', poll:'prizes' },
+  { date:'2026-11-06', until:'2026-11-15', title:'Нагорода і формат', poll:'prizes' },
   { date:'2026-11-16', until:'2026-11-22', title:'Nomination Week', poll:'nominate' },
   { date:'2026-11-23', until:'2026-11-29', title:'Ком\'юніті голосування', poll:'final' },
   { date:'2026-12-12', title:'Підсумки року в цифрах', href:'#year' },   // презентація результатів року
@@ -766,7 +766,7 @@ const MILESTONES = [
    results — HTML з підсумками попереднього блоку, показується над формою з дати opens.
    kind:'results' — картка без форми, лише з полем results. */
 const POLLS = [
-  { id:'prizes', opens:'2026-11-09', closes:'2026-11-15', title:'Нагорода і формат', engine:'own',
+  { id:'prizes', opens:'2026-11-06', closes:'2026-11-15', title:'Нагорода і формат', engine:'own',
     text:'Що отримають переможці і яким буде вечір: хто дивиться ефір разом з EVO і що робимо на афтерпаті.',
     asks:['Нагорода','Формат вечора','Афтерпаті','Своя номінація'],
     form:[ { id:'prize', type:'single', title:'Що ти хотів би отримати, якщо переможеш?', options:['Класичний кубок або статуетку','Щось практичне (мерч, софт, сертифікат, інше — вкажи свій варіант нижче)','Мені не принципово'] },
@@ -967,7 +967,7 @@ function renderFab() {
   fab.hidden = !(n) || voteInView;
 }
 /* Тест «ніби вже відбувається»: до OPEN_ALL_UNTIL усі голосування відкриті (у базі — test_week.sql, після — clear_test.sql). */
-const OPEN_ALL_UNTIL = '2026-11-08', TEST_RUN = todayNum() <= dayNum(OPEN_ALL_UNTIL);
+const OPEN_ALL_UNTIL = '2026-11-05', TEST_RUN = todayNum() <= dayNum(OPEN_ALL_UNTIL);
 POLLS.forEach(p => { const t = todayNum(); p.status = TEST_RUN ? 'open' : t < dayNum(p.opens) ? 'soon' : t > dayNum(p.closes) ? 'closed' : 'open'; });
 POLLS.forEach((p, i) => {
   const [cls, lbl] = p.kind === 'results' ? (p.status === 'soon' ? ['soon', 'Скоро'] : ['res', 'Результати']) : (STATUS[p.status] || STATUS.soon);
