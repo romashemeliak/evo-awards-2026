@@ -110,6 +110,14 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .sl-p span{display:grid;gap:2px;line-height:1.15}
 .sl-p b{font:700 13px Manrope,sans-serif}
 .sl-p small{font:700 11px Manrope,sans-serif;color:var(--stage)}
+.sl-tog{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:1px solid rgba(217,164,65,.45);background:rgba(217,164,65,.06);color:var(--gold);font:700 12px/1 Manrope,sans-serif;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:border-color .15s}
+.sl-tog:hover,.sl-tog:focus-visible{border-color:var(--gold);outline:none}
+.sl-tog span::before{content:"Згорнути"}
+.sl.closed .sl-tog span::before{content:"Розгорнути"}
+.sl-tog svg{width:14px;height:14px;transform:rotate(180deg);transition:transform .2s}
+.sl.closed .sl-tog svg{transform:none}
+#sl-h{cursor:pointer}
+.sl.closed .sl-noms,.sl.closed .sl-demo{display:none}
 .sl-wait{font-size:13px;color:var(--muted);padding:10px 14px;border-radius:10px;border:1px dashed var(--line)}
 .all-h{margin:0 0 18px}
 @media(max-width:720px){.sl-nom{grid-template-columns:1fr;gap:12px}}
@@ -294,9 +302,13 @@ function demoShortlists() {
 function renderShort() {
   const lists = DEMO ? demoShortlists() : SHORT, by = Object.fromEntries(lists.map(x => [x.name, x.nominees || []]));
   const any = lists.some(x => (x.nominees || []).length);
+  // згортання: за замовчуванням розгорнуто; вибір гравця пам'ятається
+  let open = true; try { const v = localStorage.getItem('evo_sl_open'); if (v !== null) open = v === '1'; } catch (e) {}
+  $('#sl').classList.toggle('closed', !open);
   $('#sl').innerHTML = `<div class="sl-head"><div><h2 id="sl-h">Шортлист</h2>
       <p>${any ? 'Претенденти кожної ком\'юніті номінації за підсумками Nomination Week. Натисни на претендента — він знайдеться у списку нижче.'
-        : 'Претендентів висувають учасники на Nomination Week, 16–22 листопада. Після неї шортлист кожної номінації з\'явиться тут.'}</p></div></div>
+        : 'Претендентів висувають учасники на Nomination Week, 16–22 листопада. Після неї шортлист кожної номінації з\'явиться тут.'}</p></div>
+      <button type="button" class="sl-tog" aria-controls="sl" aria-expanded="${open}"><span></span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg></button></div>
     ${DEMO ? '<div class="sl-demo"><b>Приклад</b>Претенденти тут вигадані — це лише вигляд блоку. Справжній шортлист з\'явиться після Nomination Week.</div>' : ''}
     <div class="sl-noms">${NOMS.map(n => { const list = by[n.name] || [];
       return `<div class="sl-nom"><div><h3>${esc(n.name)}</h3><p class="for">${esc(n.for)}</p></div>${list.length
@@ -304,7 +316,10 @@ function renderShort() {
             return `<button type="button" ${ringAttr('sl-p', p.c, p.c2)} data-nick="${esc(p.nick)}"><span class="avatar">${av}</span><span><b>${esc(p.nick)}</b>${p.l ? `<small>${esc(p.l)}</small>` : ''}</span></button>`; }).join('')}</div>`
         : `<div class="sl-wait">Шортлист з'явиться після Nomination Week</div>`}</div>`; }).join('')}</div>`;
 }
-$('#sl').addEventListener('click', e => { const b = e.target.closest('.sl-p'); if (!b) return;
+$('#sl').addEventListener('click', e => {
+  if (e.target.closest('.sl-tog, #sl-h')) { const open = $('#sl').classList.toggle('closed') === false;
+    $('#sl .sl-tog').setAttribute('aria-expanded', open); try { localStorage.setItem('evo_sl_open', open ? '1' : '0'); } catch (x) {} return; }
+  const b = e.target.closest('.sl-p'); if (!b) return;
   state.q = b.dataset.nick; $('#q').value = b.dataset.nick; state.team = 'all'; state.stages.clear();
   document.querySelectorAll('#team button').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === 'all'));
   document.querySelectorAll('#stages button').forEach(x => x.setAttribute('aria-pressed', 'false'));
