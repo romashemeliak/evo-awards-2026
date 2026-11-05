@@ -6,12 +6,12 @@
 <title>EV і столи</title>
 <meta name="description" content="Скільки столів, яких бай-інів, якої загрузки і якого тижневого обсягу тримати, щоб EV на 100 роздач був максимальним. Дослідження школи, анонімно, по етапах.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;900&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{color-scheme:dark;--bg:#0a0a0b;--bg2:#131315;--surface:#17171a;--surface2:#1f1f24;--text:#f3f0ea;--text2:#cfcac2;--muted:#9c9890;--line:#2a2a2e;--grid:#232327;
---red:#e3262b;--red-dim:#7a1517;--blue:#3d8bff;--green:#3fd06b;--gold:#e8c46a;
---s1:#8c8576;--s2:#e07bbf;--s3:#e07bbf;--s4:#e8c46a;--s5:#8c8576;--s6:#9c9890;--good:#e07bbf;--warn:#e8c46a;--bad:#e8c46a;--adj:#e8c46a;--band:rgba(140,133,118,.3);--radius:14px}
+:root{color-scheme:light;--bg:#f6f6f3;--bg2:#fbfbf9;--surface:#ffffff;--surface2:#f1f1ec;--text:#1f2328;--text2:#3f454d;--muted:#737a84;--line:#e3e3dd;--grid:#ebebe6;
+--red:#3b5bdb;--red-dim:#dbe2fb;--blue:#3b5bdb;--green:#2f8f5b;--gold:#c47f0a;--accent:#3b5bdb;--accent-tint:#eceffc;
+--s1:#2f6f9f;--s2:#d2622a;--s3:#d2622a;--s4:#c47f0a;--s5:#2f6f9f;--s6:#7a8089;--good:#2f8f5b;--bad:#d2622a;--adj:#c47f0a;--band:rgba(47,111,159,.16);--radius:12px}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:calc(var(--navh,46px) + 64px)}
 body{margin:0;background:radial-gradient(900px 420px at 18% -5%,rgba(227,38,43,.16),transparent 70%),radial-gradient(700px 380px at 95% 8%,rgba(232,196,106,.08),transparent 70%),var(--bg);background-attachment:fixed;color:var(--text);font:400 16px/1.6 Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
@@ -135,6 +135,65 @@ h3.sub{margin:40px 0 12px;font-size:19px;font-family:Unbounded,sans-serif;text-t
 .info:hover,.info:focus{color:#fff;border-color:#fff}
 .info .tip{display:none;position:absolute;top:28px;right:0;width:320px;max-width:min(80vw,320px);background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:400 13px/1.45 Manrope,sans-serif;color:var(--text2);z-index:20;box-shadow:0 8px 24px rgba(0,0,0,.4)}
 .info:hover .tip,.info:focus .tip{display:block}
+
+/* ── світла тема: перевизначення ── */
+body,h1,h2,h3,h4,.tile b,.out b,.kv b,.toc a,.kicker,th,.tag,.decision h4,.law h4,details.det summary h4,footer,ol.big li::before,h3.sub{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+body{background:var(--bg);background-attachment:scroll}
+b,strong,.decision b,.law p b,dt,ol.big li b,.who li b,details.det li b{color:var(--text)}
+.kicker{color:var(--muted);letter-spacing:.14em}.kicker::before{background:var(--line)}
+h1{font-size:clamp(26px,3.6vw,36px);font-weight:700;letter-spacing:-.02em;line-height:1.15;color:var(--text)}
+h2{font-size:22px;font-weight:700;text-transform:none;letter-spacing:-.01em;line-height:1.25;gap:10px;color:var(--text)}
+h2::before{display:none}
+h2 .num{font:600 12px/1 Inter,sans-serif;letter-spacing:.04em;color:var(--accent);background:var(--accent-tint);padding:6px 8px;border-radius:6px;margin:0;opacity:1;align-self:center}
+h3{font-size:15px;font-weight:600;color:var(--text)}
+h3.sub{font-size:18px;font-weight:700;text-transform:none;letter-spacing:-.01em}
+.lead{color:var(--text2)}
+.tile{background:var(--surface);border-color:var(--line)}
+.tile b{font:700 28px/1.1 Inter,sans-serif;letter-spacing:-.02em;background:none;color:var(--text);-webkit-text-fill-color:var(--text)}
+.tile span{color:var(--muted);letter-spacing:.1em}
+.toc{background:rgba(246,246,243,.94);border-bottom:1px solid var(--line)}
+.toc .tl{color:var(--muted)}
+.toc a{color:var(--text2);font-weight:600}.toc a i{color:var(--muted)}
+.toc a:hover{color:var(--text);background:var(--surface2)}
+.toc a.on{color:var(--accent);background:var(--accent-tint);border-color:transparent;box-shadow:none}.toc a.on i{color:var(--accent)}
+.bar{background:rgba(246,246,243,.94)}
+.bar label,.bar .lv label{color:var(--muted)}
+select,button{background:var(--surface);color:var(--text);border-color:var(--line)}
+.seg{background:var(--surface);border-color:var(--line)}
+.seg button{color:var(--text2)}.seg button:hover{color:var(--text);background:var(--surface2)}
+.seg button.on,#grp_all button.on{background:var(--accent);color:#fff}
+.card{background:var(--surface);border-color:var(--line);box-shadow:0 1px 2px rgba(20,24,40,.04)}
+.card:hover{border-color:#d3d3cc}
+.card>h3:first-child::before{background:var(--accent)}
+.note{color:var(--muted)}
+.callout{border-left-color:var(--accent);background:var(--accent-tint);color:var(--text)}
+.law{border:1px solid #efe1c2;border-left:4px solid var(--gold);background:#fffaf0}
+.law h4{color:var(--gold)}
+.law p{color:var(--text);font-weight:500}
+.decision{border:1px solid #d5ead9;border-left:4px solid var(--green);background:#f3faf4}
+.decision h4{color:var(--green)}
+.decision li{color:var(--text2)}
+details.det{background:var(--surface);border-color:var(--line)}
+details.det summary{color:var(--text2)}details.det summary h4,details.det summary::after,details.det summary span{color:var(--muted)}
+details.det li{color:var(--text2)}
+.main-card{border-color:var(--line);background:var(--surface)}.main-card::after{display:none}
+ol.big li{background:var(--surface2);border-color:var(--line)}ol.big li::before{color:var(--accent)}
+th{color:var(--muted)}th,td{border-bottom-color:var(--grid)}
+.out div{background:var(--surface2);border-color:var(--line)}
+.out div:first-child{border-color:#c9d2f5;background:var(--accent-tint)}
+.out b{font:700 24px/1.1 Inter,sans-serif;letter-spacing:-.02em}
+.kv div{background:var(--surface2);border-color:var(--line)}.kv b{font:700 22px/1.1 Inter,sans-serif}
+.calc label{color:var(--text2)}.calc input[type=range]{accent-color:var(--accent)}.chk input{accent-color:var(--accent)}
+footer{color:var(--muted);border-top-color:var(--line)}
+dd{color:var(--text2)}
+.who .card{border-top:3px solid var(--accent)}.who .card:nth-child(2){border-top-color:var(--s2)}.who .card:nth-child(3){border-top-color:var(--gold)}.who .card:nth-child(4){border-top-color:var(--s1)}
+.who .card h3{border-bottom-color:var(--line)}.who li{color:var(--text2)}
+.tag{background:var(--surface2);color:var(--text2)}
+.tag.hi{background:#fdf1dc;color:#8a5a06}.tag.lo{background:#fbe6da;color:#9a4116}
+.tag.sun{background:#e3ecfb;color:#2748b5}.tag.wk{background:#ececea;color:#5b616a}
+#day_note{color:var(--accent)}
+.info{border-color:var(--muted);color:var(--muted)}.info:hover,.info:focus{color:var(--text);border-color:var(--text)}
+.info .tip{background:var(--surface);border-color:var(--line);color:var(--text2);box-shadow:0 8px 24px rgba(20,24,40,.12)}
 </style>
 </head>
 <body>
@@ -151,7 +210,7 @@ h3.sub{margin:40px 0 12px;font-size:19px;font-family:Unbounded,sans-serif;text-t
 </div>
 </header>
 <nav class="toc" id="toc">
-<div class="tg"><span class="tl">Основа</span><a href="#terms">Терміни</a><a href="#who">Кому що</a></div>
+<div class="tg"><span class="tl">Основа</span><a href="#terms">Терміни</a><a href="#who">Рекомендації</a></div>
 <div class="tg"><span class="tl">Параметри</span><a href="#b1"><i>1</i>Столи</a><a href="#b2"><i>2</i>Бай-ін</a><a href="#b3"><i>3</i>Загрузка</a><a href="#b4"><i>4</i>Час доби</a><a href="#b5"><i>5</i>Неділя</a><a href="#b7"><i>6</i>Глибина і стек</a><a href="#b8"><i>7</i>Формат</a><a href="#b6"><i>8</i>Перерви</a></div>
 <div class="tg"><span class="tl">Інструменти</span><a href="#s7">Що контролює гравець</a><a href="#calc">Калькулятор</a></div>
 </nav>
@@ -172,7 +231,7 @@ h3.sub{margin:40px 0 12px;font-size:19px;font-family:Unbounded,sans-serif;text-t
 </dl></div>
 
 <section class="blk" id="who">
-<h2>Кому що: рекомендації за рівнем</h2>
+<h2>Рекомендації за рівнем</h2>
 <div class="who"><div class="card"><h3>Усім</h3><ul><li><b>Дорогий турнір (2.5×ABI і більше) — окрема подія:</b> менше столів поруч, повна концентрація. Краще — у неділю.</li><li><b>Не піднімай бай-ін і кількість столів одночасно.</b> Столи додавай по одному раз на 2 місяці.</li><li><b>Неділя — обов'язковий день для гри.</b> У неділю можна стартувати о 17:00, але не варто після 21:00.</li><li><b>Вищий ABI — у прайм:</b> для III+ сесії зі стартом о 17–20 ідуть на вдвічі вищому ABI, для I–II — на трохи вищому, для REVO різниці немає; якість гри при цьому та сама.</li><li><b>У неділю пріоритет Regspeed турніри, турбо варто підключати наприкінці сесії або в інші дні.</b> Формат Freeze має найменший пріоритет.</li><li><b>Переривати сесію через поганий старт немає потреби, бо якість догравання не падає через поганий старт сесії.</b></li><li><b>Після перерви/відпустки від двох тижнів перша сесія повинна бути коротшою за звичну і на трохи нижчому ABI.</b></li></ul></div><div class="card"><h3>Етапи I–II</h3><ul><li><b>Рекомендована кількість столів у ядрі сесії — 8.</b> Додавати по одному столу раз на 2 місяці. Це навичка, яку потрібно розвивати!</li><li><b>Дорогі турніри (2.5xABI+) граються з дуже великою просадкою по EV.</b> Їх потрібно грати особливо уважно і виключно на звичній к-сті столів. З ростом по лімітам ефект просадки EV буде ставати слабшим.</li></ul></div><div class="card"><h3>Етапи III+</h3><ul><li><b>Норма — 9-10 столів в ядрі сесії.</b></li><li><b>Неділя — головний день:</b> ABI майже вдвічі вищий. У неділю пріоритет — Normal speed турніри.</li><li><b>Дорогий турнір — з меншою кількістю столів поруч,</b> як і на нижчих рівнях бо просадка по EV все ще присутня.</li></ul></div><div class="card"><h3>REVO</h3><ul><li><b>Рекомендована кількість столів у ядрі сесії — 7.</b> Додавати по одному столу раз на 2 місяці. Це навичка, яку потрібно розвивати!</li><li><b>Дорогий турнір (2.5×ABI+) забирає майже все EV</b> - на даному етапі не варто гнатись за дорогими турнірами, треба вчитись грі. Не грайте більше 1 дорогого за раз і якщо граєте то виключно на звичній або зменшеній кількості столів (але слідкуйте за нормою награшу).</li><li><b>Неділя для REVO не особлива:</b> правила ті самі, що й в інші дні.</li></ul></div></div>
 </section>
 
@@ -577,7 +636,7 @@ function render(){
   const ug = T['X41_usual_by_group']||[]; if(ug.length){ const NM = {'усі':'уся школа','EVO':'EVO','REVO':'REVO','I':'етап I','II':'етап II','III':'етап III','IV':'етап IV+'};
     let h = '<table><tr><th>група</th><th>гравців</th><th>медіана</th><th>p25–p75</th><th>середня, зважена роздачами</th><th>гравців із ≤6</th><th>гравців із 9+</th></tr>';
     NM['I–II']='етапи I–II'; NM['III+']='етапи III+';
-    for(const k of ['усі','EVO','REVO','I–II','III+','I','II','III','IV']){ const r = ug.find(x=>x['група']===k); if(!r) continue; h += `<tr${sel.includes(k)?' style="color:#fff;font-weight:700"':''}><td>${NM[k]}</td><td>${r['гравців']}</td><td>${r['медіана'].toFixed(0)}</td><td>${r.p25.toFixed(0)}–${r.p75.toFixed(0)}</td><td>${r['середня_зваж_роздачами'].toFixed(1)}</td><td>${r['частка_гравців_≤6'].toFixed(0)}%</td><td>${r['частка_гравців_9+'].toFixed(0)}%</td></tr>`; }
+    for(const k of ['усі','EVO','REVO','I–II','III+','I','II','III','IV']){ const r = ug.find(x=>x['група']===k); if(!r) continue; h += `<tr${sel.includes(k)?' style="font-weight:700"':''}><td>${NM[k]}</td><td>${r['гравців']}</td><td>${r['медіана'].toFixed(0)}</td><td>${r.p25.toFixed(0)}–${r.p75.toFixed(0)}</td><td>${r['середня_зваж_роздачами'].toFixed(1)}</td><td>${r['частка_гравців_≤6'].toFixed(0)}%</td><td>${r['частка_гравців_9+'].toFixed(0)}%</td></tr>`; }
     document.getElementById('t_usual').innerHTML = h + '</table>'; }
   lineWithBand('c_level', sortBy(rows('S1_level'), 'lvl_1'), 'lvl_1', null, {ghost:'S1_level', plusLast:25});
   lineWithBand('c_stack', sortBy(rows('S3_stack'), 'stk_b', STK_ORDER), 'stk_b');
@@ -721,7 +780,7 @@ function sundayCharts(){
     mk('c_sun_exp', {type:'line', data:{labels:TAB4, datasets:[ln('неділя','дорогий (>2.5×)', css('--gold'), 2.5), ln('інші дні','дорогий (>2.5×)', css('--s2'), 2), ln('неділя','помірно дорогий (1.5–2.5×)', css('--gold'), 1.5, [2,3]), ln('інші дні','помірно дорогий (1.5–2.5×)', css('--s2'), 1.5, [2,3]), ln('неділя','звичний (0.67–1.5×)', css('--gold'), 1.5, [5,4]), ln('інші дні','звичний (0.67–1.5×)', css('--s1'), 1.5, [5,4])]}, options:baseOpts('нормоване EV, bb/100', {plugins:{legend:{display:true}}, scales:{x:{title:{display:true,text:'столів одночасно'}, grid:{display:false}}}}), plugins:[zeroLine()]}); }
   const pr = raw('D6_profile'); if(pr.length){ const b = BASE(pr[0]['група']==='усі' ? 'усі' : undefined);
     let h = '<table><tr><th>день</th><th>частка роздач</th><th>сесій</th><th>ABI, $</th><th>дорогих</th><th>сесія, год</th><th>фактичне EV</th><th>нормоване EV</th></tr>';
-    for(const d of ['неділя','інші дні']){ const r = pr.find(x=>x['день']===d); if(!r) continue; h += `<tr${d==='неділя'?' style="color:#fff;font-weight:700"':''}><td>${d}</td><td>${r['частка_роздач_%'].toFixed(1)}%</td><td>${Math.round(r['сесій']).toLocaleString('uk-UA')}</td><td>${r['ABI_зваж_$']==null?'—':r['ABI_зваж_$'].toFixed(0)}</td><td>${r['дорогих_%'].toFixed(0)}%</td><td>${r['сесія_год_мед'].toFixed(1)}</td><td>${r.raw.toFixed(1)}</td><td>${(b + r.adj).toFixed(1)}</td></tr>`; }
+    for(const d of ['неділя','інші дні']){ const r = pr.find(x=>x['день']===d); if(!r) continue; h += `<tr${d==='неділя'?' style="font-weight:700"':''}><td>${d}</td><td>${r['частка_роздач_%'].toFixed(1)}%</td><td>${Math.round(r['сесій']).toLocaleString('uk-UA')}</td><td>${r['ABI_зваж_$']==null?'—':r['ABI_зваж_$'].toFixed(0)}</td><td>${r['дорогих_%'].toFixed(0)}%</td><td>${r['сесія_год_мед'].toFixed(1)}</td><td>${r.raw.toFixed(1)}</td><td>${(b + r.adj).toFixed(1)}</td></tr>`; }
     document.getElementById('t_sun').innerHTML = h + '</table>'; }
 }
 const RUN_ORDER = ['< −150','−150…−50','−50…+50','+50…+150','> +150'], ENTRY_ORDER = ['1','2–4','5–8','9+'], TEN_ORDER = ['0–3','4–6','7–12','13–24','25+'];
