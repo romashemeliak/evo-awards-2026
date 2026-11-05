@@ -91,7 +91,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .sl-p.dual .avatar{box-shadow:none;width:36px;height:36px;margin:-3px;border-width:1px}
 .dot.dual{background:linear-gradient(90deg,var(--stage) 50%,var(--stage2) 50%)}
 .role .adm{color:var(--stage2)}
-.nick .nm{font:500 .78em Manrope,sans-serif;color:var(--muted);letter-spacing:0;text-transform:none;margin-left:4px}
+.nick .nm{font:600 .82em Manrope,sans-serif;color:#cfc3ae;letter-spacing:0;text-transform:none;margin-left:4px}
 /* шортлист */
 .sl{margin:8px 0 48px}
 .sl-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 20px}
@@ -137,7 +137,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);f
 </div>
 
 <div class="bar"><div class="wrap">
-  <input class="search" id="q" type="search" placeholder="Пошук за ніком або ім'ям" autocomplete="off">
+  <input class="search" id="q" type="search" placeholder="Пошук за ніком" autocomplete="off">
   <div class="seg" id="team" role="group" aria-label="Команда">
     <button data-v="all" aria-pressed="true">Усі</button><button data-v="EVO" aria-pressed="false">EVO</button><button data-v="REVO" aria-pressed="false">REVO</button><button data-v="COACH" aria-pressed="false">Тренери</button>
   </div>
@@ -196,7 +196,8 @@ const low = n => String(n || '').trim().toLowerCase();
 const staffOf = nick => STAFF.find(x => low(x.nick) === low(nick));
 const playerOf = nick => ALL.find(x => low(x.nick) === low(nick));
 const nameOf = nick => NAMES[low(nick)] || '';
-const nickHtml = nick => esc(nick) + (nameOf(nick) ? ` <span class="nm">${esc(nameOf(nick))}</span>` : '');
+// спершу ім'я, потім нік (нік — дрібніше; пошук і сортування — за ніком)
+const nickHtml = nick => nameOf(nick) ? `${esc(nameOf(nick))} <span class="nm">${esc(nick)}</span>` : esc(nick);
 const isCoach = nick => COACHES.has(low(nick));
 const staffColor = s => s.kind === 'coach' ? COACH_COLOR : ADMIN_COLOR;
 const staffTitle = s => s.kind === 'coach' ? (s.role || 'Тренер') : 'Адмінсклад' + (s.role ? ' · ' + s.role : '');
