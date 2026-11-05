@@ -1076,7 +1076,7 @@ document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click
 const SUITS = ['♠', '♥', '♦', '♣'];
 const arrow = a => Array.isArray(a) ? `${esc(a[0])} → ${esc(a[1])}` : esc(a ?? '—');
 const STAGE_COLORS = ['#ecd089', '#e2b85c', '#d9a441', '#b7792f', '#8c5524']; // етапи I–V (ранги 1–4, 5–8, 9–12, 13–16, 17+): світле золото → золото сайту → бронза: що вищий ранг, то темніше
-const REVO_COLOR = '#f3e6c4', ADMIN_COLOR = '#c9614f', COACH_COLOR = '#4fae9b';   // REVO — найсвітліший, кремовий, адмінсклад — теракота
+const REVO_COLOR = '#f3e6c4', ADMIN_COLOR = '#a5483e', COACH_COLOR = '#8f9c5c';   // REVO — найсвітліший, кремовий, адмінсклад — бордо, тренери — оливка
 const STAGE_ROMAN = ['I', 'II', 'III', 'IV', 'V'];
 const stageOf = r => Math.min(5, Math.max(1, Math.ceil(Number(r) / 4) || 1));
 function nomineeCard(x, i, example) {

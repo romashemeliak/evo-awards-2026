@@ -174,7 +174,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);f
 /* Дані — players.json поруч зі сторінкою (генерує scripts/awards_2026/player_cards.py). */
 const STAGE_COLORS = ['#ecd089', '#e2b85c', '#d9a441', '#b7792f', '#8c5524'];   // як на головній
 const STAGE_ROMAN = ['I', 'II', 'III', 'IV', 'V'];
-const REVO_COLOR = '#f3e6c4', ADMIN_COLOR = '#c9614f';
+const REVO_COLOR = '#f3e6c4', ADMIN_COLOR = '#a5483e';
 const MONTHS = ['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'];
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -199,7 +199,7 @@ document.addEventListener('click', e => { const b = e.target.closest('.qi');
   document.querySelectorAll('.qi[aria-expanded="true"]').forEach(x => { if (x !== b) x.setAttribute('aria-expanded', 'false'); });
   if (b) b.setAttribute('aria-expanded', b.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'); });
 
-const COACH_COLOR = '#4fae9b';
+const COACH_COLOR = '#8f9c5c';
 const low = n => String(n || '').trim().toLowerCase();
 const staffOf = nick => STAFF.find(x => low(x.nick) === low(nick));
 const playerOf = nick => ALL.find(x => low(x.nick) === low(nick));
