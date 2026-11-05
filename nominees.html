@@ -112,6 +112,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .sl-wait{font-size:13px;color:var(--muted);padding:10px 14px;border-radius:10px;border:1px dashed var(--line)}
 .all-h{margin:0 0 18px}
 @media(max-width:720px){.sl-nom{grid-template-columns:1fr;gap:12px}}
+/* віконце «i» у тексті */
+.qi{position:relative;display:inline-grid;place-items:center;width:20px;height:20px;margin:0 2px 0 6px;padding:0;vertical-align:2px;border-radius:50%;border:1px solid var(--gold);background:none;color:var(--gold);font:700 11px/1 Manrope,sans-serif;font-style:normal;cursor:pointer}
+.qi:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.qi-tip{position:absolute;left:50%;top:calc(100% + 10px);z-index:8;width:max-content;max-width:min(300px,calc(100vw - 40px));padding:12px 14px;border-radius:12px;background:#2f2821;border:1px solid rgba(217,164,65,.45);box-shadow:0 18px 40px -12px rgba(0,0,0,.8);font:500 13.5px/1.5 Manrope,sans-serif;color:#e6dccb;text-align:left;letter-spacing:0;text-transform:none;opacity:0;transform:translate(-50%,-4px);pointer-events:none;transition:opacity .15s,transform .15s}
+.qi:hover .qi-tip,.qi:focus-visible .qi-tip,.qi[aria-expanded="true"] .qi-tip{opacity:1;transform:translate(-50%,0)}
 footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);font-size:13px}
 </style>
 </head>
@@ -122,12 +127,12 @@ footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);f
 </div></header>
 
 <div class="wrap"><header class="top">
-  <div class="kicker">EVO Awards 2026</div>
+  <div class="kicker">Рік EVO 2026</div>
   <h1>Претенденти</h1>
   <p class="lead" id="lead"></p>
 </header>
   <section class="sl" id="sl" aria-labelledby="sl-h"></section>
-  <h2 class="all-h" id="all-h">Усі учасники</h2>
+  <h2 class="all-h" id="all-h">Усі претенденти</h2>
 </div>
 
 <div class="bar"><div class="wrap">
@@ -179,6 +184,12 @@ const NOMS = [
   { name: 'Фолд року', for: 'Найкращий фолд року' },
 ];
 const DEMO = new URLSearchParams(location.search).has('demo');
+const QI = n => `<button type="button" class="qi" aria-expanded="false" aria-label="Хто потрапляє в список">i<span class="qi-tip" role="tooltip">У списку — гравці EVO і REVO, що зіграли від ${n} ентрі за рік у складі команди, і весь адмінсклад.</span></button>`;
+/* віконце «i»: на телефоні — натиском */
+document.addEventListener('click', e => { const b = e.target.closest('.qi');
+  document.querySelectorAll('.qi[aria-expanded="true"]').forEach(x => { if (x !== b) x.setAttribute('aria-expanded', 'false'); });
+  if (b) b.setAttribute('aria-expanded', b.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'); });
+
 const low = n => String(n || '').trim().toLowerCase();
 const isDual = nick => DUAL.has(low(nick));
 const staffOf = nick => STAFF.find(x => low(x.nick) === low(nick));
@@ -300,7 +311,7 @@ stageButtons(); seg('#team', 'team'); seg('#view', 'view');
 fetch('players.json', { cache: 'no-cache' }).then(r => r.json()).then(d => {
   ALL = d.players || []; STAFF = d.staff || []; SHORT = d.shortlists || [];
   DUAL = new Set(STAFF.map(x => low(x.nick)).filter(k => ALL.some(x => low(x.nick) === k)));
-  $('#lead').textContent = `Гравці EVO і REVO, що зіграли від ${fmt(d.minDistance || 1000)} ентрі за рік у складі команди, і адмінсклад. Будь-кого з них можна висунути в ком'юніті номінаціях.`;
+  $('#lead').innerHTML = `Гравці EVO і REVO та адмінсклад із їхніми результатами за рік.${QI(fmt(d.minDistance || 1000))} Будь-кого з них можна висунути в ком'юніті номінаціях.`;
   renderShort();
   if (d.asOf) { const [y, m, dd] = d.asOf.split('-').map(Number);
     $('#foot').insertAdjacentHTML('afterbegin', `Дані станом на ${dd} ${MONTHS[m - 1]} ${y}; фінальні — після завершення Року EVO 30 листопада. `); }
