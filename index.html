@@ -256,11 +256,6 @@ a.mile:hover h3{color:var(--acc)}
 .period-badge .info{font:700 11px/1 Manrope,sans-serif;font-style:normal;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--gold);color:var(--gold)}
 .period-badge .tip{position:absolute;right:0;top:calc(100% + 8px);z-index:5;font:500 13px/1.35 Manrope,sans-serif;font-style:normal;color:var(--text);background:#2f2821;border:1px solid var(--line);border-radius:10px;padding:10px 12px;white-space:nowrap;opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity .15s,transform .15s}
 .period-badge:hover .tip,.period-badge:focus .tip{opacity:1;transform:none}
-/* віконце «i» у тексті */
-.qi{position:relative;display:inline-grid;place-items:center;width:20px;height:20px;margin:0 2px 0 6px;padding:0;vertical-align:2px;border-radius:50%;border:1px solid var(--gold);background:none;color:var(--gold);font:700 11px/1 Manrope,sans-serif;font-style:normal;cursor:pointer}
-.qi:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-.qi-tip{position:absolute;left:50%;top:calc(100% + 10px);z-index:8;width:max-content;max-width:min(300px,calc(100vw - 40px));padding:12px 14px;border-radius:12px;background:#2f2821;border:1px solid rgba(217,164,65,.45);box-shadow:0 18px 40px -12px rgba(0,0,0,.8);font:500 13.5px/1.5 Manrope,sans-serif;color:#e6dccb;text-align:left;letter-spacing:0;text-transform:none;opacity:0;transform:translate(-50%,-4px);pointer-events:none;transition:opacity .15s,transform .15s}
-.qi:hover .qi-tip,.qi:focus-visible .qi-tip,.qi[aria-expanded="true"] .qi-tip{opacity:1;transform:translate(-50%,0)}
 .board .legend{margin-top:0}
 .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}
 @media(max-width:760px){.tiers{grid-template-columns:1fr}}
@@ -1107,7 +1102,7 @@ if (SHOW_NOMINEES && groups.length) {
     <div class="sk-stats"><span><i class="sk w40"></i><i class="sk w70 tall"></i></span><span><i class="sk w40"></i><i class="sk w70 tall"></i></span><span><i class="sk w40"></i><i class="sk w70 tall"></i></span></div>
     <i class="sk w90 sk-fact"></i></div>`;
   $('#nominees-body').innerHTML = `<div class="locked">
-    <div class="locked-text"><p class="lead">Гравці EVO і REVO та адмінсклад із їхніми результатами за рік.<button type="button" class="qi" aria-expanded="false" aria-label="Хто потрапляє в список">i<span class="qi-tip" role="tooltip">У списку — гравці EVO і REVO, що зіграли від 1000 ентрі за рік у складі команди, і весь адмінсклад.</span></button> Після Nomination Week над списком з'явиться шортлист кожної номінації.</p>
+    <div class="locked-text"><p class="lead">Гравці EVO і REVO та адмінсклад із їхніми результатами за рік. Після Nomination Week над списком з'явиться шортлист кожної номінації.</p>
       <div class="tier"><span class="tier-h">Колір обідка на картці — етап</span>
         <div class="tier-bar">${[['REVO', REVO_COLOR], ...STAGE_COLORS.map((c, i) => [STAGE_ROMAN[i], c])].map(([t, c]) => `<span style="--c:${c}"><i></i>${t}</span>`).join('')}</div>
         <span class="tier-admin" style="--c:${ADMIN_COLOR}"><i></i>Адмінсклад</span></div>
@@ -1116,11 +1111,6 @@ if (SHOW_NOMINEES && groups.length) {
   </div>`;
   $('#nominees .locked-text').prepend($('#nominees .kicker'), $('#nominees h2'));
 }
-
-/* віконце «i»: на телефоні — натиском */
-document.addEventListener('click', e => { const b = e.target.closest('.qi');
-  document.querySelectorAll('.qi[aria-expanded="true"]').forEach(x => { if (x !== b) x.setAttribute('aria-expanded', 'false'); });
-  if (b) b.setAttribute('aria-expanded', b.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'); });
 
 /* --- поява блоків --- */
 const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold:.08 }) : null;
