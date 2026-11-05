@@ -497,10 +497,10 @@ footer a:hover{color:var(--text)}
 .tile .for{margin-top:6px;font-size:14px;color:var(--muted)}
 .tile .glyph{flex:none;width:34px;height:34px;color:var(--acc);margin-right:18px}
 .tile .glyph svg{width:100%;height:100%}
-.tile-info{position:absolute;top:10px;right:10px;z-index:3;width:24px;height:24px;border-radius:50%;border:1px solid rgba(217,164,65,.5);background:rgba(0,0,0,.3);color:var(--text);font:700 12px/1 Manrope,sans-serif;cursor:pointer}
-.tile-info:hover,.tile.pop-open .tile-info{background:var(--acc);color:#0b0c0c}
+.tile .glyph.pop{box-sizing:content-box;padding:11px;border-radius:50%;border:1px solid rgba(217,164,65,.45);background:rgba(217,164,65,.06);cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s}
+.tile .glyph.pop:hover,.tile .glyph.pop:focus-visible,.tile.pop-open .glyph.pop{outline:none;border-color:var(--acc);background:rgba(217,164,65,.16);box-shadow:0 0 0 4px rgba(217,164,65,.1),0 0 22px rgba(217,164,65,.35)}
 .tile-pop{position:absolute;top:calc(100% + 8px);right:0;left:0;z-index:6;padding:14px 16px;border-radius:12px;background:#2f2821;border:1px solid rgba(217,164,65,.45);box-shadow:0 18px 40px -12px rgba(0,0,0,.8);font-size:13.5px;line-height:1.5;color:#e6dccb;opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .15s,transform .15s}
-.tile-info:hover + .tile-pop,.tile-info:focus-visible + .tile-pop,.tile.pop-open .tile-pop{opacity:1;transform:none;pointer-events:auto}
+.glyph.pop:hover + .tile-pop,.glyph.pop:focus-visible + .tile-pop,.tile.pop-open .tile-pop{opacity:1;transform:none;pointer-events:auto}
 .car{position:relative;display:flex;align-items:center;gap:12px}
 .car-btn{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid rgba(217,164,65,.45);background:transparent;color:var(--acc);font:500 18px/1 Manrope,sans-serif;cursor:pointer}
 .car-btn:hover{background:rgba(217,164,65,.14)}
@@ -570,7 +570,6 @@ footer a:hover{color:var(--text)}
 .main-grid.big .tile h3{font-size:20px}
 .main-grid.big .tile .glyph{width:34px;height:34px}
 .tile-pop,.pop-list li{font-size:var(--fs-card)}
-.tile-info{top:14px;right:14px}
 /* інші картки — той самий радіус і текст */
 .ncard,.ystat,.bet-note,.poll,.auth-row,.form-empty{border-radius:var(--r-card)}
 .board .inf .card{border-radius:var(--r-card)}
@@ -1025,11 +1024,12 @@ $('#blocks').innerHTML = BLOCKS.map((b, i) => `
 
 /* --- номінації --- */
 const nomCard = n => { const t = el('article', { class:'tile' + (n.idea ? ' idea' : '') }), info = n.info || n.text;
-  t.innerHTML = `${n.pop || (info && info !== n.for) ? `<button class="tile-info" type="button" aria-label="Детальніше про ${esc(n.name)}">i</button>
-    <div class="tile-pop" role="tooltip">${n.pop || esc(info)}</div>` : ''}
-    <div class="t-text"><h3>${esc(n.name)}</h3><p class="for">${esc(n.for)}</p></div>
-    <span class="glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[n.icon] || ''}</svg></span>`;
-  if (t.querySelector('.tile-info')) t.querySelector('.tile-info').addEventListener('click', e => { e.stopPropagation(); const on = !t.classList.contains('pop-open');
+  // деталі — у віконці, що з'являється при наведенні на іконку в колі (на телефоні — натиском)
+  const pop = n.pop || (info && info !== n.for), svg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[n.icon] || ''}</svg>`;
+  t.innerHTML = `<div class="t-text"><h3>${esc(n.name)}</h3><p class="for">${esc(n.for)}</p></div>
+    ${pop ? `<button class="glyph pop" type="button" aria-label="Детальніше про ${esc(n.name)}">${svg}</button>
+    <div class="tile-pop" role="tooltip">${n.pop || esc(info)}</div>` : `<span class="glyph" aria-hidden="true">${svg}</span>`}`;
+  if (pop) t.querySelector('.glyph.pop').addEventListener('click', e => { e.stopPropagation(); const on = !t.classList.contains('pop-open');
     document.querySelectorAll('.tile.pop-open').forEach(x => x.classList.remove('pop-open')); t.classList.toggle('pop-open', on); });
   return t; };
 document.addEventListener('click', () => document.querySelectorAll('.tile.pop-open').forEach(x => x.classList.remove('pop-open')));
