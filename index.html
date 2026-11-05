@@ -1077,7 +1077,7 @@ document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click
 const SUITS = ['♠', '♥', '♦', '♣'];
 const arrow = a => Array.isArray(a) ? `${esc(a[0])} → ${esc(a[1])}` : esc(a ?? '—');
 const STAGE_COLORS = ['#ecd089', '#e2b85c', '#d9a441', '#b7792f', '#8c5524']; // етапи I–V (ранги 1–4, 5–8, 9–12, 13–16, 17+): світле золото → золото сайту → бронза: що вищий ранг, то темніше
-const REVO_COLOR = '#f3e6c4', ADMIN_COLOR = '#c9614f';   // REVO — найсвітліший, кремовий, адмінсклад — теракота
+const REVO_COLOR = '#f3e6c4', ADMIN_COLOR = '#c9614f', COACH_COLOR = '#4fae9b';   // REVO — найсвітліший, кремовий, адмінсклад — теракота
 const STAGE_ROMAN = ['I', 'II', 'III', 'IV', 'V'];
 const stageOf = r => Math.min(5, Math.max(1, Math.ceil(Number(r) / 4) || 1));
 function nomineeCard(x, i, example) {
@@ -1102,10 +1102,10 @@ if (SHOW_NOMINEES && groups.length) {
     <div class="sk-stats"><span><i class="sk w40"></i><i class="sk w70 tall"></i></span><span><i class="sk w40"></i><i class="sk w70 tall"></i></span><span><i class="sk w40"></i><i class="sk w70 tall"></i></span></div>
     <i class="sk w90 sk-fact"></i></div>`;
   $('#nominees-body').innerHTML = `<div class="locked">
-    <div class="locked-text"><p class="lead">Гравці EVO і REVO та адмінсклад із їхніми результатами за рік. Після Nomination Week над списком з'явиться шортлист кожної номінації.</p>
+    <div class="locked-text"><p class="lead">Гравці EVO і REVO, тренери та адмінсклад із їхніми результатами за рік. Після Nomination Week над списком з'явиться шортлист кожної номінації.</p>
       <div class="tier"><span class="tier-h">Колір обідка на картці — етап</span>
         <div class="tier-bar">${[['REVO', REVO_COLOR], ...STAGE_COLORS.map((c, i) => [STAGE_ROMAN[i], c])].map(([t, c]) => `<span style="--c:${c}"><i></i>${t}</span>`).join('')}</div>
-        <span class="tier-admin" style="--c:${ADMIN_COLOR}"><i></i>Адмінсклад</span></div>
+        <span class="tier-admin" style="--c:${ADMIN_COLOR}"><i></i>Адмінсклад</span><span class="tier-admin" style="--c:${COACH_COLOR}"><i></i>Тренер</span></div>
       <a class="btn" href="nominees.html">Усі претенденти і їхні результати →</a></div>
     <div class="deck" aria-hidden="true">${skel(REVO_COLOR)}${skel(STAGE_COLORS[4])}${skel(STAGE_COLORS[2])}</div>
   </div>`;

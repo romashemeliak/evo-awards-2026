@@ -138,7 +138,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);f
 <div class="bar"><div class="wrap">
   <input class="search" id="q" type="search" placeholder="Пошук за ім'ям або ніком у румі" autocomplete="off">
   <div class="seg" id="team" role="group" aria-label="Команда">
-    <button data-v="all" aria-pressed="true">Усі</button><button data-v="EVO" aria-pressed="false">EVO</button><button data-v="REVO" aria-pressed="false">REVO</button>
+    <button data-v="all" aria-pressed="true">Усі</button><button data-v="EVO" aria-pressed="false">EVO</button><button data-v="REVO" aria-pressed="false">REVO</button><button data-v="COACH" aria-pressed="false">Тренери</button>
   </div>
   <div class="stages" id="stages" role="group" aria-label="Етап"></div>
   <select id="sort" aria-label="Сортування">
@@ -154,8 +154,8 @@ footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);f
 </div></div>
 
 <main><div class="wrap"><div id="out"></div>
-  <section id="staff" class="staff-sec" hidden><h2>Адмінсклад <span id="staff-count"></span></h2>
-    <p class="staff-lead">Адміни, тренери й модератори — люди, завдяки яким працює школа. Їх теж можна висувати в ком'юніті номінаціях.</p>
+  <section id="staff" class="staff-sec" hidden><h2><span id="staff-title">Адмінсклад</span> <span id="staff-count"></span></h2>
+    <p class="staff-lead">Адміни, коучі й психологи — люди, завдяки яким працює школа. Їх теж можна висувати в ком'юніті номінаціях.</p>
     <div id="staff-out"></div></section>
 </div></main>
 
@@ -184,19 +184,27 @@ const NOMS = [
   { name: 'Фолд року', for: 'Найкращий фолд року' },
 ];
 const DEMO = new URLSearchParams(location.search).has('demo');
-const QI = n => `<button type="button" class="qi" aria-expanded="false" aria-label="Хто потрапляє в список">i<span class="qi-tip" role="tooltip">У списку — гравці EVO і REVO, що зіграли від ${n} ентрі за рік у складі команди, і весь адмінсклад.</span></button>`;
+const QI = n => `<button type="button" class="qi" aria-expanded="false" aria-label="Хто потрапляє в список">i<span class="qi-tip" role="tooltip">У списку — гравці EVO і REVO, що зіграли від ${n} ентрі за рік у складі команди, і весь адмінсклад та тренерський склад.</span></button>`;
 /* віконце «i»: на телефоні — натиском */
 document.addEventListener('click', e => { const b = e.target.closest('.qi');
   document.querySelectorAll('.qi[aria-expanded="true"]').forEach(x => { if (x !== b) x.setAttribute('aria-expanded', 'false'); });
   if (b) b.setAttribute('aria-expanded', b.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'); });
 
+const COACH_COLOR = '#4fae9b';
 const low = n => String(n || '').trim().toLowerCase();
-const isDual = nick => DUAL.has(low(nick));
 const staffOf = nick => STAFF.find(x => low(x.nick) === low(nick));
 const playerOf = nick => ALL.find(x => low(x.nick) === low(nick));
-const dualStyle = nick => isDual(nick) ? `;--stage2:${ADMIN_COLOR}` : '';
-const admTag = nick => { if (!isDual(nick)) return ''; const r = (staffOf(nick) || {}).role; return ` · <span class="adm">Адмінсклад${r ? ' · ' + esc(r) : ''}</span>`; };
-let DUAL = new Set(), SHORT = [], STAFF = [], ALL = [], state = { q: '', team: 'all', stages: new Set(), sort: 'nick', view: 'cards', dir: -1 };
+const isCoach = nick => COACHES.has(low(nick));
+const staffColor = s => s.kind === 'coach' ? COACH_COLOR : ADMIN_COLOR;
+const staffTitle = s => s.kind === 'coach' ? (s.role || 'Тренер') : 'Адмінсклад' + (s.role ? ' · ' + s.role : '');
+// гравець, якого немає серед карток (нижче порогу), але етап відомий — rank у staff
+const staffPl = s => playerOf(s.nick) || (s.rank ? { team: 'EVO', rank: s.rank } : null);
+// друга роль гравця: адмінсклад або тренер — друга половина обідка
+const extraOf = p => { const s = staffOf(p.nick); if (s) return { c: staffColor(s), t: staffTitle(s) };
+  return isCoach(p.nick) ? { c: COACH_COLOR, t: 'Тренер' } : null; };
+const ringAttr = (cls, c1, c2) => `class="${cls}${c2 ? ' dual' : ''}" style="--stage:${c1}${c2 ? ';--stage2:' + c2 : ''}"`;
+const rankTxt = p => p.rank != null && p.team !== 'REVO' ? ` · ранг ${p.rank}` : '';
+let COACHES = new Set(), SHORT = [], STAFF = [], ALL = [], state = { q: '', team: 'all', stages: new Set(), sort: 'nick', view: 'cards', dir: -1 };
 try { const s = JSON.parse(localStorage.getItem('evo_nominees_view2') || '{}'); if (s.view) state.view = s.view; if (['rank', 'distance', 'abi', 'nick'].includes(s.sort)) state.sort = s.sort; } catch (e) {}
 const save = () => { try { localStorage.setItem('evo_nominees_view2', JSON.stringify({ view: state.view, sort: state.sort })); } catch (e) {} };
 
@@ -223,15 +231,16 @@ function sorted(list) {
 }
 function filtered() {
   const q = state.q.trim().toLowerCase();
-  return ALL.filter(p => (state.team === 'all' || p.team === state.team)
+  return ALL.filter(p => (state.team === 'all' || (state.team === 'COACH' ? isCoach(p.nick) : p.team === state.team))
     && (!state.stages.size || state.stages.has(String(stageOf(p))))
     && (!q || p.nick.toLowerCase().includes(q) || (p.roomNick || '').toLowerCase().includes(q)));
 }
 function card(p) {
   const av = p.avatar ? `<img src="${esc(p.avatar)}" alt="" loading="lazy">` : esc((p.nick || '?')[0].toUpperCase());
   const pending = !p.distance;
-  return `<article class="ncard${pending ? ' pending' : ''}${isDual(p.nick) ? ' dual' : ''}" style="--stage:${colorOf(p)}${dualStyle(p.nick)}">
-    <div class="who"><div class="avatar">${av}</div><div><div class="nick">${esc(p.nick)}</div><div class="role"><b>${labelOf(p)}</b>${p.rank != null && p.team !== 'REVO' ? ` · ранг ${p.rank}` : ''}${admTag(p.nick)}</div></div></div>
+  const x = extraOf(p);
+  return `<article ${ringAttr('ncard' + (pending ? ' pending' : ''), colorOf(p), x && x.c)}>
+    <div class="who"><div class="avatar">${av}</div><div><div class="nick">${esc(p.nick)}</div><div class="role"><b>${labelOf(p)}</b>${rankTxt(p)}${x ? ` · <span class="adm">${esc(x.t)}</span>` : ''}</div></div></div>
     <dl class="stats">
       <div><dt>Ентрі</dt><dd>${pending ? '—' : fmt(p.distance)}</dd></div>
       <div><dt>ABI за рік</dt><dd>${pending ? '—' : money(p.abi)}</dd></div>
@@ -242,39 +251,41 @@ function card(p) {
 function table(list) {
   const th = (k, t, num) => `<th class="${num ? 'num' : ''}" data-k="${k}"${state.sort === k ? ' aria-sort="' + (state.dir === -1 ? 'descending' : 'ascending') + '"' : ''}>${t}${state.sort === k ? (state.dir === -1 ? ' ↓' : ' ↑') : ''}</th>`;
   return `<div class="tbl-wrap"><table><thead><tr>${th('nick', 'Гравець')}<th>Етап</th>${th('rank', 'Ранг', 1)}${th('abi', 'ABI за рік', 1)}${th('distance', 'Ентрі', 1)}<th>Факт</th></tr></thead><tbody>${
-    list.map(p => `<tr style="--stage:${colorOf(p)}${dualStyle(p.nick)}"><td><span class="dot${isDual(p.nick) ? ' dual' : ''}"></span>${esc(p.nick)}</td><td>${labelOf(p)}${isDual(p.nick) ? ' · Адмінсклад' : ''}</td><td class="num">${p.team === 'REVO' ? '—' : (p.rank ?? '—')}</td><td class="num">${money(p.abi)}</td><td class="num">${p.distance ? fmt(p.distance) : '—'}</td><td class="fact-c">${esc(p.fact || '')}</td></tr>`).join('')
+    list.map(p => { const x = extraOf(p); return `<tr style="--stage:${colorOf(p)}${x ? ';--stage2:' + x.c : ''}"><td><span class="dot${x ? ' dual' : ''}"></span>${esc(p.nick)}</td><td>${labelOf(p)}${x ? ' · ' + esc(x.t) : ''}</td><td class="num">${p.team === 'REVO' ? '—' : (p.rank ?? '—')}</td><td class="num">${money(p.abi)}</td><td class="num">${p.distance ? fmt(p.distance) : '—'}</td><td class="fact-c">${esc(p.fact || '')}</td></tr>`; }).join('')
   }</tbody></table></div>`;
 }
 function staffCard(p) {
   const av = p.avatar ? `<img src="${esc(p.avatar)}" alt="" loading="lazy">` : esc((p.nick || '?')[0].toUpperCase());
-  const pl = isDual(p.nick) && playerOf(p.nick);
-  return `<article class="ncard staff${pl ? ' dual' : ''}" style="--stage:${pl ? colorOf(pl) + ';--stage2:' + ADMIN_COLOR : ADMIN_COLOR}">
-    <div class="who"><div class="avatar">${av}</div><div><div class="nick">${esc(p.nick)}</div><div class="role">${pl ? `<b>${labelOf(pl)}</b>${pl.rank != null && pl.team !== 'REVO' ? ` · ранг ${pl.rank}` : ''} · <span class="adm">Адмінсклад</span>` : '<b>Адмінсклад</b>'}${p.role ? ' · ' + esc(p.role) : ''}</div></div></div>
+  const pl = staffPl(p), c = staffColor(p), t = esc(staffTitle(p));
+  return `<article ${ringAttr('ncard staff', pl ? colorOf(pl) : c, pl && c)}>
+    <div class="who"><div class="avatar">${av}</div><div><div class="nick">${esc(p.nick)}</div><div class="role">${pl ? `<b>${labelOf(pl)}</b>${rankTxt(pl)} · <span class="adm">${t}</span>` : `<b>${t}</b>`}</div></div></div>
     <p class="about${p.about ? '' : ' muted'}">${p.about ? esc(p.about) : 'Опис діяльності з\'явиться згодом'}</p>
   </article>`;
 }
 function staffTable(list) {
   return `<div class="tbl-wrap"><table><thead><tr><th>Нік</th><th>Роль</th><th>Діяльність</th></tr></thead><tbody>${
-    list.map(p => { const pl = isDual(p.nick) && playerOf(p.nick); return `<tr style="--stage:${pl ? colorOf(pl) + ';--stage2:' + ADMIN_COLOR : ADMIN_COLOR}"><td><span class="dot${pl ? ' dual' : ''}"></span>${esc(p.nick)}</td><td>${esc(p.role || '—')}</td><td class="fact-c">${esc(p.about || '—')}</td></tr>`; }).join('')
+    list.map(p => { const pl = staffPl(p), c = staffColor(p); return `<tr style="--stage:${pl ? colorOf(pl) + ';--stage2:' + c : c}"><td><span class="dot${pl ? ' dual' : ''}"></span>${esc(p.nick)}</td><td>${pl ? labelOf(pl) + rankTxt(pl) + ' · ' : ''}${esc(staffTitle(p))}</td><td class="fact-c">${esc(p.about || '—')}</td></tr>`; }).join('')
   }</tbody></table></div>`;
 }
 function renderStaff() {
-  const q = state.q.trim().toLowerCase(), list = STAFF.filter(p => !q || p.nick.toLowerCase().includes(q))
+  const q = state.q.trim().toLowerCase(), list = STAFF.filter(p => (!q || p.nick.toLowerCase().includes(q)) && (state.team !== 'COACH' || p.kind === 'coach'))
     .sort((a, b) => a.nick.localeCompare(b.nick, 'uk', { sensitivity: 'base' }));
   $('#staff').hidden = !list.length || state.team === 'EVO' || state.team === 'REVO' || state.stages.size > 0;
+  $('#staff-title').textContent = state.team === 'COACH' ? 'Тренерський склад' : 'Адмінсклад';
   $('#staff-count').textContent = `${list.length}`;
   $('#staff-out').innerHTML = state.view === 'table' ? staffTable(list) : `<div class="grid">${list.map(staffCard).join('')}</div>`;
 }
 function person(nick) {
   const k = String(nick).trim().toLowerCase();
-  const p = ALL.find(x => x.nick.toLowerCase() === k); if (p) return { ...p, c: colorOf(p), l: labelOf(p) + (isDual(p.nick) ? ' · Адмінсклад' : ''), dual: isDual(p.nick) };
-  const s = STAFF.find(x => x.nick.toLowerCase() === k); if (s) return { ...s, c: ADMIN_COLOR, l: 'Адмінсклад' + (s.role ? ' · ' + s.role : '') };
+  const p = ALL.find(x => x.nick.toLowerCase() === k); if (p) { const x = extraOf(p); return { ...p, c: colorOf(p), c2: x && x.c, l: labelOf(p) + (x ? ' · ' + x.t : '') }; }
+  const s = STAFF.find(x => x.nick.toLowerCase() === k); if (s) { const pl = staffPl(s), c = staffColor(s);
+    return { ...s, c: pl ? colorOf(pl) : c, c2: pl && c, l: (pl ? labelOf(pl) + ' · ' : '') + staffTitle(s) }; }
   return { nick, c: 'var(--line)', l: '' };
 }
-// приклад: по 3–5 різних людей на номінацію; «Тренер року» — з адмінскладу
+// приклад: по 3–5 різних людей на номінацію; «Тренер року» — з тренерів
 function demoShortlists() {
   const pick = (src, n, seed) => Array.from({ length: n }, (_, i) => src[(seed * 11 + i * 17) % src.length]).filter((x, i, a) => a.indexOf(x) === i).map(x => x.nick);
-  return NOMS.map((n, i) => ({ name: n.name, nominees: n.name === 'Тренер року' && STAFF.length ? pick(STAFF, 4, i) : pick(ALL, [5, 4, 4, 0, 3][i] || 4, i + 1) }));
+  return NOMS.map((n, i) => ({ name: n.name, nominees: n.name === 'Тренер року' ? pick([...ALL.filter(x => isCoach(x.nick)), ...STAFF.filter(x => x.kind === 'coach')], 4, i) : pick(ALL, [5, 4, 4, 0, 3][i] || 4, i + 1) }));
 }
 function renderShort() {
   const lists = DEMO ? demoShortlists() : SHORT, by = Object.fromEntries(lists.map(x => [x.name, x.nominees || []]));
@@ -286,7 +297,7 @@ function renderShort() {
     <div class="sl-noms">${NOMS.map(n => { const list = by[n.name] || [];
       return `<div class="sl-nom"><div><h3>${esc(n.name)}</h3><p class="for">${esc(n.for)}</p></div>${list.length
         ? `<div class="sl-list">${list.map(nick => { const p = person(nick), av = p.avatar ? `<img src="${esc(p.avatar)}" alt="" loading="lazy">` : esc((p.nick || '?')[0].toUpperCase());
-            return `<button type="button" class="sl-p${p.dual ? ' dual' : ''}" data-nick="${esc(p.nick)}" style="--stage:${p.c}${p.dual ? ';--stage2:' + ADMIN_COLOR : ''}"><span class="avatar">${av}</span><span><b>${esc(p.nick)}</b>${p.l ? `<small>${esc(p.l)}</small>` : ''}</span></button>`; }).join('')}</div>`
+            return `<button type="button" ${ringAttr('sl-p', p.c, p.c2)} data-nick="${esc(p.nick)}"><span class="avatar">${av}</span><span><b>${esc(p.nick)}</b>${p.l ? `<small>${esc(p.l)}</small>` : ''}</span></button>`; }).join('')}</div>`
         : `<div class="sl-wait">Шортлист з'явиться після Nomination Week</div>`}</div>`; }).join('')}</div>`;
 }
 $('#sl').addEventListener('click', e => { const b = e.target.closest('.sl-p'); if (!b) return;
@@ -310,8 +321,8 @@ stageButtons(); seg('#team', 'team'); seg('#view', 'view');
 
 fetch('players.json', { cache: 'no-cache' }).then(r => r.json()).then(d => {
   ALL = d.players || []; STAFF = d.staff || []; SHORT = d.shortlists || [];
-  DUAL = new Set(STAFF.map(x => low(x.nick)).filter(k => ALL.some(x => low(x.nick) === k)));
-  $('#lead').innerHTML = `Гравці EVO і REVO та адмінсклад із їхніми результатами за рік.${QI(fmt(d.minDistance || 1000))} Будь-кого з них можна висунути в ком'юніті номінаціях.`;
+  COACHES = new Set((d.coaches || []).map(low));
+  $('#lead').innerHTML = `Гравці EVO і REVO, тренери та адмінсклад із їхніми результатами за рік.${QI(fmt(d.minDistance || 1000))} Будь-кого з них можна висунути в ком'юніті номінаціях.`;
   renderShort();
   if (d.asOf) { const [y, m, dd] = d.asOf.split('-').map(Number);
     $('#foot').insertAdjacentHTML('afterbegin', `Дані станом на ${dd} ${MONTHS[m - 1]} ${y}; фінальні — після завершення Року EVO 30 листопада. `); }
