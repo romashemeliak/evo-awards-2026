@@ -181,15 +181,13 @@ a.mile:hover h3{color:var(--acc)}
 .poll-head:hover{background:rgba(217,164,65,.05)}
 .poll-head:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
 .tog{display:flex;align-items:center;gap:10px;font:700 12px/1 Manrope,sans-serif;color:var(--muted);white-space:nowrap}
-.tog::before{content:"Розгорнути"}
-.poll-head[aria-expanded="true"] .tog::before{content:"Згорнути"}
 .tog i{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;border:1px solid var(--line);color:var(--acc);transition:transform .2s,border-color .15s,background .15s}
 .tog svg{width:14px;height:14px}
 .poll-head:hover .tog{color:var(--text)}
 .poll-head:hover .tog i{border-color:var(--acc);background:rgba(217,164,65,.1)}
 .poll-head[aria-expanded="true"] .tog i{transform:rotate(180deg)}
 .poll.slim .tog i{width:28px;height:28px}
-@media(max-width:820px){.tog::before{display:none}}
+
 @media(max-width:600px){.poll-head{grid-template-columns:1fr auto;row-gap:10px}.poll-head>span:nth-child(2){grid-column:1}
   .poll-head .meta,.poll.slim .poll-head .meta{grid-column:1;grid-row:2;flex-direction:row;align-items:center;justify-content:flex-start}
   .poll-head .tog{grid-column:2;grid-row:1/3}}
