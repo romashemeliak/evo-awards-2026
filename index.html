@@ -376,6 +376,7 @@ a.mile:hover h3{color:var(--acc)}
 .tier-bar i{height:8px;background:var(--c)}
 .tier-bar span:first-child i{border-radius:4px 0 0 4px}
 .tier-bar span:last-child i{border-radius:0 4px 4px 0}
+.tier-roles{display:flex;flex-wrap:wrap;gap:10px 24px}
 .tier-admin{display:inline-flex;align-items:center;gap:8px;font:700 12px/1 Manrope,sans-serif;color:#d8cdbb}
 .tier-admin i{width:22px;height:8px;border-radius:4px;background:var(--c)}
 /* віяло скелетних карток */
@@ -1103,7 +1104,7 @@ if (SHOW_NOMINEES && groups.length) {
     <div class="locked-text"><p class="lead">Гравці EVO і REVO, тренери та адмінсклад із їхніми результатами за рік. Після Nomination Week над списком з'явиться шортлист кожної номінації.</p>
       <div class="tier"><span class="tier-h">Колір обідка на картці — етап</span>
         <div class="tier-bar">${[['REVO', REVO_COLOR], ...STAGE_COLORS.map((c, i) => [STAGE_ROMAN[i], c])].map(([t, c]) => `<span style="--c:${c}"><i></i>${t}</span>`).join('')}</div>
-        <span class="tier-admin" style="--c:${ADMIN_COLOR}"><i></i>Адмінсклад</span><span class="tier-admin" style="--c:${COACH_COLOR}"><i></i>Тренер</span></div>
+        <span class="tier-roles"><span class="tier-admin" style="--c:${ADMIN_COLOR}"><i></i>Адмінсклад</span><span class="tier-admin" style="--c:${COACH_COLOR}"><i></i>Тренер</span></span></div>
       <a class="btn" href="nominees.html">Усі претенденти і їхні результати →</a></div>
     <div class="deck" aria-hidden="true">${skel(REVO_COLOR)}${skel(STAGE_COLORS[4])}${skel(STAGE_COLORS[2])}</div>
   </div>`;
