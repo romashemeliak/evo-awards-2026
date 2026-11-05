@@ -83,6 +83,27 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--stage);margin-right:8px;vertical-align:middle}
 .tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius)}
 @media(max-width:700px){.count{margin-left:0;flex-basis:100%}.bar{position:static}}
+/* шортлист */
+.sl{margin:8px 0 48px}
+.sl-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 20px}
+.sl-head h2,.all-h{font:900 clamp(22px,3.4vw,32px)/1.1 Unbounded,sans-serif;text-transform:uppercase}
+.sl-head p{color:var(--muted);font-size:14px;margin:8px 0 0;max-width:620px}
+.sl-demo{display:flex;align-items:center;gap:10px;margin-top:16px;padding:10px 14px;border-radius:10px;border:1px dashed rgba(217,164,65,.55);background:rgba(217,164,65,.06);font-size:13px;color:#e6dccb}
+.sl-demo b{font:800 11px/1 Manrope,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.sl-noms{display:grid;gap:10px;margin-top:20px}
+.sl-nom{display:grid;grid-template-columns:230px 1fr;gap:18px;align-items:center;padding:16px 18px;border-radius:var(--radius);border:1px solid var(--line);background:var(--bg-2)}
+.sl-nom h3{font:700 15px/1.25 Unbounded,sans-serif}
+.sl-nom .for{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.4}
+.sl-list{display:flex;flex-wrap:wrap;gap:8px}
+.sl-p{display:inline-flex;align-items:center;gap:10px;padding:5px 14px 5px 5px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:inherit;font:inherit;cursor:pointer;text-align:left;transition:border-color .15s}
+.sl-p:hover,.sl-p:focus-visible{border-color:var(--stage);outline:none}
+.sl-p .avatar{width:30px;height:30px;font-size:12px;box-shadow:0 0 0 2px var(--card),0 0 0 3px var(--stage)}
+.sl-p span{display:grid;gap:2px;line-height:1.15}
+.sl-p b{font:700 13px Manrope,sans-serif}
+.sl-p small{font:700 11px Manrope,sans-serif;color:var(--stage)}
+.sl-wait{font-size:13px;color:var(--muted);padding:10px 14px;border-radius:10px;border:1px dashed var(--line)}
+.all-h{margin:0 0 18px}
+@media(max-width:720px){.sl-nom{grid-template-columns:1fr;gap:12px}}
 footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);font-size:13px}
 </style>
 </head>
@@ -94,9 +115,12 @@ footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);f
 
 <div class="wrap"><header class="top">
   <div class="kicker">Претенденти</div>
-  <h1>Гравці<br>EVO і REVO</h1>
+  <h1>Учасники<br>EVO Awards</h1>
   <p class="lead" id="lead"></p>
-</header></div>
+</header>
+  <section class="sl" id="sl" aria-labelledby="sl-h"></section>
+  <h2 class="all-h" id="all-h">Усі учасники</h2>
+</div>
 
 <div class="bar"><div class="wrap">
   <input class="search" id="q" type="search" placeholder="Пошук за ім'ям або ніком у румі" autocomplete="off">
@@ -138,7 +162,16 @@ const stageOf = p => p.team === 'ADMIN' ? -1 : p.team === 'REVO' ? 0 : p.rank ==
 const colorOf = p => { const s = stageOf(p); return s === -1 ? ADMIN_COLOR : s === 0 ? REVO_COLOR : s ? STAGE_COLORS[s - 1] : 'var(--line)'; };
 const labelOf = p => { const s = stageOf(p); return s === -1 ? 'Адмінсклад' : s === 0 ? 'REVO' : s ? STAGE_ROMAN[s - 1] + ' етап' : 'EVO'; };
 
-let STAFF = [], ALL = [], state = { q: '', team: 'all', stages: new Set(), sort: 'nick', view: 'cards', dir: -1 };
+// Ком'юніті номінації — як COMMUNITY на головній (index.html)
+const NOMS = [
+  { name: 'Найкращий блог', for: 'Найцікавіший блог гравця' },
+  { name: 'Серце EVO', for: 'Людина, до якої йдеш з будь-чим' },
+  { name: 'Харизма EVO', for: 'Заряджає всіх навколо' },
+  { name: 'Тренер року', for: 'Найбільше дав своїм учням' },
+  { name: 'Фолд року', for: 'Найкращий фолд року' },
+];
+const DEMO = new URLSearchParams(location.search).has('demo');
+let SHORT = [], STAFF = [], ALL = [], state = { q: '', team: 'all', stages: new Set(), sort: 'nick', view: 'cards', dir: -1 };
 try { const s = JSON.parse(localStorage.getItem('evo_nominees_view2') || '{}'); if (s.view) state.view = s.view; if (['rank', 'distance', 'abi', 'nick'].includes(s.sort)) state.sort = s.sort; } catch (e) {}
 const save = () => { try { localStorage.setItem('evo_nominees_view2', JSON.stringify({ view: state.view, sort: state.sort })); } catch (e) {} };
 
@@ -206,6 +239,35 @@ function renderStaff() {
   $('#staff-count').textContent = `${list.length}`;
   $('#staff-out').innerHTML = state.view === 'table' ? staffTable(list) : `<div class="grid">${list.map(staffCard).join('')}</div>`;
 }
+function person(nick) {
+  const k = String(nick).trim().toLowerCase();
+  const p = ALL.find(x => x.nick.toLowerCase() === k); if (p) return { ...p, c: colorOf(p), l: labelOf(p) };
+  const s = STAFF.find(x => x.nick.toLowerCase() === k); if (s) return { ...s, c: ADMIN_COLOR, l: 'Адмінсклад' + (s.role ? ' · ' + s.role : '') };
+  return { nick, c: 'var(--line)', l: '' };
+}
+// приклад: по 3–5 різних людей на номінацію; «Тренер року» — з адмінскладу
+function demoShortlists() {
+  const pick = (src, n, seed) => Array.from({ length: n }, (_, i) => src[(seed * 11 + i * 17) % src.length]).filter((x, i, a) => a.indexOf(x) === i).map(x => x.nick);
+  return NOMS.map((n, i) => ({ name: n.name, nominees: n.name === 'Тренер року' && STAFF.length ? pick(STAFF, 4, i) : pick(ALL, [5, 4, 4, 0, 3][i] || 4, i + 1) }));
+}
+function renderShort() {
+  const lists = DEMO ? demoShortlists() : SHORT, by = Object.fromEntries(lists.map(x => [x.name, x.nominees || []]));
+  const any = lists.some(x => (x.nominees || []).length);
+  $('#sl').innerHTML = `<div class="sl-head"><div><h2 id="sl-h">Шортлист</h2>
+      <p>${any ? 'Претенденти кожної ком\'юніті номінації за підсумками Nomination Week. Натисни на претендента — він знайдеться у списку нижче.'
+        : 'Претендентів висувають учасники на Nomination Week, 16–22 листопада. Після неї шортлист кожної номінації з\'явиться тут.'}</p></div></div>
+    ${DEMO ? '<div class="sl-demo"><b>Приклад</b>Претенденти тут вигадані — це лише вигляд блоку. Справжній шортлист з\'явиться після Nomination Week.</div>' : ''}
+    <div class="sl-noms">${NOMS.map(n => { const list = by[n.name] || [];
+      return `<div class="sl-nom"><div><h3>${esc(n.name)}</h3><p class="for">${esc(n.for)}</p></div>${list.length
+        ? `<div class="sl-list">${list.map(nick => { const p = person(nick), av = p.avatar ? `<img src="${esc(p.avatar)}" alt="" loading="lazy">` : esc((p.nick || '?')[0].toUpperCase());
+            return `<button type="button" class="sl-p" data-nick="${esc(p.nick)}" style="--stage:${p.c}"><span class="avatar">${av}</span><span><b>${esc(p.nick)}</b>${p.l ? `<small>${esc(p.l)}</small>` : ''}</span></button>`; }).join('')}</div>`
+        : `<div class="sl-wait">Шортлист з'явиться після Nomination Week</div>`}</div>`; }).join('')}</div>`;
+}
+$('#sl').addEventListener('click', e => { const b = e.target.closest('.sl-p'); if (!b) return;
+  state.q = b.dataset.nick; $('#q').value = b.dataset.nick; state.team = 'all'; state.stages.clear();
+  document.querySelectorAll('#team button').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === 'all'));
+  document.querySelectorAll('#stages button').forEach(x => x.setAttribute('aria-pressed', 'false'));
+  render(); $('#all-h').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
 function render() {
   renderStaff();
   const list = sorted(filtered());
@@ -221,8 +283,9 @@ $('#sort').addEventListener('change', e => { state.sort = e.target.value; state.
 stageButtons(); seg('#team', 'team'); seg('#view', 'view');
 
 fetch('players.json', { cache: 'no-cache' }).then(r => r.json()).then(d => {
-  ALL = d.players || []; STAFF = d.staff || [];
-  $('#lead').textContent = `Гравці, що зіграли від ${fmt(d.minDistance || 1000)} ентрі за рік у складі команди.`;
+  ALL = d.players || []; STAFF = d.staff || []; SHORT = d.shortlists || [];
+  $('#lead').textContent = `Гравці EVO і REVO, що зіграли від ${fmt(d.minDistance || 1000)} ентрі за рік у складі команди, і адмінсклад. Будь-кого з них можна висунути в ком'юніті номінаціях.`;
+  renderShort();
   if (d.asOf) { const [y, m, dd] = d.asOf.split('-').map(Number);
     $('#foot').insertAdjacentHTML('afterbegin', `Дані станом на ${dd} ${MONTHS[m - 1]} ${y}; фінальні — після завершення Року EVO 30 листопада. `); }
   render();

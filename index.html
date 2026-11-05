@@ -602,7 +602,7 @@ footer a:hover{color:var(--text)}
       <li><a href="#vote">Голосування</a></li>
       <!-- <li><a href="#program">Програма</a></li>  тимчасово прибрано разом із блоком -->
       <li><a href="#nominations">Номінації</a></li>
-      <li><a href="#nominees">Номінанти</a></li>
+      <li><a href="#nominees">Претенденти</a></li>
       <li><a href="#year">Підсумки</a></li>
       <li><a href="#rules">Ставки</a></li>
     </ul>
@@ -673,7 +673,7 @@ footer a:hover{color:var(--text)}
 <section id="nominees" style="background:var(--bg-2)">
   <div class="wrap">
     <div class="kicker">Номінанти</div>
-    <h2>Шортлист</h2>
+    <h2>Претенденти</h2>
     <div id="nominees-body"></div>
   </div>
 </section>
@@ -1102,7 +1102,7 @@ if (SHOW_NOMINEES && groups.length) {
     <div class="sk-stats"><span><i class="sk w40"></i><i class="sk w70 tall"></i></span><span><i class="sk w40"></i><i class="sk w70 tall"></i></span><span><i class="sk w40"></i><i class="sk w70 tall"></i></span></div>
     <i class="sk w90 sk-fact"></i></div>`;
   $('#nominees-body').innerHTML = `<div class="locked">
-    <div class="locked-text"><p class="lead">Претенденти будуть оголошені наприкінці листопада, коли завершиться Рік EVO 2026.</p>
+    <div class="locked-text"><p class="lead">Список усіх учасників уже відкритий: гравці EVO і REVO та адмінсклад. Шортлист кожної ком'юніті номінації з'явиться над ним після Nomination Week.</p>
       <div class="tier"><span class="tier-h">Колір обідка на картці — етап</span>
         <div class="tier-bar">${[['REVO', REVO_COLOR], ...STAGE_COLORS.map((c, i) => [STAGE_ROMAN[i], c])].map(([t, c]) => `<span style="--c:${c}"><i></i>${t}</span>`).join('')}</div>
         <span class="tier-admin" style="--c:${ADMIN_COLOR}"><i></i>Адмінсклад</span></div>
