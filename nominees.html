@@ -91,6 +91,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .sl-p.dual .avatar{box-shadow:none;width:36px;height:36px;margin:-3px;border-width:1px}
 .dot.dual{background:linear-gradient(90deg,var(--stage) 50%,var(--stage2) 50%)}
 .role .adm{color:var(--stage2)}
+.nick .nm{font:500 .78em Manrope,sans-serif;color:var(--muted);letter-spacing:0;text-transform:none;margin-left:4px}
 /* шортлист */
 .sl{margin:8px 0 48px}
 .sl-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 20px}
@@ -136,7 +137,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);f
 </div>
 
 <div class="bar"><div class="wrap">
-  <input class="search" id="q" type="search" placeholder="Пошук за ім'ям або ніком у румі" autocomplete="off">
+  <input class="search" id="q" type="search" placeholder="Пошук за ніком або ім'ям" autocomplete="off">
   <div class="seg" id="team" role="group" aria-label="Команда">
     <button data-v="all" aria-pressed="true">Усі</button><button data-v="EVO" aria-pressed="false">EVO</button><button data-v="REVO" aria-pressed="false">REVO</button><button data-v="COACH" aria-pressed="false">Тренери</button>
   </div>
@@ -194,6 +195,8 @@ const COACH_COLOR = '#4fae9b';
 const low = n => String(n || '').trim().toLowerCase();
 const staffOf = nick => STAFF.find(x => low(x.nick) === low(nick));
 const playerOf = nick => ALL.find(x => low(x.nick) === low(nick));
+const nameOf = nick => NAMES[low(nick)] || '';
+const nickHtml = nick => esc(nick) + (nameOf(nick) ? ` <span class="nm">${esc(nameOf(nick))}</span>` : '');
 const isCoach = nick => COACHES.has(low(nick));
 const staffColor = s => s.kind === 'coach' ? COACH_COLOR : ADMIN_COLOR;
 const staffTitle = s => s.kind === 'coach' ? (s.role || 'Тренер') : 'Адмінсклад' + (s.role ? ' · ' + s.role : '');
@@ -204,7 +207,7 @@ const extraOf = p => { const s = staffOf(p.nick); if (s) return { c: staffColor(
   return isCoach(p.nick) ? { c: COACH_COLOR, t: 'Тренер' } : null; };
 const ringAttr = (cls, c1, c2) => `class="${cls}${c2 ? ' dual' : ''}" style="--stage:${c1}${c2 ? ';--stage2:' + c2 : ''}"`;
 const rankTxt = p => p.rank != null && p.team !== 'REVO' ? ` · ранг ${p.rank}` : '';
-let COACHES = new Set(), SHORT = [], STAFF = [], ALL = [], state = { q: '', team: 'all', stages: new Set(), sort: 'nick', view: 'cards', dir: -1 };
+let NAMES = {}, COACHES = new Set(), SHORT = [], STAFF = [], ALL = [], state = { q: '', team: 'all', stages: new Set(), sort: 'nick', view: 'cards', dir: -1 };
 try { const s = JSON.parse(localStorage.getItem('evo_nominees_view2') || '{}'); if (s.view) state.view = s.view; if (['rank', 'distance', 'abi', 'nick'].includes(s.sort)) state.sort = s.sort; } catch (e) {}
 const save = () => { try { localStorage.setItem('evo_nominees_view2', JSON.stringify({ view: state.view, sort: state.sort })); } catch (e) {} };
 
@@ -233,14 +236,14 @@ function filtered() {
   const q = state.q.trim().toLowerCase();
   return ALL.filter(p => (state.team === 'all' || (state.team === 'COACH' ? isCoach(p.nick) : p.team === state.team))
     && (!state.stages.size || state.stages.has(String(stageOf(p))))
-    && (!q || p.nick.toLowerCase().includes(q) || (p.roomNick || '').toLowerCase().includes(q)));
+    && (!q || p.nick.toLowerCase().includes(q) || (p.roomNick || '').toLowerCase().includes(q) || nameOf(p.nick).toLowerCase().includes(q)));
 }
 function card(p) {
   const av = p.avatar ? `<img src="${esc(p.avatar)}" alt="" loading="lazy">` : esc((p.nick || '?')[0].toUpperCase());
   const pending = !p.distance;
   const x = extraOf(p);
   return `<article ${ringAttr('ncard' + (pending ? ' pending' : ''), colorOf(p), x && x.c)}>
-    <div class="who"><div class="avatar">${av}</div><div><div class="nick">${esc(p.nick)}</div><div class="role"><b>${labelOf(p)}</b>${rankTxt(p)}${x ? ` · <span class="adm">${esc(x.t)}</span>` : ''}</div></div></div>
+    <div class="who"><div class="avatar">${av}</div><div><div class="nick">${nickHtml(p.nick)}</div><div class="role"><b>${labelOf(p)}</b>${rankTxt(p)}${x ? ` · <span class="adm">${esc(x.t)}</span>` : ''}</div></div></div>
     <dl class="stats">
       <div><dt>Ентрі</dt><dd>${pending ? '—' : fmt(p.distance)}</dd></div>
       <div><dt>ABI за рік</dt><dd>${pending ? '—' : money(p.abi)}</dd></div>
@@ -251,24 +254,24 @@ function card(p) {
 function table(list) {
   const th = (k, t, num) => `<th class="${num ? 'num' : ''}" data-k="${k}"${state.sort === k ? ' aria-sort="' + (state.dir === -1 ? 'descending' : 'ascending') + '"' : ''}>${t}${state.sort === k ? (state.dir === -1 ? ' ↓' : ' ↑') : ''}</th>`;
   return `<div class="tbl-wrap"><table><thead><tr>${th('nick', 'Гравець')}<th>Етап</th>${th('rank', 'Ранг', 1)}${th('abi', 'ABI за рік', 1)}${th('distance', 'Ентрі', 1)}<th>Факт</th></tr></thead><tbody>${
-    list.map(p => { const x = extraOf(p); return `<tr style="--stage:${colorOf(p)}${x ? ';--stage2:' + x.c : ''}"><td><span class="dot${x ? ' dual' : ''}"></span>${esc(p.nick)}</td><td>${labelOf(p)}${x ? ' · ' + esc(x.t) : ''}</td><td class="num">${p.team === 'REVO' ? '—' : (p.rank ?? '—')}</td><td class="num">${money(p.abi)}</td><td class="num">${p.distance ? fmt(p.distance) : '—'}</td><td class="fact-c">${esc(p.fact || '')}</td></tr>`; }).join('')
+    list.map(p => { const x = extraOf(p); return `<tr style="--stage:${colorOf(p)}${x ? ';--stage2:' + x.c : ''}"><td><span class="dot${x ? ' dual' : ''}"></span>${nickHtml(p.nick)}</td><td>${labelOf(p)}${x ? ' · ' + esc(x.t) : ''}</td><td class="num">${p.team === 'REVO' ? '—' : (p.rank ?? '—')}</td><td class="num">${money(p.abi)}</td><td class="num">${p.distance ? fmt(p.distance) : '—'}</td><td class="fact-c">${esc(p.fact || '')}</td></tr>`; }).join('')
   }</tbody></table></div>`;
 }
 function staffCard(p) {
   const av = p.avatar ? `<img src="${esc(p.avatar)}" alt="" loading="lazy">` : esc((p.nick || '?')[0].toUpperCase());
   const pl = staffPl(p), c = staffColor(p), t = esc(staffTitle(p));
   return `<article ${ringAttr('ncard staff', pl ? colorOf(pl) : c, pl && c)}>
-    <div class="who"><div class="avatar">${av}</div><div><div class="nick">${esc(p.nick)}</div><div class="role">${pl ? `<b>${labelOf(pl)}</b>${rankTxt(pl)} · <span class="adm">${t}</span>` : `<b>${t}</b>`}</div></div></div>
+    <div class="who"><div class="avatar">${av}</div><div><div class="nick">${nickHtml(p.nick)}</div><div class="role">${pl ? `<b>${labelOf(pl)}</b>${rankTxt(pl)} · <span class="adm">${t}</span>` : `<b>${t}</b>`}</div></div></div>
     <p class="about${p.about ? '' : ' muted'}">${p.about ? esc(p.about) : 'Опис діяльності з\'явиться згодом'}</p>
   </article>`;
 }
 function staffTable(list) {
   return `<div class="tbl-wrap"><table><thead><tr><th>Нік</th><th>Роль</th><th>Діяльність</th></tr></thead><tbody>${
-    list.map(p => { const pl = staffPl(p), c = staffColor(p); return `<tr style="--stage:${pl ? colorOf(pl) + ';--stage2:' + c : c}"><td><span class="dot${pl ? ' dual' : ''}"></span>${esc(p.nick)}</td><td>${pl ? labelOf(pl) + rankTxt(pl) + ' · ' : ''}${esc(staffTitle(p))}</td><td class="fact-c">${esc(p.about || '—')}</td></tr>`; }).join('')
+    list.map(p => { const pl = staffPl(p), c = staffColor(p); return `<tr style="--stage:${pl ? colorOf(pl) + ';--stage2:' + c : c}"><td><span class="dot${pl ? ' dual' : ''}"></span>${nickHtml(p.nick)}</td><td>${pl ? labelOf(pl) + rankTxt(pl) + ' · ' : ''}${esc(staffTitle(p))}</td><td class="fact-c">${esc(p.about || '—')}</td></tr>`; }).join('')
   }</tbody></table></div>`;
 }
 function renderStaff() {
-  const q = state.q.trim().toLowerCase(), list = STAFF.filter(p => (!q || p.nick.toLowerCase().includes(q)) && (state.team !== 'COACH' || p.kind === 'coach'))
+  const q = state.q.trim().toLowerCase(), list = STAFF.filter(p => (!q || p.nick.toLowerCase().includes(q) || nameOf(p.nick).toLowerCase().includes(q)) && (state.team !== 'COACH' || p.kind === 'coach'))
     .sort((a, b) => a.nick.localeCompare(b.nick, 'uk', { sensitivity: 'base' }));
   $('#staff').hidden = !list.length || state.team === 'EVO' || state.team === 'REVO' || state.stages.size > 0;
   $('#staff-title').textContent = state.team === 'COACH' ? 'Тренерський склад' : 'Адмінсклад';
@@ -321,7 +324,7 @@ stageButtons(); seg('#team', 'team'); seg('#view', 'view');
 
 fetch('players.json', { cache: 'no-cache' }).then(r => r.json()).then(d => {
   ALL = d.players || []; STAFF = d.staff || []; SHORT = d.shortlists || [];
-  COACHES = new Set((d.coaches || []).map(low));
+  COACHES = new Set((d.coaches || []).map(low)); NAMES = d.names || {};
   $('#lead').innerHTML = `Гравці EVO і REVO, тренери та адмінсклад із їхніми результатами за рік.${QI(fmt(d.minDistance || 1000))} Будь-кого з них можна висунути в ком'юніті номінаціях.`;
   renderShort();
   if (d.asOf) { const [y, m, dd] = d.asOf.split('-').map(Number);
