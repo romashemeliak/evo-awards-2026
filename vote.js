@@ -212,7 +212,7 @@ function renderAuthBox() {
 /* Ролі учасника (обирає при першому вході) і хто голосує в якому опитуванні — як polls.roles у schema.sql. */
 const ROLES = { EVO: 'EVO', REVO: 'REVO', ADMIN: 'Адмін', FRIEND: 'Друг' };
 const POLL_ROLES = {};   // голосують і висувають усі учасники: гравці, адміни, тренери, друзі (polls.roles у базі — так само)
-const LUCKY_TEAMS = ['EVO', 'REVO'];   // Lucky Gambler — лише гравці; адміни, тренери й друзі ставлять, але не в розіграші
+const LUCKY_TEAMS = null;   // Lucky Gambler — для всіх, хто ставить: гравці, адміни, тренери й друзі (рішення 06.11.2026)
 const canVote = (poll, role) => !POLL_ROLES[poll] || POLL_ROLES[poll].includes(role);
 const teamLabel = t => ROLES[t] || (t === 'STAFF' ? 'Адмін' : t);
 const DISCORD_SVG = '<svg width="20" height="16" viewBox="0 0 71 55" aria-hidden="true"><path fill="currentColor" d="M60.1 4.9A58.5 58.5 0 0 0 45.6.4a40 40 0 0 0-1.8 3.7 54 54 0 0 0-16.2 0A40 40 0 0 0 25.8.4 58.4 58.4 0 0 0 11.3 4.9C2.1 18.6-.4 32 .8 45.2a58.9 58.9 0 0 0 18 9.1 43 43 0 0 0 3.8-6.3 38 38 0 0 1-6-2.9l1.5-1.1a42 42 0 0 0 35.8 0l1.5 1.1a38 38 0 0 1-6 2.9 43 43 0 0 0 3.8 6.3 58.7 58.7 0 0 0 18-9.1C72.6 30 68.8 16.7 60.1 4.9ZM23.7 37.1c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2 6.5 3.3 6.4 7.2c0 4-2.8 7.2-6.4 7.2Zm23.6 0c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2 6.5 3.3 6.4 7.2c0 4-2.8 7.2-6.4 7.2Z"/></svg>';
@@ -416,10 +416,10 @@ async function renderBoard() {
       return `<li><b>${esc(m)}</b>: ${x.opts.join(', ')} → отримав ${fmtN(Math.round(x.payout))} <span class="${net >= 0 ? 'plus-c' : 'minus-c'}">(${net >= 0 ? '+' : '−'}${fmtN(Math.abs(net))})</span></li>`; });
     return `<ul>${lines.join('') || '<li>Ставок у номінаціях з переможцем немає.</li>'}<li>Не поставлено: <b>${fmtN(budget - r.staked)}</b> фішок</li></ul>`; };
   box.innerHTML = `<div class="lb-head"><div><div class="kicker">Фішки</div><h3>${settled ? 'Хто вгадав переможців' : 'Ставки на переможців'}</h3>
-      <p class="hint">${settled ? 'Баланс після оголошення переможців: невитрачені фішки + виграші. Lucky Gambler — гравець з найбільшим балансом.' : `Учасників зі ставками: ${top.length}. Переможців оголосимо на ефірі ${dLabel(EVENT_DATE)} — тоді тут з'явиться підсумок.`}</p></div>
+      <p class="hint">${settled ? 'Баланс після оголошення переможців: невитрачені фішки + виграші. Lucky Gambler — учасник з найбільшим балансом.' : `Учасників зі ставками: ${top.length}. Переможців оголосимо на ефірі ${dLabel(EVENT_DATE)} — тоді тут з'явиться підсумок.`}</p></div>
       ${MOCK ? '<div class="poll-actions"><button class="btn ghost" type="button" id="mock-settle">Тест: оголосити переможців</button><button class="btn ghost" type="button" id="mock-reset">Тест: скинути дані</button></div>' : ''}</div>
     ${top.length ? `<div class="board-wrap"><table class="lb"><thead><tr><th>#</th><th>Нік</th><th>Роль</th><th class="r">${settled ? 'Баланс' : 'Доступно'}</th><th class="r">У ставках</th><th class="r">Не поставлено</th>${settled ? '<th class="r">Вгадано</th>' : ''}</tr></thead><tbody>
-      ${top.map((r, i) => `<tr class="lb-row ${r.player === meP ? 'me' : ''}" data-i="${i}"><td>${i + 1}</td><td>${esc(r.player)}${LUCKY_TEAMS.includes(r.team) ? '' : ' <small class="muted">поза Lucky Gambler</small>'}</td><td><span class="chip team ${r.team === 'REVO' ? 'revo' : ''}">${esc(teamLabel(r.team))}</span></td>
+      ${top.map((r, i) => `<tr class="lb-row ${r.player === meP ? 'me' : ''}" data-i="${i}"><td>${i + 1}</td><td>${esc(r.player)}${!LUCKY_TEAMS || LUCKY_TEAMS.includes(r.team) ? '' : ' <small class="muted">поза Lucky Gambler</small>'}</td><td><span class="chip team ${r.team === 'REVO' ? 'revo' : ''}">${esc(teamLabel(r.team))}</span></td>
         <td class="r"><b>${fmtN(r.balance)}</b></td><td class="r">${fmtN(r.staked)}</td><td class="r">${fmtN(budget - r.staked)}</td>${settled ? `<td class="r">${r.won} з ${r.settled}</td>` : ''}</tr>
         ${settled ? `<tr class="lb-det" data-for="${i}" hidden><td colspan="7">${detHtml(r)}</td></tr>` : ''}`).join('')}
       </tbody></table></div>` : '<div class="form-empty">Ставок ще немає — стань першим.</div>'}`;
