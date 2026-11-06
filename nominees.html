@@ -61,6 +61,12 @@ main{padding:24px 0 80px}
 .stats dd small{font:500 11px Manrope,sans-serif;color:var(--muted)}
 .fact{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:13.5px;color:#ddd2c0;line-height:1.45}
 .fact::before{content:"★ ";color:var(--gold)}
+.gate{grid-column:1/-1;max-width:520px;margin:30px auto 60px;text-align:center;padding:36px 28px;border-radius:var(--radius);border:1px solid rgba(217,164,65,.35);background:var(--bg-2)}
+.gate h2{font:900 clamp(20px,3vw,26px)/1.15 Unbounded,sans-serif;text-transform:uppercase}
+.gate p{color:var(--muted);margin:12px 0 22px;font-size:15px;line-height:1.5}
+.gate button{display:inline-flex;align-items:center;gap:10px;padding:13px 22px;border-radius:999px;border:0;background:var(--gold);color:#14110e;font:800 14px Manrope,sans-serif;cursor:pointer}
+.gate button:hover{filter:brightness(1.08)}
+body.locked .bar,body.locked #sl,body.locked #all-h,body.locked #staff{display:none!important}
 .empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:50px 0}
 .pending .stats dd,.pending .fact{color:var(--muted)}
 /* адмінсклад */
@@ -129,7 +135,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);font-size:13px}
 </style>
 </head>
-<body>
+<body class="locked">
 <header class="nav"><div class="wrap">
   <a class="logo" href="./">EVO <b>AWARDS</b> 2026</a>
   <a class="back" href="./#nominees">← На головну</a>
@@ -170,8 +176,10 @@ footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);f
 
 <footer><div class="wrap" id="foot">© 2026 Еволюція · <a href="https://evopoker.pro/">evopoker.pro</a></div></footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
-/* Дані — players.json поруч зі сторінкою (генерує scripts/awards_2026/player_cards.py). */
+/* Дані — Supabase, таблиця page_data (лише для тих, хто увійшов через Discord; scripts/awards_2026/voting/page_data.sql,
+   make_page_data.py). ?mock — локальна перевірка з players.json поруч. */
 const STAGE_COLORS = ['#ecd089', '#e2b85c', '#d9a441', '#b7792f', '#8c5524'];   // як на головній
 const STAGE_ROMAN = ['I', 'II', 'III', 'IV', 'V'];
 const REVO_COLOR = '#f3e6c4', ADMIN_COLOR = '#a5483e';
@@ -338,7 +346,26 @@ $('#q').addEventListener('input', e => { state.q = e.target.value; render(); });
 $('#sort').addEventListener('change', e => { state.sort = e.target.value; state.dir = -1; save(); render(); });
 stageButtons(); seg('#team', 'team'); seg('#view', 'view');
 
-fetch('players.json', { cache: 'no-cache' }).then(r => r.json()).then(d => {
+const SB_URL = 'https://rofzgohmhqxgngkiruik.supabase.co', SB_KEY = 'sb_publishable_zEC4Lbhn4Fz2siYEmoElcw_uDRX-lUI';   // як у vote.js
+const sb = window.supabase && window.supabase.createClient(SB_URL, SB_KEY, { auth: { persistSession: true, detectSessionInUrl: true, flowType: 'pkce' } });
+function gate(msg) {
+  document.body.classList.add('locked');
+  $('#out').innerHTML = `<div class="grid"><div class="gate"><h2>Лише для учасників</h2>
+    <p>${msg || 'Картки гравців, тренерів і адмінскладу бачать лише учасники EVO Awards. Увійди через Discord — той самий акаунт, що й для голосувань.'}</p>
+    <button type="button" id="gate-in"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.3 4.4A19.6 19.6 0 0 0 15.4 3l-.6 1.3a18 18 0 0 0-5.6 0L8.6 3a19.6 19.6 0 0 0-4.9 1.4C.6 9 0 13.6.3 18.1a19.8 19.8 0 0 0 6 3l1.3-2a12.8 12.8 0 0 1-2-1l.5-.4a14 14 0 0 0 11.8 0l.5.4a12.8 12.8 0 0 1-2 1l1.3 2a19.7 19.7 0 0 0 6-3c.4-5.2-.7-9.8-3.4-13.7ZM8.7 15.3c-1.2 0-2.1-1-2.1-2.3s.9-2.3 2.1-2.3 2.2 1 2.1 2.3c0 1.3-.9 2.3-2.1 2.3Zm6.6 0c-1.2 0-2.1-1-2.1-2.3s.9-2.3 2.1-2.3 2.2 1 2.1 2.3c0 1.3-.9 2.3-2.1 2.3Z"/></svg>Увійти через Discord</button></div></div>`;
+  $('#gate-in').addEventListener('click', () => sb.auth.signInWithOAuth({ provider: 'discord', options: { redirectTo: location.origin + location.pathname } }));
+}
+async function loadData() {
+  if (new URLSearchParams(location.search).has('mock')) return fetch('players.json', { cache: 'no-cache' }).then(r => r.json());
+  if (!sb) throw new Error('supabase');
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return null;
+  const { data, error } = await sb.from('page_data').select('data').eq('id', 'players').maybeSingle();
+  if (error) throw error;
+  return data ? data.data : { players: [], staff: [] };
+}
+loadData().then(d => { if (!d) return gate();
+  document.body.classList.remove('locked');
   const hide = new Set((d.hidePlayers || []).map(low));
   ALL = (d.players || []).filter(p => !hide.has(low(p.nick))); STAFF = d.staff || []; SHORT = d.shortlists || [];
   COACHES = new Set((d.coaches || []).map(low)); NAMES = d.names || {};
@@ -347,7 +374,7 @@ fetch('players.json', { cache: 'no-cache' }).then(r => r.json()).then(d => {
   if (d.asOf) { const [y, m, dd] = d.asOf.split('-').map(Number);
     $('#foot').insertAdjacentHTML('afterbegin', `Дані станом на ${dd} ${MONTHS[m - 1]} ${y}; фінальні — після завершення Року EVO 30 листопада. `); }
   render();
-}).catch(() => { $('#out').innerHTML = '<div class="grid"><p class="empty">Не вдалося завантажити дані.</p></div>'; });
+}).catch(() => { $('#out').innerHTML = '<div class="grid"><p class="empty">Не вдалося завантажити дані. Онови сторінку.</p></div>'; });
 </script>
 </body>
 </html>
