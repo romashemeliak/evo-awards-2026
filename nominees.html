@@ -257,7 +257,7 @@ function filtered() {
 }
 function card(p) {
   const av = p.avatar ? `<img src="${esc(p.avatar)}" alt="" loading="lazy">` : esc((p.nick || '?')[0].toUpperCase());
-  const pending = !p.distance;
+  const pending = p.low || !p.distance;   // < 500 ентрі за рік — порожня картка: лише ранг і етап
   const x = extraOf(p);
   return `<article ${ringAttr('ncard' + (pending ? ' pending' : ''), colorOf(p), x && x.c)}>
     <div class="who"><div class="avatar">${av}</div><div><div class="nick">${nickHtml(p.nick)}</div><div class="role"><b>${labelOf(p)}</b>${rankTxt(p)}${x ? ` · <span class="adm">${esc(x.t)}</span>` : ''}</div></div></div>
@@ -265,7 +265,7 @@ function card(p) {
       <div><dt>Ентрі</dt><dd>${pending ? '—' : fmt(p.distance)}</dd></div>
       <div><dt>ABI за рік</dt><dd>${pending ? '—' : money(p.abi)}</dd></div>
     </dl>
-    <p class="fact">${pending ? 'Дані з\'являться після перерахунку за повний рік' : esc(p.fact || '—')}</p>
+    <p class="fact">${pending ? 'Недостатньо награшу для цікавого факту' : esc(p.fact || '—')}</p>
   </article>`;
 }
 function table(list) {
