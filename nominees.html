@@ -208,7 +208,7 @@ const nameOf = nick => NAMES[low(nick)] || '';
 const nickHtml = nick => nameOf(nick) ? `${esc(nameOf(nick))} <span class="nm">${esc(nick)}</span>` : esc(nick);
 const isCoach = nick => COACHES.has(low(nick));
 const staffColor = s => s.kind === 'coach' ? COACH_COLOR : ADMIN_COLOR;
-const staffTitle = s => s.kind === 'coach' ? (s.role || 'Тренер') : s.role === 'Засновник' ? 'Засновник' : 'Адмін';
+const staffTitle = s => s.role || (s.kind === 'coach' ? 'Тренер' : 'Адмін');
 // гравець, якого немає серед карток (нижче порогу), але етап відомий — rank у staff
 const staffPl = s => playerOf(s.nick) || (s.rank ? { team: 'EVO', rank: s.rank } : null);
 // друга роль гравця: адмінсклад або тренер — друга половина обідка
