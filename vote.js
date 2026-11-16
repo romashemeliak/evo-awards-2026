@@ -39,8 +39,8 @@ function supabaseBackend() {
     me: () => rpc('me'),
     roster: () => sel(sb.from('roster').select('player,team').order('player')),
     coaches: async () => { const d = await sel(sb.from('page_data').select('data').eq('id', 'players').maybeSingle());
-      const pd = (d && d.data) || {};   // тренери: картки адмінскладу kind=coach + гравці-тренери зі списку coaches
-      return [...new Set([...(pd.staff || []).filter(s => s.kind === 'coach').map(s => s.nick), ...(pd.coaches || [])])]; },
+      const pd = (d && d.data) || {};   // лише покерні тренери: гравці-тренери (coaches) + адмінсклад з роллю «Тренер» (без психологів і коучів)
+      return [...new Set([...(pd.coaches || []), ...(pd.staff || []).filter(isCoach).map(s => s.nick)])]; },
     register: (role, nick) => rpc('register', { p_role: role, p_nick: nick }),
     myAnswers: () => sel(sb.from('answers').select('poll_id,payload,updated_at')),
     submit: (poll, payload) => rpc('submit_answers', { p_poll: poll, p_payload: payload }),
@@ -128,6 +128,7 @@ function mockBackend(players) {
 }
 
 /* ─── стан ───────────────────────────────────────────────────────────────── */
+const isCoach = s => /тренер/i.test(s.role || '');   // покерний тренер за роллю картки
 const Vote = { api: null, ready: false, sess: { signedIn: false }, me: null, answers: {}, roster: [], coaches: null, markets: null };
 
 const fmtN = n => Math.round(n).toLocaleString('uk-UA');
@@ -138,7 +139,7 @@ async function voteInit() {
   try {
     if (MOCK) { const pj = await fetch('players.json').then(r => r.json()).catch(() => ({ players: [] }));
       Vote.api = mockBackend((pj.players || []).map(p => ({ nick: p.nick, team: p.team || 'EVO' })));
-      Vote.api.setCoaches([...new Set([...(pj.staff || []).filter(s => s.kind === 'coach').map(s => s.nick), ...(pj.coaches || [])])]); }
+      Vote.api.setCoaches([...new Set([...(pj.coaches || []), ...(pj.staff || []).filter(isCoach).map(s => s.nick)])]); }
     else {
       await new Promise((ok, bad) => { const s = document.createElement('script');
         s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js'; s.onload = ok; s.onerror = bad; document.head.append(s); });
@@ -332,9 +333,9 @@ function collect(form, p) {
 }
 
 /* ─── вибір людини для висування ──────────────────────────────────────────── */
-const PICK_WHO = { all: 'Гравці, тренери й адмінсклад', player: 'Лише гравці', coach: 'Лише тренери та коучі' };
+const PICK_WHO = { all: 'Гравці, тренери й адмінсклад', player: 'Лише гравці', coach: 'Лише тренери' };
 const PICK_GROUPS = { all: ['EVO', 'REVO', 'COACH', 'STAFF'], player: ['EVO', 'REVO'], coach: ['COACH'] };
-const GROUP_LABEL = { EVO: 'EVO', REVO: 'REVO', COACH: 'Тренери та коучі', STAFF: 'Адмінсклад' };
+const GROUP_LABEL = { EVO: 'EVO', REVO: 'REVO', COACH: 'Тренери', STAFF: 'Адмінсклад' };
 function pickList(group) {
   if (group === 'COACH') return [...(Vote.coaches || [])].sort((a, b) => a.localeCompare(b, 'uk'));
   const coaches = new Set(Vote.coaches || []);
