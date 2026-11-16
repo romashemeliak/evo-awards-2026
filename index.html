@@ -1007,6 +1007,7 @@ function fillSlot(card, p) {
       ? `<div class="results-slot">${p.results}</div>`
       : `<div class="form-empty">Результати з'являться тут ${dLabel(p.opens)} — анонс буде в Discord.</div>`; return; }
   if (p.engine === 'own' && p.status === 'open') { if (window.renderOwnPoll) renderOwnPoll(card, p); else card.querySelector('.slot').innerHTML = '<div class="form-empty">Підключаємось…</div>'; return; }
+  if (p.status === 'closed' && p.results) { slot.innerHTML = ''; return; }   // підсумки вже показані над слотом
   if (hasVoted(p.id)) { showThanks(card, p); return; }
   if (p.status !== 'open') { slot.innerHTML = `<div class="form-empty">${p.status === 'closed' ? 'Опитування завершено. Дякуємо за голос!' : 'Відкриється ' + dLabel(p.opens) + ' — анонс в Discord.'}</div>`; return; }
 }
