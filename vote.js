@@ -290,7 +290,7 @@ function qHtml(q, val) {
   if (q.type === 'text') return `<fieldset class="q" data-q="${q.id}">${head}<textarea name="${name}" rows="${q.rows || 3}" maxlength="${q.maxlength || 600}" placeholder="${esc(q.placeholder || '')}">${esc(v || '')}</textarea></fieldset>`;
   if (q.type === 'nominate') return `<fieldset class="q nominate" data-q="${q.id}">${head}<div class="nom-grid">${q.items.map(it => { const x = (v || {})[it] || {}, mode = (q.modes || {})[it] || 'all';
     const who = `<span class="nom-who">${esc(it)}${noteOf(q, it)}${PICK_WHO[mode] ? `<small class="c-note pk-scope">${PICK_WHO[mode]}</small>` : ''}</span>`;
-    if (mode === 'blog' || mode === 'hand') return `<div class="nom-row link" data-item="${esc(it)}">${who}
+    if (mode === 'blog' || mode === 'hand') return `<div class="nom-row lnk" data-item="${esc(it)}">${who}
       <input class="link-in" type="url" inputmode="url" placeholder="${mode === 'hand' ? 'Посилання на допис з роздачею' : 'Посилання на блог'}" value="${esc(x.link || '')}" maxlength="300"></div>`;
     return `<div class="nom-row" data-item="${esc(it)}" data-mode="${mode}">${who}
       <span class="pk-field"><input type="hidden" class="who" value="${esc(x.who || '')}">
