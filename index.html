@@ -920,7 +920,7 @@ function renderRoad() {
   const state = m => { const s = dayNum(m.date), e = dayNum(m.until || m.date);
     return today > e ? 'done' : today >= s ? 'now' : 'next'; };
   const when = m => { const st = state(m), s = dayNum(m.date) - today;
-    if (st === 'done') return 'Завершено';
+    if (st === 'done') { const p = m.poll && POLLS.find(x => x.id === m.poll); return p && p.results ? 'Результати' : 'Завершено'; }
     if (st === 'now') return m.until ? 'Зараз · ще ' + days(dayNum(m.until) - today + 1) : 'Сьогодні';
     return 'Через ' + days(s); };
   const span = m => m.until ? `${dLabel(m.date).split(' ')[0]}–${dLabel(m.until)}` : dLabel(m.date);
