@@ -275,6 +275,7 @@ async function renderOwnPoll(card, p) {
 }
 
 const DISCORD_POST = /^https:\/\/(?:(?:ptb|canary)\.)?discord(?:app)?\.com\/channels\/\d+\/\d+\/\d+\/?$/;   // посилання на повідомлення
+const DISCORD_CHAN = /^https:\/\/(?:(?:ptb|canary)\.)?discord(?:app)?\.com\/channels\/\d+\/\d+(?:\/\d+)?\/?$/;   // канал/гілка (блог) або повідомлення
 const noteOf = (q, o) => q.notes && q.notes[o] ? `<small class="c-note">${esc(q.notes[o])}</small>` : '';
 
 function qHtml(q, val) {
@@ -316,7 +317,10 @@ function collect(form, p) {
     else if (q.type === 'nominate') { const m = {};
       for (const row of fs.querySelectorAll('.nom-row')) { const li = row.querySelector('.link-in');
         if (li) { const link = li.value.trim(); if (!link) continue;
-          if (!DISCORD_POST.test(link)) return { error: `«${row.dataset.item}»: потрібне посилання на допис на нашому Discord-сервері (на дописі — «Копіювати посилання на повідомлення»).` };
+          const blog = row.dataset.item === 'Найкращий блог';
+          if (!(blog ? DISCORD_CHAN : DISCORD_POST).test(link)) return { error: blog
+            ? `«${row.dataset.item}»: потрібне посилання на блог на нашому Discord-сервері (гілка блогу або допис у ній).`
+            : `«${row.dataset.item}»: потрібне посилання на допис з роздачею на нашому Discord-сервері (на дописі — «Копіювати посилання на повідомлення»).` };
           m[row.dataset.item] = { link }; continue; }
         const who = row.querySelector('.who').value.trim(), why = row.querySelector('.why').value.trim();
         if (!who) { if (why) return { error: `«${row.dataset.item}»: обери, кого висуваєш.` }; continue; }
