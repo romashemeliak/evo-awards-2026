@@ -39,7 +39,8 @@ function supabaseBackend() {
     me: () => rpc('me'),
     roster: () => sel(sb.from('roster').select('player,team').order('player')),
     coaches: async () => { const d = await sel(sb.from('page_data').select('data').eq('id', 'players').maybeSingle());
-      return ((d && d.data && d.data.staff) || []).filter(s => s.kind === 'coach').map(s => s.nick); },
+      const pd = (d && d.data) || {};   // тренери: картки адмінскладу kind=coach + гравці-тренери зі списку coaches
+      return [...new Set([...(pd.staff || []).filter(s => s.kind === 'coach').map(s => s.nick), ...(pd.coaches || [])])]; },
     register: (role, nick) => rpc('register', { p_role: role, p_nick: nick }),
     myAnswers: () => sel(sb.from('answers').select('poll_id,payload,updated_at')),
     submit: (poll, payload) => rpc('submit_answers', { p_poll: poll, p_payload: payload }),
@@ -137,7 +138,7 @@ async function voteInit() {
   try {
     if (MOCK) { const pj = await fetch('players.json').then(r => r.json()).catch(() => ({ players: [] }));
       Vote.api = mockBackend((pj.players || []).map(p => ({ nick: p.nick, team: p.team || 'EVO' })));
-      Vote.api.setCoaches(((pj.staff || []).filter(s => s.kind === 'coach').map(s => s.nick))); }
+      Vote.api.setCoaches([...new Set([...(pj.staff || []).filter(s => s.kind === 'coach').map(s => s.nick), ...(pj.coaches || [])])]); }
     else {
       await new Promise((ok, bad) => { const s = document.createElement('script');
         s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js'; s.onload = ok; s.onerror = bad; document.head.append(s); });
