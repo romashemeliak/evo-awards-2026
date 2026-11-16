@@ -38,6 +38,8 @@ function supabaseBackend() {
     signOut: () => sb.auth.signOut(),
     me: () => rpc('me'),
     roster: () => sel(sb.from('roster').select('player,team').order('player')),
+    coaches: async () => { const d = await sel(sb.from('page_data').select('data').eq('id', 'players').maybeSingle());
+      return ((d && d.data && d.data.staff) || []).filter(s => s.kind === 'coach').map(s => s.nick); },
     register: (role, nick) => rpc('register', { p_role: role, p_nick: nick }),
     myAnswers: () => sel(sb.from('answers').select('poll_id,payload,updated_at')),
     submit: (poll, payload) => rpc('submit_answers', { p_poll: poll, p_payload: payload }),
@@ -80,8 +82,10 @@ function mockBackend(players) {
     session: () => A(db.signedIn ? { signedIn: true, name: 'Тестовий акаунт' } : { signedIn: false }),
     signIn: () => { db.signedIn = true; save(db); location.reload(); },
     signOut: () => { db.signedIn = false; save(db); return A(null); },
+    setCoaches: list => { db.coaches = list; },
     me: () => A(db.signedIn ? meObj() : null),
     roster: () => A(db.roster),
+    coaches: () => A(db.coaches || []),
     register: (role, nick) => { chk(); if (db.me) throw new Error('already_claimed'); if (!ROLES[role]) throw new Error('bad_role');
       nick = (nick || '').trim(); if (nick.length < 2 || nick.length > 40) throw new Error('bad_nick');
       if ([...taken()].some(x => x.toLowerCase() === nick.toLowerCase())) throw new Error('nick_taken');
@@ -123,7 +127,7 @@ function mockBackend(players) {
 }
 
 /* ─── стан ───────────────────────────────────────────────────────────────── */
-const Vote = { api: null, ready: false, sess: { signedIn: false }, me: null, answers: {}, roster: [], markets: null };
+const Vote = { api: null, ready: false, sess: { signedIn: false }, me: null, answers: {}, roster: [], coaches: null, markets: null };
 
 const fmtN = n => Math.round(n).toLocaleString('uk-UA');
 const enabled = () => MOCK || (VOTE_CFG.url && VOTE_CFG.anonKey);
@@ -132,7 +136,8 @@ async function voteInit() {
   if (!enabled()) { renderAuth(); return; }
   try {
     if (MOCK) { const pj = await fetch('players.json').then(r => r.json()).catch(() => ({ players: [] }));
-      Vote.api = mockBackend((pj.players || []).map(p => ({ nick: p.nick, team: p.team || 'EVO' }))); }
+      Vote.api = mockBackend((pj.players || []).map(p => ({ nick: p.nick, team: p.team || 'EVO' })));
+      Vote.api.setCoaches(((pj.staff || []).filter(s => s.kind === 'coach').map(s => s.nick))); }
     else {
       await new Promise((ok, bad) => { const s = document.createElement('script');
         s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js'; s.onload = ok; s.onerror = bad; document.head.append(s); });
@@ -247,12 +252,14 @@ async function renderOwnPoll(card, p) {
     ? 'Претендентів висувають гравці EVO і REVO.' + (Vote.me.team === 'ADMIN' ? ' Ком\'юніті голосування — з ' + dLabel((POLLS.find(x => x.id === 'final') || p).opens) + '.' : '')
     : 'Це опитування — для гравців і адмінів школи.');
   if (p.bets) return renderFinal(card, p);
-  if (!Vote.roster.length && p.form.some(q => q.type === 'nominate')) Vote.roster = await Vote.api.roster();
+  if (p.form.some(q => q.type === 'nominate')) { if (!Vote.roster.length) Vote.roster = await Vote.api.roster();
+    if (!Vote.coaches) Vote.coaches = await Vote.api.coaches().catch(() => []); }
   const val = (prev && prev.payload) || {};
   slot.innerHTML = `<form class="own-form" novalidate>${p.form.map(q => qHtml(q, val)).join('')}
     <div class="poll-actions"><button class="btn" type="submit">${prev ? 'Зберегти зміни' : 'Надіслати'}</button><span class="form-msg"></span></div></form>`;
-  if (!document.getElementById('roster-all')) { const dl = document.createElement('datalist'); dl.id = 'roster-all';
-    dl.innerHTML = Vote.roster.map(r => `<option value="${esc(r.player)}">`).join(''); document.body.append(dl); }
+  slot.querySelectorAll('.nom-row[data-mode]').forEach(row => {
+    row.querySelector('.pk-open').onclick = () => openPicker(row);
+    row.querySelector('.pk-clear').onclick = () => setWho(row, ''); });
   const form = slot.querySelector('form');
   form.addEventListener('change', () => limitMulti(form, p));
   limitMulti(form, p);
@@ -280,12 +287,15 @@ function qHtml(q, val) {
       : `<div class="choices multi">${q.options.map(box).join('')}</div>`}
     ${q.max ? `<p class="count" data-count="${q.id}"></p>` : ''}</fieldset>`;
   if (q.type === 'text') return `<fieldset class="q" data-q="${q.id}">${head}<textarea name="${name}" rows="${q.rows || 3}" maxlength="${q.maxlength || 600}" placeholder="${esc(q.placeholder || '')}">${esc(v || '')}</textarea></fieldset>`;
-  if (q.type === 'nominate') return `<fieldset class="q nominate" data-q="${q.id}">${head}<div class="nom-grid">${q.items.map(it => { const x = (v || {})[it] || {};
-    return `<div class="nom-row" data-item="${esc(it)}"><span class="nom-name">${esc(it)}${noteOf(q, it)}</span>
-      <input class="who" list="roster-all" placeholder="Кого висуваєш" value="${esc(x.who || '')}" maxlength="60">
-      ${(q.links || []).includes(it)
-        ? `<input class="link-in" type="url" inputmode="url" placeholder="Посилання на допис у Discord" value="${esc(x.link || '')}" maxlength="300">`
-        : `<input class="why" placeholder="Коротко — чому" value="${esc(x.why || '')}" maxlength="300">`}</div>`; }).join('')}</div></fieldset>`;
+  if (q.type === 'nominate') return `<fieldset class="q nominate" data-q="${q.id}">${head}<div class="nom-grid">${q.items.map(it => { const x = (v || {})[it] || {}, mode = (q.modes || {})[it] || 'all';
+    const who = `<span class="nom-who">${esc(it)}${noteOf(q, it)}${PICK_WHO[mode] ? `<small class="c-note pk-scope">${PICK_WHO[mode]}</small>` : ''}</span>`;
+    if (mode === 'blog' || mode === 'hand') return `<div class="nom-row link" data-item="${esc(it)}">${who}
+      <input class="link-in" type="url" inputmode="url" placeholder="${mode === 'hand' ? 'Посилання на допис з роздачею' : 'Посилання на блог'}" value="${esc(x.link || '')}" maxlength="300"></div>`;
+    return `<div class="nom-row" data-item="${esc(it)}" data-mode="${mode}">${who}
+      <span class="pk-field"><input type="hidden" class="who" value="${esc(x.who || '')}">
+        <button type="button" class="pk-open" ${x.who ? 'hidden' : ''}>Обрати…</button>
+        <span class="pk-chip" ${x.who ? '' : 'hidden'}><b>${esc(x.who || '')}</b><button type="button" class="pk-clear" aria-label="Прибрати">×</button></span></span>
+      <input class="why" placeholder="Коротко — чому (необов'язково)" value="${esc(x.why || '')}" maxlength="300"></div>`; }).join('')}</div></fieldset>`;
   return '';
 }
 
@@ -303,16 +313,55 @@ function collect(form, p) {
     else if (q.type === 'multi') { const c = [...fs.querySelectorAll('input:checked')].map(x => x.value); if (c.length) out[q.id] = c; }
     else if (q.type === 'text') { const t = fs.querySelector('textarea').value.trim(); if (t) out[q.id] = t; }
     else if (q.type === 'nominate') { const m = {};
-      for (const row of fs.querySelectorAll('.nom-row')) { const who = row.querySelector('.who').value.trim(), li = row.querySelector('.link-in');
-        const why = li ? '' : row.querySelector('.why').value.trim(), link = li ? li.value.trim() : '';
-        if (!who && !link) continue;
-        if (li && !DISCORD_POST.test(link)) return { error: `«${row.dataset.item}»: встав посилання на допис з роздачею на Discord-сервері (Копіювати посилання на повідомлення).` };
-        if (!who) return { error: `«${row.dataset.item}»: вкажи, хто зіграв цю роздачу.` };
-        m[row.dataset.item] = link ? { who, link } : why ? { who, why } : { who }; }
+      for (const row of fs.querySelectorAll('.nom-row')) { const li = row.querySelector('.link-in');
+        if (li) { const link = li.value.trim(); if (!link) continue;
+          if (!DISCORD_POST.test(link)) return { error: `«${row.dataset.item}»: потрібне посилання на допис на нашому Discord-сервері (на дописі — «Копіювати посилання на повідомлення»).` };
+          m[row.dataset.item] = { link }; continue; }
+        const who = row.querySelector('.who').value.trim(), why = row.querySelector('.why').value.trim();
+        if (!who) { if (why) return { error: `«${row.dataset.item}»: обери, кого висуваєш.` }; continue; }
+        m[row.dataset.item] = why ? { who, why } : { who }; }
       if (Object.keys(m).length) out[q.id] = m; }
     if (!q.optional && out[q.id] === undefined) return { error: `Заповни: «${q.title}».` };
   }
   return { payload: out };
+}
+
+/* ─── вибір людини для висування ──────────────────────────────────────────── */
+const PICK_WHO = { all: 'Гравці, тренери й адмінсклад', player: 'Лише гравці', coach: 'Лише тренери' };
+const PICK_GROUPS = { all: ['EVO', 'REVO', 'COACH', 'STAFF'], player: ['EVO', 'REVO'], coach: ['COACH'] };
+const GROUP_LABEL = { EVO: 'EVO', REVO: 'REVO', COACH: 'Тренери', STAFF: 'Адмінсклад' };
+function pickList(group) {
+  if (group === 'COACH') return [...(Vote.coaches || [])].sort((a, b) => a.localeCompare(b, 'uk'));
+  const coaches = new Set(Vote.coaches || []);
+  return Vote.roster.filter(r => r.team === group && !(group === 'STAFF' && coaches.has(r.player))).map(r => r.player);
+}
+function setWho(row, who) {
+  row.querySelector('.who').value = who; row.querySelector('.pk-chip b').textContent = who;
+  row.querySelector('.pk-chip').hidden = !who; row.querySelector('.pk-open').hidden = !!who;
+}
+function openPicker(row) {
+  const groups = PICK_GROUPS[row.dataset.mode] || PICK_GROUPS.all, me = Vote.me && Vote.me.player;
+  const ov = document.createElement('div'); ov.className = 'pk-ov';
+  ov.innerHTML = `<div class="pk" role="dialog" aria-modal="true" aria-label="Кого висуваєш">
+    <div class="pk-head"><b>${esc(row.dataset.item)}</b> — кого висуваєш<button type="button" class="pk-x" aria-label="Закрити">×</button></div>
+    <input class="pk-q" type="search" placeholder="Пошук по ніку" autocomplete="off">
+    ${groups.length > 1 ? `<div class="pk-tabs">${groups.map((g, i) => `<button type="button" class="pk-tab${i ? '' : ' on'}" data-g="${g}">${GROUP_LABEL[g]}</button>`).join('')}</div>` : ''}
+    <div class="pk-list"></div></div>`;
+  const list = ov.querySelector('.pk-list'), q = ov.querySelector('.pk-q');
+  let group = groups[0];
+  const draw = () => { const s = q.value.trim().toLowerCase();
+    const names = (s ? groups.flatMap(pickList) : pickList(group)).filter(n => !s || n.toLowerCase().includes(s));
+    list.innerHTML = names.length ? names.map(n => `<button type="button" class="pk-item${n === me ? ' me' : ''}" data-n="${esc(n)}">${esc(n)}</button>`).join('')
+      : `<p class="pk-empty">${s ? 'Нікого не знайдено' : 'Список порожній'}</p>`;
+    ov.querySelectorAll('.pk-tab').forEach(t => t.classList.toggle('on', !s && t.dataset.g === group)); };
+  const close = () => { ov.remove(); document.removeEventListener('keydown', onKey); };
+  const onKey = e => { if (e.key === 'Escape') close(); };
+  ov.addEventListener('click', e => { const t = e.target;
+    if (t === ov || t.closest('.pk-x')) return close();
+    const tab = t.closest('.pk-tab'); if (tab) { group = tab.dataset.g; q.value = ''; return draw(); }
+    const it = t.closest('.pk-item'); if (it) { setWho(row, it.dataset.n); close(); } });
+  q.addEventListener('input', draw); document.addEventListener('keydown', onKey);
+  document.body.append(ov); draw(); q.focus();
 }
 
 function showOwnThanks(card, p, prev) {
