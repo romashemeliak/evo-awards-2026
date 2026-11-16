@@ -93,7 +93,7 @@ function mockBackend(players) {
       db.me = { player: nick, team: role }; save(db); return A(meObj()); },
     myAnswers: () => A(db.me ? Object.entries(db.answers).map(([poll_id, v]) => ({ poll_id, payload: v.payload, updated_at: v.at })) : []),
     submit: (poll, payload) => { part(); if (!canVote(poll, db.me.team)) throw new Error('role_not_allowed'); db.answers[poll] = { payload, at: new Date().toISOString() }; save(db); return A(new Date().toISOString()); },
-    markets: () => A(db.markets.map(m => ({ id: m.id, title: m.title, ord: m.ord, winner: m.winner, closes_at: '2026-11-29T21:59:59Z',
+    markets: () => A(db.markets.map(m => ({ id: m.id, title: m.title, ord: m.ord, winner: m.winner, closes_at: '2026-11-30T21:59:59Z',
       market_options: m.options.map((o, i) => ({ option: o, ord: i })) }))),
     pools: () => A(db.markets.flatMap(m => m.options.map(o => { const bs = db.bets.filter(b => b.market_id === m.id && b.option === o);
       return { market_id: m.id, option: o, pool: bs.reduce((s, b) => s + b.amount, 0), bettors: bs.length }; }))),

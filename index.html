@@ -757,7 +757,7 @@ const SHOW_NOMINEES = false;
 const MILESTONES = [
   { date:'2026-11-06', until:'2026-11-15', title:'Нагорода і формат', poll:'prizes' },
   { date:'2026-11-16', until:'2026-11-22', title:'Nomination Week', poll:'nominate' },
-  { date:'2026-11-23', until:'2026-11-29', title:'Ком\'юніті голосування', poll:'final' },
+  { date:'2026-11-24', until:'2026-11-30', title:'Ком\'юніті голосування', poll:'final' },
   { date:'2026-12-12', title:'Підсумки року', href:'#year' },   // презентація результатів року
   { date:'2026-12-22', title:'EVO Awards', final:true },
 ];
@@ -790,7 +790,7 @@ const POLLS = [
     text:'Висуваєш претендентів у кожній ком\'юніті номінації.',
     asks:['Претенденти','Коротко — чому'],
     form:[ { id:'nominees', type:'nominate', optional:false, title:'Кого висуваєш', hint:'Можна заповнити лише ті номінації, де маєш кандидата. Блог і Фолд року — посиланням на допис на нашому Discord-сервері, решта — вибором людини зі списку.', items:'INFORMAL' } ] },
-  { id:'final', opens:'2026-11-23', closes:'2026-11-29', title:'Ком\'юніті голосування', engine:'own', bets:true,
+  { id:'final', opens:'2026-11-24', closes:'2026-11-30', title:'Ком\'юніті голосування', engine:'own', bets:true,
     text:'Обираємо переможців ком\'юніті номінацій серед претендентів шортлисту — і ставимо фішки на тих, хто переможе.',
     asks:['Переможець у кожній номінації'] },
 ];
