@@ -208,6 +208,10 @@ a.mile:hover h3{color:var(--acc)}
 .chosen-list li em{font-style:normal;margin-left:8px;color:var(--muted);font-size:13px}
 .results-slot{margin-top:18px;padding:clamp(18px,3vw,28px);border-radius:var(--radius);border:1px solid rgba(217,164,65,.35);background:linear-gradient(90deg,rgba(217,164,65,.08),var(--bg-2) 60%)}
 .chip.res{border-color:rgba(217,164,65,.55);color:var(--gold)}
+.results-slot h4{margin:0;font:700 18px/1.25 Unbounded,sans-serif;color:var(--gold)}
+.results-slot .rs-lead{margin-top:8px;color:var(--muted);font-size:14px}
+.results-slot .rs-list{margin:14px 0 0;padding-left:20px;display:grid;gap:10px;font-size:15px;line-height:1.5}
+.results-slot .rs-list b{color:var(--text)}
 @media(max-width:600px){.poll-head{grid-template-columns:1fr auto auto}.poll-head .idx{display:none}.poll-head .meta .dl{display:none}}
 
 /* program */
@@ -766,6 +770,14 @@ const POLLS = [
   { id:'prizes', opens:'2026-11-06', closes:'2026-11-15', title:'Нагорода і формат', engine:'own',
     text:'Що отримають переможці і яким буде вечір: хто дивиться ефір разом з EVO і що робимо на афтерпаті.',
     asks:['Нагорода','Формат вечора','Афтерпаті','Своя номінація'],
+    results:`<h4>Підсумки</h4>
+      <p class="rs-lead">73 відповіді — 47% гравців команди. Ось як ваші голоси вплинули на рішення:</p>
+      <ul class="rs-list">
+        <li><b>Нагорода — кубок.</b> Кубок 28, практичне 27, не принципово 18: для зміни традиції переваги немає, тож цього року переможці отримують класичний кубок.</li>
+        <li><b>Формат вечора — близькі присутні на нагородженні, афтерпаті — для команди.</b> Половині формат не принциповий; серед решти 25 із 37 — за присутність близьких, і більшість із них — лише на нагородженні.</li>
+        <li><b>Афтерпаті — розмовне, з інтерактивними конкурсами.</b> «Тімбілдинг і спілкування» обрали 72%, ігри — як доповнення; у коментарях просили квіз і більше про досягнення кожного.</li>
+        <li><b>Шостої ком'юніті номінації не буде.</b> З 12 ідей більшість — статистичні (визначаються цифрами, а не голосуванням) або перетинаються з наявними номінаціями.</li>
+      </ul>`,
     form:[ { id:'prize', type:'single', title:'Що ти хотів би отримати, якщо переможеш?', options:['Класичний кубок або статуетку','Щось практичне (мерч, софт, сертифікат, інше — вкажи свій варіант нижче)','Мені не принципово'] },
            { id:'prize_note', type:'text', optional:true, title:'Свій варіант нагороди або коментар', rows:2 },
            { id:'format', type:'single', title:'Яким має бути вечір?', options:['Камерним — лише для гравців і команди','Близькі можуть дивитися нагородження, афтерпаті — лише для команди','Близькі можуть дивитися нагородження і долучитися до афтерпаті','Мені не принципово'] },
@@ -967,7 +979,7 @@ function renderFab() {
 const OPEN_ALL_UNTIL = '2026-11-05', TEST_RUN = todayNum() <= dayNum(OPEN_ALL_UNTIL);
 POLLS.forEach(p => { const t = todayNum(); p.status = TEST_RUN ? 'open' : t < dayNum(p.opens) ? 'soon' : t > dayNum(p.closes) ? 'closed' : 'open'; });
 POLLS.forEach((p, i) => {
-  const [cls, lbl] = p.kind === 'results' ? (p.status === 'soon' ? ['soon', 'Скоро'] : ['res', 'Результати']) : (STATUS[p.status] || STATUS.soon);
+  const [cls, lbl] = p.kind === 'results' ? (p.status === 'soon' ? ['soon', 'Скоро'] : ['res', 'Результати']) : (p.status === 'closed' && p.results ? ['res', 'Результати'] : STATUS[p.status] || STATUS.soon);
   // майбутні й пройдені — вузькі, щоб акцент був на відкритих
   const card = el('article', { class:'poll' + (p.status === 'open' && p.kind !== 'results' ? ' is-open' : ' slim'), id:'poll-' + p.id });
   card.innerHTML = `
