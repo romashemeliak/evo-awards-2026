@@ -194,12 +194,12 @@ const labelOf = p => { const s = stageOf(p); return s === -1 ? 'Адмінскл
 
 // Ком'юніті номінації — як COMMUNITY на головній (index.html)
 const NOMS = [
-  { name: 'Найкращий блог', for: 'Найцікавіший блог гравця' },
-  { name: 'Серце EVO', for: 'Людина, до якої йдеш з будь-чим' },
-  { name: 'Харизма EVO', for: 'Заряджає всіх навколо' },
-  { name: 'Тренер року', for: 'Найбільше дав своїм учням' },
-  { name: 'Фолд року', for: 'Найкращий фолд року' },
-  { name: 'EVO GOTY', for: 'Greatest of the Year — народна версія' },
+  { name: 'Найкращий блог', for: 'Блог, у якому видно людину' },
+  { name: 'Серце EVO', for: 'Найближча людина в команді' },
+  { name: 'Харизма EVO', for: 'Людина, яку помітно' },
+  { name: 'Тренер року', for: 'Тренер, якому ти вдячний' },
+  { name: 'Фолд року', for: 'Фолд, який вартий поваги' },
+  { name: 'EVO GOTY', for: 'Найсильніший гравець на думку команди' },
 ];
 const DEMO = new URLSearchParams(location.search).has('demo');
 const QI = n => `<button type="button" class="qi" aria-expanded="false" aria-label="Хто потрапляє в список">i<span class="qi-tip" role="tooltip">У списку — гравці EVO і REVO, що зіграли від ${n} ентрі за рік у складі команди, і весь адмінсклад та тренерський склад.</span></button>`;
