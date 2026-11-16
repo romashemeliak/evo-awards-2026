@@ -332,9 +332,9 @@ function collect(form, p) {
 }
 
 /* ─── вибір людини для висування ──────────────────────────────────────────── */
-const PICK_WHO = { all: 'Гравці, тренери й адмінсклад', player: 'Лише гравці', coach: 'Лише тренери' };
+const PICK_WHO = { all: 'Гравці, тренери й адмінсклад', player: 'Лише гравці', coach: 'Лише тренери та коучі' };
 const PICK_GROUPS = { all: ['EVO', 'REVO', 'COACH', 'STAFF'], player: ['EVO', 'REVO'], coach: ['COACH'] };
-const GROUP_LABEL = { EVO: 'EVO', REVO: 'REVO', COACH: 'Тренери', STAFF: 'Адмінсклад' };
+const GROUP_LABEL = { EVO: 'EVO', REVO: 'REVO', COACH: 'Тренери та коучі', STAFF: 'Адмінсклад' };
 function pickList(group) {
   if (group === 'COACH') return [...(Vote.coaches || [])].sort((a, b) => a.localeCompare(b, 'uk'));
   const coaches = new Set(Vote.coaches || []);
