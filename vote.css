@@ -75,8 +75,8 @@
 .pk-tabs{display:flex;flex-wrap:wrap;gap:6px}
 .pk-tab{padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);font:inherit;font-size:13px;cursor:pointer}
 .pk-tab.on{border-color:var(--acc);color:var(--acc)}
-.pk-list{overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;padding:2px}
-.pk-item{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--field);color:var(--text);font:inherit;font-size:14px;text-align:left;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pk-list{overflow:auto;min-height:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));grid-auto-rows:max-content;align-content:start;gap:6px;padding:2px}
+.pk-item{min-height:42px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--field);color:var(--text);font:inherit;font-size:14px;text-align:left;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pk-item:hover{border-color:var(--acc)}
 .pk-item.me{opacity:.6}
 .pk-empty{grid-column:1/-1;padding:20px;text-align:center;color:var(--muted);font-size:14px}
