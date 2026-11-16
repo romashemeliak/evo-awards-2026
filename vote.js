@@ -166,7 +166,7 @@ async function refreshMe() {
   const v = votedSet();
   POLLS.filter(p => p.engine === 'own').forEach(p => { if (Vote.answers[p.id]) v.add(p.id); else v.delete(p.id);
     const chip = document.querySelector('#poll-' + p.id + ' .meta .chip'); if (!chip) return;
-    if (Vote.answers[p.id]) { chip.className = 'chip done'; chip.textContent = '✓ Голос прийнято'; }
+    if (Vote.answers[p.id] && !hasResults(p)) { chip.className = 'chip done'; chip.textContent = '✓ Голос прийнято'; }
     else if (chip.classList.contains('done')) { const [c, l] = STATUS[p.status] || STATUS.soon; chip.className = 'chip ' + c; chip.textContent = l; } });
   store(VOTED_KEY, JSON.stringify([...v]));
   renderFab();

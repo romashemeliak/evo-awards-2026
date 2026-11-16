@@ -946,9 +946,10 @@ const STATUS = { open:['open','Відкрито'], soon:['soon','Скоро'], c
 const VOTED_KEY = 'evo_awards_voted';
 const votedSet = () => { try { return new Set(JSON.parse(store(VOTED_KEY) || '[]')); } catch (e) { return new Set(); } };
 const hasVoted = id => votedSet().has(id);
+const hasResults = p => p.status === 'closed' && !!p.results;   // закрите з підсумками — чіп «Результати» важливіший за «Голос прийнято»
 function markVoted(id) { const v = votedSet(); v.add(id); store(VOTED_KEY, JSON.stringify([...v]));
-  const chip = document.querySelector('#poll-' + id + ' .meta .chip'); if (chip) { chip.className = 'chip done'; chip.textContent = '✓ Голос прийнято'; }
   const card = document.getElementById('poll-' + id), p = POLLS.find(x => x.id === id);
+  const chip = document.querySelector('#poll-' + id + ' .meta .chip'); if (chip && !(p && hasResults(p))) { chip.className = 'chip done'; chip.textContent = '✓ Голос прийнято'; }
   if (card && p && !p.bets) { if (p.engine === 'own' && window.showOwnThanks) showOwnThanks(card, p, Vote.answers[p.id]); else showThanks(card, p); }
   renderFab(); }
 /* Картка подяки: показується одразу після відправки і при повторному відкритті. */
@@ -988,7 +989,7 @@ POLLS.forEach((p, i) => {
     <button class="poll-head" aria-expanded="false" aria-controls="pb-${p.id}">
       <span class="idx">${String(i + 1).padStart(2, '0')}</span>
       <span><h3>${esc(p.title)}</h3><p>${esc(p.text)}</p></span>
-      <span class="meta">${hasVoted(p.id) && p.kind !== 'results' ? '<span class="chip done">✓ Голос прийнято</span>' : `<span class="chip ${cls}">${lbl}</span>`}<span class="dl">${dLabel(p.opens).split(' ')[0]}–${dLabel(p.closes)}</span></span>
+      <span class="meta">${hasVoted(p.id) && p.kind !== 'results' && !hasResults(p) ? '<span class="chip done">✓ Голос прийнято</span>' : `<span class="chip ${cls}">${lbl}</span>`}<span class="dl">${dLabel(p.opens).split(' ')[0]}–${dLabel(p.closes)}</span></span>
       <span class="tog" aria-hidden="true"><i><svg viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></i></span>
     </button>
     <div class="poll-body" id="pb-${p.id}">
