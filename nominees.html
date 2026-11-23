@@ -412,6 +412,8 @@ Promise.all([loadData(), loadCards()]).then(([d, cards]) => { if (!d) return gat
   COACHES = new Set((d.coaches || []).map(low)); NAMES = d.names || {};
   $('#lead').textContent = `Усі активні гравці EVO і REVO, тренери та адмінсклад із результатами за рік. Будь-кого з них можна висунути в ком'юніті номінаціях.`;
   renderShort();
+  // перехід з форми голосування: #sl-N з'являється лише після рендеру, тому скролимо вручну
+  if (/^#sl-\d+$/.test(location.hash)) { const t = document.querySelector(location.hash); if (t) { t.open = true; setTimeout(() => t.scrollIntoView({ block: 'start' }), 50); } }
   if (d.asOf) { const [y, m, dd] = d.asOf.split('-').map(Number);
     $('#foot').insertAdjacentHTML('afterbegin', `Дані станом на ${dd} ${MONTHS[m - 1]} ${y}; фінальні — після завершення Року EVO 30 листопада. `); }
   render();
