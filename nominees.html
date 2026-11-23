@@ -143,9 +143,10 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .sl-card .nm{font-size:13px;color:var(--text);margin-top:2px}
 .sl-card .sub{font-size:12px;color:var(--gold);margin-top:3px;line-height:1.35}
 .sl-card .st{display:flex;flex-wrap:wrap;gap:6px}
-.sl-card .st span{display:flex;flex-direction:column;background:rgba(255,255,255,.04);border-radius:8px;padding:6px 9px;min-width:64px}
+.sl-card .st{display:grid;grid-template-columns:repeat(3,1fr)}
+.sl-card .st span{display:flex;flex-direction:column;background:rgba(255,255,255,.04);border-radius:8px;padding:6px 9px;min-width:0}
 .sl-card .st small{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
-.sl-card .st b{font:700 14px/1.2 Unbounded,sans-serif;font-variant-numeric:tabular-nums}
+.sl-card .st b{font:700 13px/1.25 Unbounded,sans-serif;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .sl-card p{margin:0;font-size:14px;line-height:1.5;color:#d8cdbb}
 .sl-card .srv{font-size:13px;line-height:1.45;color:var(--muted);border-left:2px solid var(--gold);padding-left:10px}
 .sl-card .srv b{display:block;font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
