@@ -403,7 +403,7 @@ async function renderFinal(card, p) {
       Банк номінації ділиться між тими, хто вгадав, пропорційно ставкам. Результати голосування і ставок з'являться в лідерборді після завершення голосування і будуть представлені на самому івенті.${markets.some(m => (Vote.cards || {})[m.title]) ? ' Розгорни номінацію — у кожного претендента коротка довідка, у блогів і фолдів ще й посилання на Discord.' : ''}</p>
       <p class="hint"><a class="more-link" href="nominees.html">Повні картки претендентів: хто вони, що зробили цього року і за що їх висунули →</a></p></div>
       <div class="chips-bal big"${canBet ? '' : ' hidden'}><span class="coin"></span><b data-free>${fmtN(budget - Vote.me.staked)}</b><small>фішок доступно з ${fmtN(budget)}</small></div></div>
-    <form class="own-form final${canBet ? '' : ' no-bets'}" novalidate>${markets.map(m => mkHtml(m, votes, pool, tot, my, canBet, voteHere)).join('')}
+    <form class="own-form final${canBet ? '' : ' no-bets'}" novalidate>${markets.map((m, i) => mkHtml(m, votes, pool, tot, my, canBet, voteHere, i + 1)).join('')}
       <div class="poll-actions sticky-save"><button class="btn" type="submit">${!voteHere ? 'Зберегти ставки' : canBet ? 'Зберегти голос і ставки' : 'Зберегти голос'}</button><span class="form-msg"></span></div></form>`;
   const form = slot.querySelector('form');
   const recalc = () => {
@@ -455,7 +455,7 @@ function cardHtml(title, option) {
 const avatarHtml = (title, option) => { const c = ((Vote.cards || {})[title] || []).find(x => x.option === option);
   return `<span class="nm-av">${c && c.avatar ? `<img src="${esc(c.avatar)}" alt="" loading="lazy">` : esc(option[0].toUpperCase())}</span>`; };
 
-function mkHtml(m, votes, pool, tot, my, canBet = true, voteHere = true) {
+function mkHtml(m, votes, pool, tot, my, canBet = true, voteHere = true, pos = 1) {
   const closed = !!m.winner || (m.closes_at && new Date(m.closes_at) < new Date());
   const opts = (m.market_options || []).slice().sort((a, b) => a.ord - b.ord);
   const chosen = votes[m.id], staked = opts.reduce((s, o) => s + (my[m.id + '|' + o.option] || 0), 0);
@@ -470,7 +470,7 @@ function mkHtml(m, votes, pool, tot, my, canBet = true, voteHere = true) {
         <span class="odds"></span>
         <span class="stake-box"${canBet ? '' : ' hidden'}><span class="coin sm"></span><input class="stake" type="number" inputmode="numeric" min="0" step="10" value="${mine || ''}" placeholder="0" ${closed ? 'disabled' : ''} aria-label="Фішок на ${esc(o.option)}">
         ${closed ? '' : '<button type="button" class="plus" data-plus="50">+50</button>'}</span></div>`; }).join('')}
-    <p class="mk-more"><a href="nominees.html#sl-${m.ord}">Детальніше про претендентів у шортлисті →</a></p>
+    <p class="mk-more"><a href="nominees.html#sl-${pos}">Детальніше про претендентів у шортлисті →</a></p>
   </fieldset></details>`;
 }
 
