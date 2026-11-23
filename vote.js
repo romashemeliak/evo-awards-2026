@@ -59,6 +59,11 @@ function mockBackend(players, cards) {
   const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) { return null; } };
   const save = d => { try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) {} };
   let db = load();
+  // шортлист у тестовій базі застарів (інші претенденти) — перебудувати номінації, ставки на зниклих скинути
+  if (db && cards && Object.keys(cards).length) { const fresh = Object.entries(cards).map(([t, opts], k) => ({ id: 'm' + (k + 1), title: t, ord: k + 1, winner: null, options: opts.map(o => o.option) }));
+    const same = db.markets && db.markets.filter(m => !m.id.startsWith('test')).length === fresh.length && fresh.every(f => { const m = db.markets.find(x => x.id === f.id); return m && m.title === f.title && JSON.stringify(m.options) === JSON.stringify(f.options); });
+    if (!same) { db.markets = [...fresh, ...(db.markets || []).filter(m => m.id.startsWith('test'))]; const ok = new Set(fresh.flatMap(f => f.options.map(o => f.id + '|' + o)));
+      db.bets = (db.bets || []).filter(b => ok.has(b.market_id + '|' + b.option) || b.market_id.startsWith('test')); save(db); } }
   if (!db) {
     const names = players.map(p => p.nick);
     const pick = (k, n) => Array.from({ length: n }, (_, i) => names[(k * 7 + i * 13) % names.length]);
