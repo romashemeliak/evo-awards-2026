@@ -9,7 +9,7 @@ const VOTE_CFG = {
 };
 
 const QS = new URLSearchParams(location.search);
-const MOCK = QS.has('mock');
+const MOCK = QS.has('mock') || !!window.DEV_PREVIEW;   // DEV_PREVIEW — дев-копія сайту без бази
 
 /* ─── бекенд: Supabase або тестовий ─────────────────────────────────────────── */
 const ERR = {

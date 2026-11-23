@@ -127,6 +127,30 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .sl-wait{font-size:13px;color:var(--muted);padding:10px 14px;border-radius:10px;border:1px dashed var(--line)}
 .all-h{margin:0 0 18px}
 @media(max-width:720px){.sl-nom{grid-template-columns:1fr;gap:12px}}
+/* шортлист — повні картки */
+.sl-nom.full{display:block;padding:0;overflow:hidden}
+.sl-nom.full>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:16px;padding:16px 18px}
+.sl-nom.full>summary::-webkit-details-marker{display:none}
+.sl-nom.full>summary .for{margin-top:2px}
+.sl-nom.full>summary .n{margin-left:auto;font:700 12px Manrope,sans-serif;color:var(--muted);white-space:nowrap}
+.sl-nom.full>summary i{flex:none;width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .15s}
+.sl-nom.full[open]>summary i{transform:rotate(45deg)}
+.sl-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;padding:0 18px 18px}
+.sl-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.sl-card .who{display:flex;align-items:center;gap:12px}
+.sl-card .avatar{width:56px;height:56px;font-size:20px;box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--gold)}
+.sl-card .nick{font:700 16px/1.2 Unbounded,sans-serif;word-break:break-word}
+.sl-card .nm{font-size:13px;color:var(--text);margin-top:2px}
+.sl-card .sub{font-size:12px;color:var(--gold);margin-top:3px;line-height:1.35}
+.sl-card .st{display:flex;flex-wrap:wrap;gap:6px}
+.sl-card .st span{display:flex;flex-direction:column;background:rgba(255,255,255,.04);border-radius:8px;padding:6px 9px;min-width:64px}
+.sl-card .st small{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.sl-card .st b{font:700 14px/1.2 Unbounded,sans-serif;font-variant-numeric:tabular-nums}
+.sl-card p{margin:0;font-size:14px;line-height:1.5;color:#d8cdbb}
+.sl-card .srv{font-size:13px;line-height:1.45;color:var(--muted);border-left:2px solid var(--gold);padding-left:10px}
+.sl-card .srv b{display:block;font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.sl-card .lnk{margin-top:auto;font-size:13px;font-weight:700;color:var(--text);text-decoration:underline;text-underline-offset:3px}
+.sl-card .lnk:hover{color:var(--gold)}
 /* віконце «i» у тексті */
 .qi{position:relative;display:inline-grid;place-items:center;width:20px;height:20px;margin:0 2px 0 6px;padding:0;vertical-align:2px;border-radius:50%;border:1px solid var(--gold);background:none;color:var(--gold);font:700 11px/1 Manrope,sans-serif;font-style:normal;cursor:pointer}
 .qi:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
@@ -317,11 +341,19 @@ function renderShort() {
   let open = true; try { const v = localStorage.getItem('evo_sl_open'); if (v !== null) open = v === '1'; } catch (e) {}
   $('#sl').classList.toggle('closed', !open);
   $('#sl').innerHTML = `<div class="sl-head"><div><h2 id="sl-h">Шортлист</h2>
-      <p>${any ? 'Претенденти кожної ком\'юніті номінації за підсумками Nomination Week. Натисни на претендента — він знайдеться у списку нижче.'
+      <p>${any ? 'П\'ятеро претендентів у кожній ком\'юніті номінації за підсумками Nomination Week. Хто вони, що зробили цього року і за що їх висунули.'
         : 'Претендентів висувають учасники на Nomination Week, 16–22 листопада. Після неї шортлист кожної номінації з\'явиться тут.'}</p></div>
       <button type="button" class="sl-tog" aria-controls="sl" aria-expanded="${open}"><span></span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg></button></div>
     ${DEMO ? '<div class="sl-demo"><b>Приклад</b>Претенденти тут вигадані — це лише вигляд блоку. Справжній шортлист з\'явиться після Nomination Week.</div>' : ''}
-    <div class="sl-noms">${NOMS.map(n => { const list = by[n.name] || [];
+    <div class="sl-noms">${NOMS.map(n => { const list = by[n.name] || [], cards = CARDS[n.name] || [];
+      if (list.length && cards.length) return `<details class="sl-nom full" open><summary><div><h3>${esc(n.name)}</h3><p class="for">${esc(n.for)}</p></div><span class="n">${list.length} претендентів</span><i></i></summary>
+        <div class="sl-cards">${list.map(nick => { const c = cards.find(x => x.option === nick) || { option: nick }, p = person(nick), pic = c.avatar || p.avatar;
+          return `<article class="sl-card"><div class="who"><div class="avatar">${pic ? `<img src="${esc(pic)}" alt="" loading="lazy">` : esc(nick[0].toUpperCase())}</div>
+              <div><div class="nick">${esc(nick)}</div>${c.name ? `<div class="nm">${esc(c.name)}</div>` : ''}${c.sub ? `<div class="sub">${esc(c.sub)}</div>` : ''}</div></div>
+            ${(c.stats || []).length ? `<div class="st">${c.stats.map(([k, v]) => `<span><small>${esc(k)}</small><b>${esc(v)}</b></span>`).join('')}</div>` : ''}
+            ${c.about ? `<p>${esc(c.about)}</p>` : c.desc ? `<p>${esc(c.desc)}</p>` : ''}
+            ${c.fact ? `<div class="srv"><b>З сервера</b>${esc(c.fact)}</div>` : ''}
+            ${c.link ? `<a class="lnk" href="${esc(c.link)}" target="_blank" rel="noopener">${esc(c.linkText || 'Допис у Discord')} ↗</a>` : ''}</article>`; }).join('')}</div></details>`;
       return `<div class="sl-nom"><div><h3>${esc(n.name)}</h3><p class="for">${esc(n.for)}</p></div>${list.length
         ? `<div class="sl-list">${list.map(nick => { const p = person(nick), card = (CARDS[n.name] || []).find(x => x.option === nick) || {};
             const pic = card.avatar || p.avatar, av = pic ? `<img src="${esc(pic)}" alt="" loading="lazy">` : esc((p.nick || '?')[0].toUpperCase());
@@ -361,7 +393,7 @@ function gate(msg) {
   $('#gate-in').addEventListener('click', () => sb.auth.signInWithOAuth({ provider: 'discord', options: { redirectTo: location.origin + location.pathname } }));
 }
 async function loadData() {
-  if (new URLSearchParams(location.search).has('mock')) return fetch('players.json', { cache: 'no-cache' }).then(r => r.json());
+  if (new URLSearchParams(location.search).has('mock') || window.DEV_PREVIEW) return fetch('players.json', { cache: 'no-cache' }).then(r => r.json());
   if (!sb) throw new Error('supabase');
   const { data: { session } } = await sb.auth.getSession();
   if (!session) return null;
@@ -372,7 +404,7 @@ async function loadData() {
 const loadCards = () => fetch('shortlist.json', { cache: 'no-cache' }).then(r => r.json()).catch(() => ({}));
 Promise.all([loadData(), loadCards()]).then(([d, cards]) => { if (!d) return gate();
   CARDS = cards || {};
-  if (new URLSearchParams(location.search).has('mock') && !(d.shortlists || []).length) d.shortlists = Object.entries(CARDS).map(([name, l]) => ({ name, nominees: l.map(o => o.option) }));
+  if ((new URLSearchParams(location.search).has('mock') || window.DEV_PREVIEW) && !(d.shortlists || []).length) d.shortlists = Object.entries(CARDS).map(([name, l]) => ({ name, nominees: l.map(o => o.option) }));
   document.body.classList.remove('locked');
   const hide = new Set((d.hidePlayers || []).map(low));
   ALL = (d.players || []).filter(p => !hide.has(low(p.nick))); STAFF = d.staff || []; SHORT = d.shortlists || [];

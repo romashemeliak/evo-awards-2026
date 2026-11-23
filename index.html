@@ -894,7 +894,7 @@ function store(key, val) { try { if (val === undefined) return localStorage.getI
 /* --- дні до ефіру і шлях --- */
 const MONTHS = ['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'];
 const dayNum = iso => { const [y, m, d] = iso.split('-').map(Number); return Date.UTC(y, m - 1, d) / 864e5; };
-const TODAY_OVERRIDE = /^\d{4}-\d{2}-\d{2}$/.test(new URLSearchParams(location.search).get('today') || '') ? new URLSearchParams(location.search).get('today') : null;
+const TODAY_OVERRIDE = /^\d{4}-\d{2}-\d{2}$/.test(new URLSearchParams(location.search).get('today') || '') ? new URLSearchParams(location.search).get('today') : (window.DEV_PREVIEW && window.DEV_PREVIEW.today) || null;
 const todayNum = () => { const t = TODAY_OVERRIDE || new Date().toLocaleDateString('en-CA', { timeZone:'Europe/Kyiv' }); return dayNum(t); };
 const dLabel = iso => { const [, m, d] = iso.split('-').map(Number); return d + ' ' + MONTHS[m - 1]; };
 const plural = (n, one, few, many) => { const a = n % 10, b = n % 100; return a === 1 && b !== 11 ? one : a >= 2 && a <= 4 && (b < 12 || b > 14) ? few : many; };
@@ -1121,11 +1121,11 @@ if (SHOW_NOMINEES && groups.length) {
     <div class="sk-stats"><span><i class="sk w40"></i><i class="sk w70 tall"></i></span><span><i class="sk w40"></i><i class="sk w70 tall"></i></span><span><i class="sk w40"></i><i class="sk w70 tall"></i></span></div>
     <i class="sk w90 sk-fact"></i></div>`;
   $('#nominees-body').innerHTML = `<div class="locked">
-    <div class="locked-text"><p class="lead">Гравці EVO і REVO, тренери та адмінсклад із їхніми результатами за рік. Після Nomination Week над списком з'явиться шортлист кожної номінації.</p>
+    <div class="locked-text"><p class="lead">${POLLS.find(p => p.id === 'nominate').status === 'closed' ? 'Шортлист кожної ком\'юніті номінації: п\'ятеро претендентів з повними картками. Нижче — усі гравці EVO і REVO, тренери та адмінсклад із результатами за рік.' : 'Гравці EVO і REVO, тренери та адмінсклад із їхніми результатами за рік. Після Nomination Week над списком з\'явиться шортлист кожної номінації.'}</p>
       <div class="tier"><span class="tier-h">Колір обідка на картці — етап</span>
         <div class="tier-bar">${[['REVO', REVO_COLOR], ...STAGE_COLORS.map((c, i) => [STAGE_ROMAN[i], c])].map(([t, c]) => `<span style="--c:${c}"><i></i>${t}</span>`).join('')}</div>
         <span class="tier-roles"><span class="tier-admin" style="--c:${ADMIN_COLOR}"><i></i>Адмінсклад</span><span class="tier-admin" style="--c:${COACH_COLOR}"><i></i>Тренер</span></span></div>
-      <a class="btn" href="nominees.html">Усі претенденти і їхні результати →</a></div>
+      <a class="btn" href="nominees.html">${POLLS.find(p => p.id === 'nominate').status === 'closed' ? 'Шортлист і всі претенденти →' : 'Усі претенденти і їхні результати →'}</a></div>
     <div class="deck" aria-hidden="true">${skel(REVO_COLOR)}${skel(STAGE_COLORS[4])}${skel(STAGE_COLORS[2])}</div>
   </div>`;
   $('#nominees .locked-text').prepend($('#nominees .kicker'), $('#nominees h2'));
