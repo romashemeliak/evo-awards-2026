@@ -54,7 +54,7 @@ function supabaseBackend() {
 }
 
 /* Тестовий бекенд: повторює правила бази (бюджет, один гравець — один акаунт, тоталізатор) у localStorage. */
-function mockBackend(players) {
+function mockBackend(players, cards) {
   const KEY = 'evo_vote_mock';
   const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) { return null; } };
   const save = d => { try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) {} };
@@ -65,7 +65,8 @@ function mockBackend(players) {
     const noms = ['Найкращий блог', 'Серце EVO', 'Харизма EVO', 'Тренер року', 'Фолд року', 'EVO GOTY'];
     db = { budget: 1000, me: null, signedIn: false, answers: {}, bets: [],
       roster: players.map(p => ({ player: p.nick, team: p.team })),
-      markets: [...noms.map((t, k) => ({ id: 'm' + (k + 1), title: t, ord: k, winner: null, options: pick(k, 4 + (k % 2)) })),
+      markets: [...(cards && Object.keys(cards).length ? Object.entries(cards).map(([t, opts], k) => ({ id: 'm' + (k + 1), title: t, ord: k, winner: null, options: opts.map(o => o.option) }))
+                 : noms.map((t, k) => ({ id: 'm' + (k + 1), title: t, ord: k, winner: null, options: pick(k, 4 + (k % 2)) }))),
                 { id: 'test1', title: 'Тестова номінація', ord: 0, winner: null, options: ['Претендент A', 'Претендент B', 'Претендент C'] }],
       others: [] };
     // інші учасники зі ставками — щоб було видно банки й коефіцієнти
@@ -129,7 +130,9 @@ function mockBackend(players) {
 
 /* ─── стан ───────────────────────────────────────────────────────────────── */
 const isCoach = s => /тренер/i.test(s.role || '');   // покерний тренер за роллю картки
-const Vote = { api: null, ready: false, sess: { signedIn: false }, me: null, answers: {}, roster: [], coaches: null, markets: null };
+const Vote = { api: null, ready: false, sess: { signedIn: false }, me: null, answers: {}, roster: [], coaches: null, markets: null, cards: null };
+// картки шортлисту (shortlist.json поруч зі сторінкою): {Номінація: [{option, sub, desc, link}]} — підписи під претендентами в фіналі
+const loadCards = async () => { if (Vote.cards) return Vote.cards; try { Vote.cards = await fetch('shortlist.json', { cache: 'no-cache' }).then(r => r.json()); } catch (e) { Vote.cards = {}; } return Vote.cards; };
 
 const fmtN = n => Math.round(n).toLocaleString('uk-UA');
 const enabled = () => MOCK || (VOTE_CFG.url && VOTE_CFG.anonKey);
@@ -138,7 +141,7 @@ async function voteInit() {
   if (!enabled()) { renderAuth(); return; }
   try {
     if (MOCK) { const pj = await fetch('players.json').then(r => r.json()).catch(() => ({ players: [] }));
-      Vote.api = mockBackend((pj.players || []).map(p => ({ nick: p.nick, team: p.team || 'EVO' })));
+      Vote.api = mockBackend((pj.players || []).map(p => ({ nick: p.nick, team: p.team || 'EVO' })), await loadCards());
       Vote.api.setCoaches([...new Set([...(pj.coaches || []), ...(pj.staff || []).filter(isCoach).map(s => s.nick)])]); }
     else {
       await new Promise((ok, bad) => { const s = document.createElement('script');
@@ -385,7 +388,7 @@ async function renderFinal(card, p) {
   const slot = card.querySelector('.slot');
   slot.innerHTML = `<div class="form-empty">Завантажуємо шортлист…</div>`;
   let markets, pools, mine;
-  try { [markets, pools, mine] = await Promise.all([Vote.api.markets(), Vote.api.pools(), Vote.api.myBets()]); }
+  try { [markets, pools, mine] = await Promise.all([Vote.api.markets(), Vote.api.pools(), Vote.api.myBets(), loadCards()]); }
   catch (x) { slot.innerHTML = `<div class="form-empty">${esc(errText(x))}</div>`; return; }
   markets = markets.filter(m => !m.id.startsWith('test') || (typeof TEST_RUN !== 'undefined' && TEST_RUN));   // тестовий шортлист — лише під час тесту
   const canBet = Vote.me.can_bet !== false, voteHere = canVote(p.id, Vote.me.team);   // друзі — лише ставки, без голосу
@@ -397,7 +400,7 @@ async function renderFinal(card, p) {
   const budget = Vote.me.budget;
   slot.innerHTML = `<div class="bet-head">
       <div><b>${!voteHere ? 'Ставки' : canBet ? 'Голос і ставки' : 'Голос'}</b><p class="hint">${!voteHere ? 'Голосують гравці й адміни школи, а ти можеш поставити фішки на того, хто, на твою думку, переможе.' : `${canBet ? '' : 'Для твого акаунта ставки вимкнені — лише голос. '}У кожній номінації обери, за кого голосуєш. Окремо можеш поставити фішки на того, хто, на твою думку, переможе — не обов'язково на того, за кого голосуєш.`}
-      Банк номінації ділиться між тими, хто вгадав, пропорційно ставкам. Суми ставок інших учасників не видно до оголошення переможців.</p></div>
+      Банк номінації ділиться між тими, хто вгадав, пропорційно ставкам. Суми ставок інших учасників не видно до оголошення переможців.${markets.some(m => (Vote.cards || {})[m.title]) ? ' Під претендентами — короткі довідки, у блогів і фолдів — посилання на Discord.' : ''}</p></div>
       <div class="chips-bal big"${canBet ? '' : ' hidden'}><span class="coin"></span><b data-free>${fmtN(budget - Vote.me.staked)}</b><small>фішок доступно з ${fmtN(budget)}</small></div></div>
     <form class="own-form final${canBet ? '' : ' no-bets'}" novalidate>${markets.map(m => mkHtml(m, votes, pool, tot, my, canBet, voteHere)).join('')}
       <div class="poll-actions sticky-save"><button class="btn" type="submit">${!voteHere ? 'Зберегти ставки' : canBet ? 'Зберегти голос і ставки' : 'Зберегти голос'}</button><span class="form-msg"></span></div></form>`;
@@ -439,6 +442,12 @@ async function renderFinal(card, p) {
   });
 }
 
+function cardHtml(title, option) {
+  const c = ((Vote.cards || {})[title] || []).find(x => x.option === option); if (!c) return '';
+  const link = c.link ? `<a class="nm-link" href="${esc(c.link)}" target="_blank" rel="noopener">${/\/\d+\/\d+\/\d+\/?$/.test(c.link) ? 'Допис у Discord ↗' : 'Відкрити блог ↗'}</a>` : '';
+  return `${c.sub ? `<small class="nm-sub">${esc(c.sub)}</small>` : ''}${c.desc || link ? `<span class="nm-desc">${esc(c.desc || '')}${link ? ' ' + link : ''}</span>` : ''}`;
+}
+
 function mkHtml(m, votes, pool, tot, my, canBet = true, voteHere = true) {
   const closed = !!m.winner || (m.closes_at && new Date(m.closes_at) < new Date());
   const opts = (m.market_options || []).slice().sort((a, b) => a.ord - b.ord);
@@ -446,7 +455,7 @@ function mkHtml(m, votes, pool, tot, my, canBet = true, voteHere = true) {
     ${m.winner ? `<p class="winner">🏆 Переможець: <b>${esc(m.winner)}</b></p>` : ''}
     ${opts.map(o => { const k = m.id + '|' + o.option, mine = my[k] || 0;
       return `<div class="opt${m.winner === o.option ? ' win' : ''}" data-o="${esc(o.option)}">
-        ${voteHere ? `<label class="pick"><input type="radio" name="v-${esc(m.id)}" value="${esc(o.option)}" ${votes[m.id] === o.option ? 'checked' : ''} ${closed ? 'disabled' : ''}><span class="dot"></span><span class="nm">${esc(o.option)}</span></label>` : `<span class="pick"><span class="nm">${esc(o.option)}</span></span>`}
+        ${voteHere ? `<label class="pick"><input type="radio" name="v-${esc(m.id)}" value="${esc(o.option)}" ${votes[m.id] === o.option ? 'checked' : ''} ${closed ? 'disabled' : ''}><span class="dot"></span><span class="nm"><b>${esc(o.option)}</b>${cardHtml(m.title, o.option)}</span></label>` : `<span class="pick"><span class="nm"><b>${esc(o.option)}</b>${cardHtml(m.title, o.option)}</span></span>`}
         <span class="odds"></span>
         <span class="stake-box"${canBet ? '' : ' hidden'}><span class="coin sm"></span><input class="stake" type="number" inputmode="numeric" min="0" step="10" value="${mine || ''}" placeholder="0" ${closed ? 'disabled' : ''} aria-label="Фішок на ${esc(o.option)}">
         ${closed ? '' : '<button type="button" class="plus" data-plus="50">+50</button>'}</span></div>`; }).join('')}
