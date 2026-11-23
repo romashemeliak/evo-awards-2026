@@ -405,7 +405,7 @@ async function renderFinal(card, p) {
   const budget = Vote.me.budget;
   slot.innerHTML = `<div class="bet-head">
       <div><b>${!voteHere ? 'Ставки' : canBet ? 'Голос і ставки' : 'Голос'}</b><p class="hint">${!voteHere ? 'Голосують гравці й адміни школи, а ти можеш поставити фішки на того, хто, на твою думку, переможе.' : `${canBet ? '' : 'Для твого акаунта ставки вимкнені — лише голос. '}У кожній номінації обери, за кого голосуєш. Окремо можеш поставити фішки на того, хто, на твою думку, переможе — не обов'язково на того, за кого голосуєш.`}
-      Банк номінації ділиться між тими, хто вгадав, пропорційно ставкам. Результати голосування і ставок з'являться в лідерборді після завершення голосування і будуть представлені на самому івенті.${markets.some(m => (Vote.cards || {})[m.title]) ? ' Розгорни номінацію — у кожного претендента коротка довідка, у блогів і фолдів ще й посилання на Discord.' : ''}</p>
+      Банк номінації ділиться між тими, хто вгадав, пропорційно ставкам.</p>
       <a class="btn ghost more-btn" href="nominees.html">Повні картки претендентів →</a></div>
       <div class="chips-bal big"${canBet ? '' : ' hidden'}><span class="coin"></span><b data-free>${fmtN(budget - Vote.me.staked)}</b><small>фішок доступно з ${fmtN(budget)}</small></div></div>
     <form class="own-form final${canBet ? '' : ' no-bets'}" novalidate>${markets.map((m, i) => mkHtml(m, votes, pool, tot, my, canBet, voteHere, i + 1)).join('')}
