@@ -125,9 +125,11 @@
 
 .mk-wrap[open]>summary{border-bottom:1px solid var(--line)}
 .own-form.final .mk-wrap .mk{border:0;border-radius:0;background:transparent;padding:4px 16px 12px}
-.mk-more{margin:10px 0 0;font-size:13px}
-.mk-more a,.more-link{color:var(--acc);font-weight:700;text-decoration:none}
-.mk-more a:hover,.more-link:hover{text-decoration:underline}
+.mk-more{display:flex;align-items:center;gap:10px;margin:8px 0 6px;padding:10px 14px;border-radius:10px;border:1px solid rgba(217,164,65,.45);background:rgba(217,164,65,.08);color:var(--text);font-size:14px;font-weight:600;text-decoration:none;transition:background .15s,border-color .15s}
+.mk-more:hover{background:rgba(217,164,65,.16);border-color:var(--acc)}
+.mk-more b{margin-left:auto;color:var(--acc)}
+.mk-more-i{flex:none;width:22px;height:22px;border-radius:50%;background:var(--acc);color:#0b0c0c;font:900 13px/22px Unbounded,sans-serif;text-align:center}
+.more-btn{margin-top:10px;display:inline-flex}
 .odds{color:var(--muted);font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
 .stake-box{display:flex;align-items:center;gap:6px}
 .own-form .stake-box input.stake{flex:none;width:86px;padding:8px 10px;text-align:right;font-variant-numeric:tabular-nums}

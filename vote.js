@@ -406,7 +406,7 @@ async function renderFinal(card, p) {
   slot.innerHTML = `<div class="bet-head">
       <div><b>${!voteHere ? 'Ставки' : canBet ? 'Голос і ставки' : 'Голос'}</b><p class="hint">${!voteHere ? 'Голосують гравці й адміни школи, а ти можеш поставити фішки на того, хто, на твою думку, переможе.' : `${canBet ? '' : 'Для твого акаунта ставки вимкнені — лише голос. '}У кожній номінації обери, за кого голосуєш. Окремо можеш поставити фішки на того, хто, на твою думку, переможе — не обов'язково на того, за кого голосуєш.`}
       Банк номінації ділиться між тими, хто вгадав, пропорційно ставкам. Результати голосування і ставок з'являться в лідерборді після завершення голосування і будуть представлені на самому івенті.${markets.some(m => (Vote.cards || {})[m.title]) ? ' Розгорни номінацію — у кожного претендента коротка довідка, у блогів і фолдів ще й посилання на Discord.' : ''}</p>
-      <p class="hint"><a class="more-link" href="nominees.html">Повні картки претендентів: хто вони, що зробили цього року і за що їх висунули →</a></p></div>
+      <a class="btn ghost more-btn" href="nominees.html">Повні картки претендентів →</a></div>
       <div class="chips-bal big"${canBet ? '' : ' hidden'}><span class="coin"></span><b data-free>${fmtN(budget - Vote.me.staked)}</b><small>фішок доступно з ${fmtN(budget)}</small></div></div>
     <form class="own-form final${canBet ? '' : ' no-bets'}" novalidate>${markets.map((m, i) => mkHtml(m, votes, pool, tot, my, canBet, voteHere, i + 1)).join('')}
       <div class="poll-actions sticky-save"><button class="btn" type="submit">${!voteHere ? 'Зберегти ставки' : canBet ? 'Зберегти голос і ставки' : 'Зберегти голос'}</button><span class="form-msg"></span></div></form>`;
@@ -466,6 +466,7 @@ function mkHtml(m, votes, pool, tot, my, canBet = true, voteHere = true, pos = 1
   const chosen = votes[m.id], staked = opts.reduce((s, o) => s + (my[m.id + '|' + o.option] || 0), 0);
   return `<details class="mk-wrap" ${m.winner ? 'open' : ''}><summary><span class="mk-t">${esc(m.title)}</span><span class="mk-s">${m.winner ? '🏆 ' + esc(m.winner) : chosen ? '✓ ' + esc(chosen) : 'обрати'}${staked ? ` · ${fmtN(staked)} фішок` : ''}</span><i class="mk-chev"></i></summary>
     <fieldset class="mk${closed ? ' closed' : ''}" data-m="${esc(m.id)}">
+    <a class="mk-more" href="nominees.html#sl-${pos}"><span class="mk-more-i">i</span>Повні картки претендентів цієї номінації: хто вони і за що їх висунули <b>→</b></a>
     ${m.winner ? `<p class="winner">🏆 Переможець: <b>${esc(m.winner)}</b></p>` : ''}
     ${opts.map(o => { const k = m.id + '|' + o.option, mine = my[k] || 0;
       const cardOf = ((Vote.cards || {})[m.title] || []).find(x => x.option === o.option) || {};
@@ -475,7 +476,6 @@ function mkHtml(m, votes, pool, tot, my, canBet = true, voteHere = true, pos = 1
         <span class="odds"></span>
         <span class="stake-box"${canBet ? '' : ' hidden'}><span class="coin sm"></span><input class="stake" type="number" inputmode="numeric" min="0" step="10" value="${mine || ''}" placeholder="0" ${closed ? 'disabled' : ''} aria-label="Фішок на ${esc(o.option)}">
         ${closed ? '' : '<button type="button" class="plus" data-plus="50">+50</button>'}</span></div>`; }).join('')}
-    <p class="mk-more"><a href="nominees.html#sl-${pos}">Детальніше про претендентів у шортлисті →</a></p>
   </fieldset></details>`;
 }
 
