@@ -347,7 +347,7 @@ function renderShort() {
       <button type="button" class="sl-tog" aria-controls="sl" aria-expanded="${open}"><span></span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg></button></div>
     ${DEMO ? '<div class="sl-demo"><b>Приклад</b>Претенденти тут вигадані — це лише вигляд блоку. Справжній шортлист з\'явиться після Nomination Week.</div>' : ''}
     <div class="sl-noms">${NOMS.map(n => { const list = by[n.name] || [], cards = CARDS[n.name] || [];
-      if (list.length && cards.length) return `<details class="sl-nom full" open><summary><div><h3>${esc(n.name)}</h3><p class="for">${esc(n.for)}</p></div><span class="n">${list.length} претендентів</span><i></i></summary>
+      if (list.length && cards.length) return `<details class="sl-nom full" id="sl-${NOMS.indexOf(n) + 1}" open><summary><div><h3>${esc(n.name)}</h3><p class="for">${esc(n.for)}</p></div><span class="n">${list.length} претендентів</span><i></i></summary>
         <div class="sl-cards">${list.map(nick => { const c = cards.find(x => x.option === nick) || { option: nick }, p = person(nick), pic = c.avatar || p.avatar;
           return `<article class="sl-card"><div class="who"><div class="avatar">${pic ? `<img src="${esc(pic)}" alt="" loading="lazy">` : esc(nick[0].toUpperCase())}</div>
               <div><div class="nick">${esc(nick)}</div>${c.name ? `<div class="nm">${esc(c.name)}</div>` : ''}${c.sub ? `<div class="sub">${esc(c.sub)}</div>` : ''}</div></div>

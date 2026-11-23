@@ -65,7 +65,7 @@ function mockBackend(players, cards) {
     const noms = ['Найкращий блог', 'Серце EVO', 'Харизма EVO', 'Тренер року', 'Фолд року', 'EVO GOTY'];
     db = { budget: 1000, me: null, signedIn: false, answers: {}, bets: [],
       roster: players.map(p => ({ player: p.nick, team: p.team })),
-      markets: [...(cards && Object.keys(cards).length ? Object.entries(cards).map(([t, opts], k) => ({ id: 'm' + (k + 1), title: t, ord: k, winner: null, options: opts.map(o => o.option) }))
+      markets: [...(cards && Object.keys(cards).length ? Object.entries(cards).map(([t, opts], k) => ({ id: 'm' + (k + 1), title: t, ord: k + 1, winner: null, options: opts.map(o => o.option) }))
                  : noms.map((t, k) => ({ id: 'm' + (k + 1), title: t, ord: k, winner: null, options: pick(k, 4 + (k % 2)) }))),
                 { id: 'test1', title: 'Тестова номінація', ord: 0, winner: null, options: ['Претендент A', 'Претендент B', 'Претендент C'] }],
       others: [] };
@@ -400,7 +400,8 @@ async function renderFinal(card, p) {
   const budget = Vote.me.budget;
   slot.innerHTML = `<div class="bet-head">
       <div><b>${!voteHere ? 'Ставки' : canBet ? 'Голос і ставки' : 'Голос'}</b><p class="hint">${!voteHere ? 'Голосують гравці й адміни школи, а ти можеш поставити фішки на того, хто, на твою думку, переможе.' : `${canBet ? '' : 'Для твого акаунта ставки вимкнені — лише голос. '}У кожній номінації обери, за кого голосуєш. Окремо можеш поставити фішки на того, хто, на твою думку, переможе — не обов'язково на того, за кого голосуєш.`}
-      Банк номінації ділиться між тими, хто вгадав, пропорційно ставкам. Результати голосування і ставок з'являться в лідерборді після завершення голосування і будуть представлені на самому івенті.${markets.some(m => (Vote.cards || {})[m.title]) ? ' Розгорни номінацію — у кожного претендента коротка довідка, у блогів і фолдів ще й посилання на Discord.' : ''}</p></div>
+      Банк номінації ділиться між тими, хто вгадав, пропорційно ставкам. Результати голосування і ставок з'являться в лідерборді після завершення голосування і будуть представлені на самому івенті.${markets.some(m => (Vote.cards || {})[m.title]) ? ' Розгорни номінацію — у кожного претендента коротка довідка, у блогів і фолдів ще й посилання на Discord.' : ''}</p>
+      <p class="hint"><a class="more-link" href="nominees.html">Повні картки претендентів: хто вони, що зробили цього року і за що їх висунули →</a></p></div>
       <div class="chips-bal big"${canBet ? '' : ' hidden'}><span class="coin"></span><b data-free>${fmtN(budget - Vote.me.staked)}</b><small>фішок доступно з ${fmtN(budget)}</small></div></div>
     <form class="own-form final${canBet ? '' : ' no-bets'}" novalidate>${markets.map(m => mkHtml(m, votes, pool, tot, my, canBet, voteHere)).join('')}
       <div class="poll-actions sticky-save"><button class="btn" type="submit">${!voteHere ? 'Зберегти ставки' : canBet ? 'Зберегти голос і ставки' : 'Зберегти голос'}</button><span class="form-msg"></span></div></form>`;
@@ -469,6 +470,7 @@ function mkHtml(m, votes, pool, tot, my, canBet = true, voteHere = true) {
         <span class="odds"></span>
         <span class="stake-box"${canBet ? '' : ' hidden'}><span class="coin sm"></span><input class="stake" type="number" inputmode="numeric" min="0" step="10" value="${mine || ''}" placeholder="0" ${closed ? 'disabled' : ''} aria-label="Фішок на ${esc(o.option)}">
         ${closed ? '' : '<button type="button" class="plus" data-plus="50">+50</button>'}</span></div>`; }).join('')}
+    <p class="mk-more"><a href="nominees.html#sl-${m.ord}">Детальніше про претендентів у шортлисті →</a></p>
   </fieldset></details>`;
 }
 

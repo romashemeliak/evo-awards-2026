@@ -125,6 +125,9 @@
 
 .mk-wrap[open]>summary{border-bottom:1px solid var(--line)}
 .own-form.final .mk-wrap .mk{border:0;border-radius:0;background:transparent;padding:4px 16px 12px}
+.mk-more{margin:10px 0 0;font-size:13px}
+.mk-more a,.more-link{color:var(--acc);font-weight:700;text-decoration:none}
+.mk-more a:hover,.more-link:hover{text-decoration:underline}
 .odds{color:var(--muted);font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
 .stake-box{display:flex;align-items:center;gap:6px}
 .own-form .stake-box input.stake{flex:none;width:86px;padding:8px 10px;text-align:right;font-variant-numeric:tabular-nums}
