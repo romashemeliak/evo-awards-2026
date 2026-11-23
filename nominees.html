@@ -352,7 +352,7 @@ function renderShort() {
               <div><div class="nick">${esc(nick)}</div>${c.name ? `<div class="nm">${esc(c.name)}</div>` : ''}${c.sub ? `<div class="sub">${esc(c.sub)}</div>` : ''}</div></div>
             ${(c.stats || []).length ? `<div class="st">${c.stats.map(([k, v]) => `<span><small>${esc(k)}</small><b>${esc(v)}</b></span>`).join('')}</div>` : ''}
             ${c.about ? `<p>${esc(c.about)}</p>` : c.desc ? `<p>${esc(c.desc)}</p>` : ''}
-            ${c.fact ? `<div class="srv"><b>З сервера</b>${esc(c.fact)}</div>` : ''}
+            ${c.fact ? `<div class="srv"><b>${esc(c.factLabel || 'З сервера')}</b>${esc(c.fact)}</div>` : ''}
             ${c.link ? `<a class="lnk" href="${esc(c.link)}" target="_blank" rel="noopener">${esc(c.linkText || 'Допис у Discord')} ↗</a>` : ''}</article>`; }).join('')}</div></details>`;
       return `<div class="sl-nom"><div><h3>${esc(n.name)}</h3><p class="for">${esc(n.for)}</p></div>${list.length
         ? `<div class="sl-list">${list.map(nick => { const p = person(nick), card = (CARDS[n.name] || []).find(x => x.option === nick) || {};
