@@ -21,6 +21,13 @@ h1,h2,h3{font-family:Unbounded,Manrope,sans-serif;margin:0;letter-spacing:-.01em
 .logo b{color:var(--red)}
 .back{font-size:14px;font-weight:700;color:var(--muted);text-decoration:none;white-space:nowrap}
 .back:hover{color:var(--text)}
+.back.hot{color:var(--gold)}
+.fab{position:fixed;right:20px;bottom:20px;z-index:30;display:inline-flex;align-items:center;gap:10px;padding:14px 18px;border-radius:999px;font:700 14px/1.2 Manrope,sans-serif;text-decoration:none;box-shadow:0 14px 36px -10px rgba(0,0,0,.8);transition:transform .15s}
+.fab:hover{transform:translateY(-2px)}
+.fab[hidden]{display:none}
+.fab.hot{background:var(--gold);color:#0b0c0c}
+.fab .pulse{width:8px;height:8px;border-radius:50%;background:#0b0c0c;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
 header.top{padding:clamp(40px,7vw,80px) 0 24px}
 .kicker{font:700 12px/1 Manrope,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-bottom:14px;display:flex;align-items:center;gap:10px}
 .kicker::before{content:"";width:22px;height:2px;background:var(--red)}
@@ -164,8 +171,22 @@ footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);f
 <body class="locked">
 <header class="nav"><div class="wrap">
   <a class="logo" href="./">EVO <b>AWARDS</b> 2026</a>
-  <a class="back" href="./#nominees">← На головну</a>
+  <a class="back" id="back" href="./#nominees">← На головну</a>
 </div></header>
+<a class="fab hot" id="fab" href="./#poll-final" hidden><span class="pulse"></span>Голосуй: Ком'юніті голосування <b>→</b></a>
+<script>
+/* Під час ком'юніті голосування (24–30.11) сторінка веде назад не на головну, а на голосування — поки гравець не проголосував
+   (позначка з index.html у localStorage: evo_awards_voted містить 'final'). Дата — за Києвом, ?today= і DEV_PREVIEW як на головній. */
+(() => {
+  const qs = new URLSearchParams(location.search).get('today'), today = /^\d{4}-\d{2}-\d{2}$/.test(qs || '') ? qs
+    : (window.DEV_PREVIEW && window.DEV_PREVIEW.today) || new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Kyiv' });
+  if (today < '2026-11-24' || today > '2026-11-30') return;
+  let voted = false; try { voted = JSON.parse(localStorage.getItem('evo_awards_voted') || '[]').includes('final'); } catch (e) {}
+  if (voted) return;
+  const b = document.getElementById('back'); b.href = './#poll-final'; b.textContent = '← До голосування'; b.classList.add('hot');
+  document.getElementById('fab').hidden = false;
+})();
+</script>
 
 <div class="wrap"><header class="top">
   <div class="kicker">Звітний період 2026</div>
