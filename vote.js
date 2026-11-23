@@ -462,7 +462,8 @@ function mkHtml(m, votes, pool, tot, my, canBet = true, voteHere = true) {
     <fieldset class="mk${closed ? ' closed' : ''}" data-m="${esc(m.id)}">
     ${m.winner ? `<p class="winner">🏆 Переможець: <b>${esc(m.winner)}</b></p>` : ''}
     ${opts.map(o => { const k = m.id + '|' + o.option, mine = my[k] || 0;
-      const body = `${avatarHtml(m.title, o.option)}<span class="nm"><b>${esc(o.option)}</b>${cardHtml(m.title, o.option)}</span>`;
+      const cardOf = ((Vote.cards || {})[m.title] || []).find(x => x.option === o.option) || {};
+      const body = `${avatarHtml(m.title, o.option)}<span class="nm"><b>${esc(o.option)}${cardOf.name ? `<span class="nm-name">${esc(cardOf.name)}</span>` : ''}</b>${cardHtml(m.title, o.option)}</span>`;
       return `<div class="opt${m.winner === o.option ? ' win' : ''}" data-o="${esc(o.option)}">
         ${voteHere ? `<label class="pick"><input type="radio" name="v-${esc(m.id)}" value="${esc(o.option)}" ${votes[m.id] === o.option ? 'checked' : ''} ${closed ? 'disabled' : ''}><span class="dot"></span>${body}</label>` : `<span class="pick">${body}</span>`}
         <span class="odds"></span>

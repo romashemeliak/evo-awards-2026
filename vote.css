@@ -101,6 +101,7 @@
 .pick input:focus-visible+.dot{outline:2px solid var(--acc);outline-offset:2px}
 .pick .nm{overflow-wrap:anywhere;display:flex;flex-direction:column;gap:3px;min-width:0}
 .pick .nm>b{font:700 15px Unbounded,sans-serif}
+.pick .nm-name{font:500 14px Manrope,sans-serif;color:var(--text);margin-left:8px}
 .pick .nm-sub{font-size:12px;color:var(--acc)}
 .pick .nm-stats{display:flex;flex-wrap:wrap;gap:4px 8px;margin:2px 0}
 .pick .nm-stats span{display:inline-flex;flex-direction:column;background:rgba(255,255,255,.04);border-radius:7px;padding:4px 8px;min-width:60px}
