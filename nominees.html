@@ -323,9 +323,10 @@ function renderShort() {
     ${DEMO ? '<div class="sl-demo"><b>Приклад</b>Претенденти тут вигадані — це лише вигляд блоку. Справжній шортлист з\'явиться після Nomination Week.</div>' : ''}
     <div class="sl-noms">${NOMS.map(n => { const list = by[n.name] || [];
       return `<div class="sl-nom"><div><h3>${esc(n.name)}</h3><p class="for">${esc(n.for)}</p></div>${list.length
-        ? `<div class="sl-list">${list.map(nick => { const p = person(nick), av = p.avatar ? `<img src="${esc(p.avatar)}" alt="" loading="lazy">` : esc((p.nick || '?')[0].toUpperCase());
-            const inner = `<span class="avatar">${av}</span><span><b>${esc(p.nick)}</b>${p.l ? `<small>${esc(p.l)}</small>` : ''}</span>`;
-            return p.link ? `<a ${ringAttr('sl-p', p.c, p.c2)} href="${esc(p.link)}" target="_blank" rel="noopener">${inner}</a>` : `<button type="button" ${ringAttr('sl-p', p.c, p.c2)} data-nick="${esc(p.nick)}">${inner}</button>`; }).join('')}</div>`
+        ? `<div class="sl-list">${list.map(nick => { const p = person(nick), card = (CARDS[n.name] || []).find(x => x.option === nick) || {};
+            const pic = card.avatar || p.avatar, av = pic ? `<img src="${esc(pic)}" alt="" loading="lazy">` : esc((p.nick || '?')[0].toUpperCase());
+            const inner = `<span class="avatar">${av}</span><span><b>${esc(p.nick)}</b>${card.sub || p.l ? `<small>${esc(card.sub || p.l)}</small>` : ''}</span>`;
+            return `<button type="button" ${ringAttr('sl-p', 'var(--gold)')} data-nick="${esc(p.nick)}">${inner}</button>`; }).join('')}</div>`
         : `<div class="sl-wait">Шортлист з'явиться після Nomination Week</div>`}</div>`; }).join('')}</div>`;
 }
 $('#sl').addEventListener('click', e => {

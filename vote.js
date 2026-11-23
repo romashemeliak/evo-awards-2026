@@ -400,7 +400,7 @@ async function renderFinal(card, p) {
   const budget = Vote.me.budget;
   slot.innerHTML = `<div class="bet-head">
       <div><b>${!voteHere ? 'Ставки' : canBet ? 'Голос і ставки' : 'Голос'}</b><p class="hint">${!voteHere ? 'Голосують гравці й адміни школи, а ти можеш поставити фішки на того, хто, на твою думку, переможе.' : `${canBet ? '' : 'Для твого акаунта ставки вимкнені — лише голос. '}У кожній номінації обери, за кого голосуєш. Окремо можеш поставити фішки на того, хто, на твою думку, переможе — не обов'язково на того, за кого голосуєш.`}
-      Банк номінації ділиться між тими, хто вгадав, пропорційно ставкам. Суми ставок інших учасників не видно до оголошення переможців.${markets.some(m => (Vote.cards || {})[m.title]) ? ' Під претендентами — короткі довідки, у блогів і фолдів — посилання на Discord.' : ''}</p></div>
+      Банк номінації ділиться між тими, хто вгадав, пропорційно ставкам. Суми ставок інших учасників не видно до оголошення переможців.${markets.some(m => (Vote.cards || {})[m.title]) ? ' Розгорни номінацію — у кожного претендента коротка довідка, у блогів і фолдів ще й посилання на Discord.' : ''}</p></div>
       <div class="chips-bal big"${canBet ? '' : ' hidden'}><span class="coin"></span><b data-free>${fmtN(budget - Vote.me.staked)}</b><small>фішок доступно з ${fmtN(budget)}</small></div></div>
     <form class="own-form final${canBet ? '' : ' no-bets'}" novalidate>${markets.map(m => mkHtml(m, votes, pool, tot, my, canBet, voteHere)).join('')}
       <div class="poll-actions sticky-save"><button class="btn" type="submit">${!voteHere ? 'Зберегти ставки' : canBet ? 'Зберегти голос і ставки' : 'Зберегти голос'}</button><span class="form-msg"></span></div></form>`;
@@ -414,11 +414,14 @@ async function renderFinal(card, p) {
       mk.querySelectorAll('.opt').forEach(o => { const k = mid + '|' + o.dataset.o; t += (Math.floor(+o.querySelector('.stake').value || 0)) - (my[k] || 0); });
       mk.querySelectorAll('.opt').forEach(o => { const k = mid + '|' + o.dataset.o, mineNow = Math.floor(+o.querySelector('.stake').value || 0);
         const pl = (pool[k] || 0) - (my[k] || 0) + mineNow; o.querySelector('.odds').textContent = pl > 0 ? `банк ${fmtN(pl)} · ×${(t / pl).toFixed(2)}` : `ще ніхто · ×—`; }); });
+    form.querySelectorAll('.mk-wrap').forEach(w => { const mk = w.querySelector('.mk'), c = mk.querySelector('input[type=radio]:checked'); let st = 0;
+      mk.querySelectorAll('.stake').forEach(i => { st += Math.max(0, Math.floor(+i.value || 0)); });
+      const win = mk.querySelector('.winner b'); w.querySelector('.mk-s').textContent = (win ? '🏆 ' + win.textContent : c ? '✓ ' + c.value : 'обрати') + (st ? ` · ${fmtN(st)} фішок` : ''); });
     form.querySelector('[type=submit]').disabled = free < 0;
     form.querySelector('.form-msg').textContent = free < 0 ? `Перебір на ${fmtN(-free)} фішок` : '';
     form.querySelector('.form-msg').className = 'form-msg' + (free < 0 ? ' err' : '');
   };
-  form.addEventListener('input', recalc); recalc();
+  form.addEventListener('input', recalc); form.addEventListener('change', recalc); recalc();
   form.querySelectorAll('[data-plus]').forEach(b => b.onclick = () => { const i = b.closest('.opt').querySelector('.stake'); i.value = Math.max(0, (Math.floor(+i.value || 0)) + +b.dataset.plus); recalc(); });
   form.addEventListener('submit', async ev => {
     ev.preventDefault(); const msg = form.querySelector('.form-msg'), btn = form.querySelector('[type=submit]');
@@ -444,22 +447,28 @@ async function renderFinal(card, p) {
 
 function cardHtml(title, option) {
   const c = ((Vote.cards || {})[title] || []).find(x => x.option === option); if (!c) return '';
-  const link = c.link ? `<a class="nm-link" href="${esc(c.link)}" target="_blank" rel="noopener">${/\/\d+\/\d+\/\d+\/?$/.test(c.link) ? 'Допис у Discord ↗' : 'Відкрити блог ↗'}</a>` : '';
-  return `${c.sub ? `<small class="nm-sub">${esc(c.sub)}</small>` : ''}${c.desc || link ? `<span class="nm-desc">${esc(c.desc || '')}${link ? ' ' + link : ''}</span>` : ''}`;
+  const link = c.link ? `<a class="nm-link" href="${esc(c.link)}" target="_blank" rel="noopener">${esc(c.linkText || 'Допис у Discord')} ↗</a>` : '';
+  const stats = (c.stats || []).length ? `<span class="nm-stats">${c.stats.map(([k, val]) => `<span><small>${esc(k)}</small><b>${esc(val)}</b></span>`).join('')}</span>` : '';
+  return `${c.sub ? `<small class="nm-sub">${esc(c.sub)}</small>` : ''}${stats}${c.desc || link ? `<span class="nm-desc">${esc(c.desc || '')}${link ? ' ' + link : ''}</span>` : ''}`;
 }
+const avatarHtml = (title, option) => { const c = ((Vote.cards || {})[title] || []).find(x => x.option === option);
+  return `<span class="nm-av">${c && c.avatar ? `<img src="${esc(c.avatar)}" alt="" loading="lazy">` : esc(option[0].toUpperCase())}</span>`; };
 
 function mkHtml(m, votes, pool, tot, my, canBet = true, voteHere = true) {
   const closed = !!m.winner || (m.closes_at && new Date(m.closes_at) < new Date());
   const opts = (m.market_options || []).slice().sort((a, b) => a.ord - b.ord);
-  return `<fieldset class="mk${closed ? ' closed' : ''}" data-m="${esc(m.id)}"><legend>${esc(m.title)}</legend>
+  const chosen = votes[m.id], staked = opts.reduce((s, o) => s + (my[m.id + '|' + o.option] || 0), 0);
+  return `<details class="mk-wrap" ${m.winner ? 'open' : ''}><summary><span class="mk-t">${esc(m.title)}</span><span class="mk-s">${m.winner ? '🏆 ' + esc(m.winner) : chosen ? '✓ ' + esc(chosen) : 'обрати'}${staked ? ` · ${fmtN(staked)} фішок` : ''}</span><i class="mk-chev"></i></summary>
+    <fieldset class="mk${closed ? ' closed' : ''}" data-m="${esc(m.id)}">
     ${m.winner ? `<p class="winner">🏆 Переможець: <b>${esc(m.winner)}</b></p>` : ''}
     ${opts.map(o => { const k = m.id + '|' + o.option, mine = my[k] || 0;
+      const body = `${avatarHtml(m.title, o.option)}<span class="nm"><b>${esc(o.option)}</b>${cardHtml(m.title, o.option)}</span>`;
       return `<div class="opt${m.winner === o.option ? ' win' : ''}" data-o="${esc(o.option)}">
-        ${voteHere ? `<label class="pick"><input type="radio" name="v-${esc(m.id)}" value="${esc(o.option)}" ${votes[m.id] === o.option ? 'checked' : ''} ${closed ? 'disabled' : ''}><span class="dot"></span><span class="nm"><b>${esc(o.option)}</b>${cardHtml(m.title, o.option)}</span></label>` : `<span class="pick"><span class="nm"><b>${esc(o.option)}</b>${cardHtml(m.title, o.option)}</span></span>`}
+        ${voteHere ? `<label class="pick"><input type="radio" name="v-${esc(m.id)}" value="${esc(o.option)}" ${votes[m.id] === o.option ? 'checked' : ''} ${closed ? 'disabled' : ''}><span class="dot"></span>${body}</label>` : `<span class="pick">${body}</span>`}
         <span class="odds"></span>
         <span class="stake-box"${canBet ? '' : ' hidden'}><span class="coin sm"></span><input class="stake" type="number" inputmode="numeric" min="0" step="10" value="${mine || ''}" placeholder="0" ${closed ? 'disabled' : ''} aria-label="Фішок на ${esc(o.option)}">
         ${closed ? '' : '<button type="button" class="plus" data-plus="50">+50</button>'}</span></div>`; }).join('')}
-  </fieldset>`;
+  </fieldset></details>`;
 }
 
 /* ─── таблиця фішок ──────────────────────────────────────────────────────── */

@@ -99,15 +99,31 @@
 .pick .dot{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--line)}
 .pick input:checked+.dot{border-color:var(--acc);background:radial-gradient(circle,var(--acc) 0 45%,transparent 50%)}
 .pick input:focus-visible+.dot{outline:2px solid var(--acc);outline-offset:2px}
-.pick .nm{overflow-wrap:anywhere;display:flex;flex-direction:column;gap:2px;min-width:0}
-.pick .nm>b{font-weight:600}
-.pick .nm-sub{font-size:12px;color:var(--acc);letter-spacing:.01em}
+.pick .nm{overflow-wrap:anywhere;display:flex;flex-direction:column;gap:3px;min-width:0}
+.pick .nm>b{font:700 15px Unbounded,sans-serif}
+.pick .nm-sub{font-size:12px;color:var(--acc)}
+.pick .nm-stats{display:flex;flex-wrap:wrap;gap:4px 8px;margin:2px 0}
+.pick .nm-stats span{display:inline-flex;flex-direction:column;background:rgba(255,255,255,.04);border-radius:7px;padding:4px 8px;min-width:60px}
+.pick .nm-stats small{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.pick .nm-stats b{font-size:13px;font-variant-numeric:tabular-nums}
 .pick .nm-desc{font-size:13px;line-height:1.45;color:var(--muted)}
 .pick .nm-link{color:var(--text);text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
 .pick .nm-link:hover{color:var(--acc)}
+.nm-av{flex:none;width:44px;height:44px;border-radius:50%;background:#2f2821;border:2px solid var(--line);display:grid;place-items:center;font:900 16px/1 Unbounded,sans-serif;overflow:hidden;color:var(--muted)}
+.nm-av img{width:100%;height:100%;object-fit:cover;display:block}
+.pick input:checked~.nm-av{border-color:var(--acc)}
 .mk .opt{align-items:start}
-.pick .dot{margin-top:2px}
+.pick .dot{margin-top:12px}
 .mk .opt .stake-box,.mk .opt .odds{align-self:center}
+/* згортання номінацій */
+.mk-wrap{border:1px solid var(--line);border-radius:12px;background:var(--panel);min-width:0}
+.mk-wrap>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px 16px;font:700 15px Unbounded,sans-serif}
+.mk-wrap>summary::-webkit-details-marker{display:none}
+.mk-wrap>summary .mk-s{margin-left:auto;font:500 13px Manrope,sans-serif;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:50%}
+.mk-wrap>summary .mk-chev{display:none}
+
+.mk-wrap[open]>summary{border-bottom:1px solid var(--line)}
+.own-form.final .mk-wrap .mk{border:0;border-radius:0;background:transparent;padding:4px 16px 12px}
 .odds{color:var(--muted);font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
 .stake-box{display:flex;align-items:center;gap:6px}
 .own-form .stake-box input.stake{flex:none;width:86px;padding:8px 10px;text-align:right;font-variant-numeric:tabular-nums}
