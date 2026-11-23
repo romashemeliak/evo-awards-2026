@@ -150,7 +150,8 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .sl-card p{margin:0;font-size:14px;line-height:1.5;color:#d8cdbb}
 .sl-card .srv{font-size:13px;line-height:1.45;color:var(--muted);border-left:2px solid var(--gold);padding-left:10px}
 .sl-card .srv b{display:block;font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
-.sl-card .lnk{margin-top:auto;font-size:13px;font-weight:700;color:var(--text);text-decoration:underline;text-underline-offset:3px}
+.sl-card .lnks{margin-top:auto;display:flex;flex-wrap:wrap;gap:6px 16px}
+.sl-card .lnk{font-size:13px;font-weight:700;color:var(--text);text-decoration:underline;text-underline-offset:3px}
 .sl-card .lnk:hover{color:var(--gold)}
 /* віконце «i» у тексті */
 .qi{position:relative;display:inline-grid;place-items:center;width:20px;height:20px;margin:0 2px 0 6px;padding:0;vertical-align:2px;border-radius:50%;border:1px solid var(--gold);background:none;color:var(--gold);font:700 11px/1 Manrope,sans-serif;font-style:normal;cursor:pointer}
@@ -354,7 +355,7 @@ function renderShort() {
             ${(c.stats || []).length ? `<div class="st">${c.stats.map(([k, v]) => `<span><small>${esc(k)}</small><b>${esc(v)}</b></span>`).join('')}</div>` : ''}
             ${c.about ? `<p>${esc(c.about)}</p>` : c.desc ? `<p>${esc(c.desc)}</p>` : ''}
             ${c.fact ? `<div class="srv"><b>${esc(c.factLabel || 'З сервера')}</b>${esc(c.fact)}</div>` : ''}
-            ${c.link ? `<a class="lnk" href="${esc(c.link)}" target="_blank" rel="noopener">${esc(c.linkText || 'Допис у Discord')} ↗</a>` : ''}</article>`; }).join('')}</div></details>`;
+            ${c.link || c.blog ? `<div class="lnks">${c.link ? `<a class="lnk" href="${esc(c.link)}" target="_blank" rel="noopener">${esc(c.linkText || 'Допис у Discord')} ↗</a>` : ''}${c.blog ? `<a class="lnk" href="${esc(c.blog.link)}" target="_blank" rel="noopener">Блог #${esc(c.blog.name)} ↗</a>` : ''}</div>` : ''}</article>`; }).join('')}</div></details>`;
       return `<div class="sl-nom"><div><h3>${esc(n.name)}</h3><p class="for">${esc(n.for)}</p></div>${list.length
         ? `<div class="sl-list">${list.map(nick => { const p = person(nick), card = (CARDS[n.name] || []).find(x => x.option === nick) || {};
             const pic = card.avatar || p.avatar, av = pic ? `<img src="${esc(pic)}" alt="" loading="lazy">` : esc((p.nick || '?')[0].toUpperCase());

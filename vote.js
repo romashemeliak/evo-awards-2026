@@ -452,7 +452,8 @@ async function renderFinal(card, p) {
 
 function cardHtml(title, option) {
   const c = ((Vote.cards || {})[title] || []).find(x => x.option === option); if (!c) return '';
-  const link = c.link ? `<a class="nm-link" href="${esc(c.link)}" target="_blank" rel="noopener">${esc(c.linkText || 'Допис у Discord')} ↗</a>` : '';
+  const link = (c.link ? `<a class="nm-link" href="${esc(c.link)}" target="_blank" rel="noopener">${esc(c.linkText || 'Допис у Discord')} ↗</a>` : '')
+    + (c.blog ? ` <a class="nm-link" href="${esc(c.blog.link)}" target="_blank" rel="noopener">Блог #${esc(c.blog.name)} ↗</a>` : '');
   const stats = (c.stats || []).length ? `<span class="nm-stats">${c.stats.map(([k, val]) => `<span><small>${esc(k)}</small><b>${esc(val)}</b></span>`).join('')}</span>` : '';
   return `${c.sub ? `<small class="nm-sub">${esc(c.sub)}</small>` : ''}${stats}${c.desc || link ? `<span class="nm-desc">${esc(c.desc || '')}${link ? ' ' + link : ''}</span>` : ''}`;
 }
