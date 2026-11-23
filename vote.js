@@ -469,7 +469,7 @@ async function renderBoard() {
   if (!enabled() || !Vote.ready || (!live && !MOCK)) { box.hidden = true; return; }
   let rows; try { rows = await Vote.api.leaderboard(); } catch (e) { box.hidden = true; return; }
   const settled = rows.some(r => r.settled > 0);
-  if (!settled && !MOCK) { box.hidden = true; return; }        // до оголошення переможців чужі ставки не показуємо
+  if (!settled && !(MOCK && QS.has('board'))) { box.hidden = true; return; }        // до оголошення переможців чужі ставки не показуємо; у тесті — лише з ?board
   box.hidden = false;
   const meP = Vote.me && Vote.me.player;
   const top = rows.filter(r => r.staked > 0 || r.settled > 0), budget = (Vote.me && Vote.me.budget) || 1000;

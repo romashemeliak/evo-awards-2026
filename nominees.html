@@ -110,7 +110,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .sl-nom h3{font:700 15px/1.25 Unbounded,sans-serif}
 .sl-nom .for{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.4}
 .sl-list{display:flex;flex-wrap:wrap;gap:8px}
-.sl-p{display:inline-flex;align-items:center;gap:10px;padding:5px 14px 5px 5px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:inherit;font:inherit;cursor:pointer;text-align:left;transition:border-color .15s}
+.sl-p{text-decoration:none;display:inline-flex;align-items:center;gap:10px;padding:5px 14px 5px 5px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:inherit;font:inherit;cursor:pointer;text-align:left;transition:border-color .15s}
 .sl-p:hover,.sl-p:focus-visible{border-color:var(--stage);outline:none}
 .sl-p .avatar{width:30px;height:30px;font-size:12px;box-shadow:0 0 0 2px var(--card),0 0 0 3px var(--stage)}
 .sl-p span{display:grid;gap:2px;line-height:1.15}
@@ -225,7 +225,7 @@ const extraOf = p => { const s = staffOf(p.nick); if (s) return { c: staffColor(
   return isCoach(p.nick) ? { c: COACH_COLOR, t: 'Тренер' } : null; };
 const ringAttr = (cls, c1, c2) => `class="${cls}${c2 ? ' dual' : ''}" style="--stage:${c1}${c2 ? ';--stage2:' + c2 : ''}"`;
 const rankTxt = p => p.rank != null && p.team !== 'REVO' ? ` · ранг ${p.rank}` : '';
-let NAMES = {}, COACHES = new Set(), SHORT = [], STAFF = [], ALL = [], state = { q: '', team: 'all', stages: new Set(), sort: 'nick', view: 'cards', dir: -1 };
+let NAMES = {}, COACHES = new Set(), SHORT = [], STAFF = [], ALL = [], CARDS = {}, state = { q: '', team: 'all', stages: new Set(), sort: 'nick', view: 'cards', dir: -1 };
 try { const s = JSON.parse(localStorage.getItem('evo_nominees_view2') || '{}'); if (s.view) state.view = s.view; if (['rank', 'distance', 'abi', 'nick'].includes(s.sort)) state.sort = s.sort; } catch (e) {}
 const save = () => { try { localStorage.setItem('evo_nominees_view2', JSON.stringify({ view: state.view, sort: state.sort })); } catch (e) {} };
 
@@ -301,7 +301,9 @@ function person(nick) {
   const p = ALL.find(x => x.nick.toLowerCase() === k); if (p) { const x = extraOf(p); return { ...p, c: colorOf(p), c2: x && x.c, l: labelOf(p) + (x ? ' · ' + x.t : '') }; }
   const s = STAFF.find(x => x.nick.toLowerCase() === k); if (s) { const pl = staffPl(s), c = staffColor(s);
     return { ...s, c: pl ? colorOf(pl) : c, c2: pl && c, l: (pl ? labelOf(pl) + ' · ' : '') + staffTitle(s) }; }
-  return { nick, c: 'var(--line)', l: '' };
+  // не людина (блог, фолд) — підпис і посилання з shortlist.json
+  const card = Object.values(CARDS).flat().find(x => x.option === nick);
+  return { nick, c: 'var(--line)', l: card ? card.sub || '' : '', link: card && card.link };
 }
 // приклад: по 3–5 різних людей на номінацію; «Тренер року» — з тренерів
 function demoShortlists() {
@@ -322,13 +324,14 @@ function renderShort() {
     <div class="sl-noms">${NOMS.map(n => { const list = by[n.name] || [];
       return `<div class="sl-nom"><div><h3>${esc(n.name)}</h3><p class="for">${esc(n.for)}</p></div>${list.length
         ? `<div class="sl-list">${list.map(nick => { const p = person(nick), av = p.avatar ? `<img src="${esc(p.avatar)}" alt="" loading="lazy">` : esc((p.nick || '?')[0].toUpperCase());
-            return `<button type="button" ${ringAttr('sl-p', p.c, p.c2)} data-nick="${esc(p.nick)}"><span class="avatar">${av}</span><span><b>${esc(p.nick)}</b>${p.l ? `<small>${esc(p.l)}</small>` : ''}</span></button>`; }).join('')}</div>`
+            const inner = `<span class="avatar">${av}</span><span><b>${esc(p.nick)}</b>${p.l ? `<small>${esc(p.l)}</small>` : ''}</span>`;
+            return p.link ? `<a ${ringAttr('sl-p', p.c, p.c2)} href="${esc(p.link)}" target="_blank" rel="noopener">${inner}</a>` : `<button type="button" ${ringAttr('sl-p', p.c, p.c2)} data-nick="${esc(p.nick)}">${inner}</button>`; }).join('')}</div>`
         : `<div class="sl-wait">Шортлист з'явиться після Nomination Week</div>`}</div>`; }).join('')}</div>`;
 }
 $('#sl').addEventListener('click', e => {
   if (e.target.closest('.sl-tog, #sl-h')) { const open = $('#sl').classList.toggle('closed') === false;
     $('#sl .sl-tog').setAttribute('aria-expanded', open); try { localStorage.setItem('evo_sl_open', open ? '1' : '0'); } catch (x) {} return; }
-  const b = e.target.closest('.sl-p'); if (!b) return;
+  const b = e.target.closest('button.sl-p'); if (!b) return;
   state.q = b.dataset.nick; $('#q').value = b.dataset.nick; state.team = 'all'; state.stages.clear();
   document.querySelectorAll('#team button').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === 'all'));
   document.querySelectorAll('#stages button').forEach(x => x.setAttribute('aria-pressed', 'false'));
@@ -365,7 +368,10 @@ async function loadData() {
   if (error) throw error;
   return data ? data.data : { players: [], staff: [] };
 }
-loadData().then(d => { if (!d) return gate();
+const loadCards = () => fetch('shortlist.json', { cache: 'no-cache' }).then(r => r.json()).catch(() => ({}));
+Promise.all([loadData(), loadCards()]).then(([d, cards]) => { if (!d) return gate();
+  CARDS = cards || {};
+  if (new URLSearchParams(location.search).has('mock') && !(d.shortlists || []).length) d.shortlists = Object.entries(CARDS).map(([name, l]) => ({ name, nominees: l.map(o => o.option) }));
   document.body.classList.remove('locked');
   const hide = new Set((d.hidePlayers || []).map(low));
   ALL = (d.players || []).filter(p => !hide.has(low(p.nick))); STAFF = d.staff || []; SHORT = d.shortlists || [];
