@@ -106,7 +106,7 @@
 .pick .nm-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:2px 0;max-width:420px}
 .pick .nm-stats span{display:flex;flex-direction:column;background:rgba(255,255,255,.04);border-radius:7px;padding:4px 8px;min-width:0}
 .pick .nm-stats small{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
-.pick .nm-stats b{font-size:13px;font-variant-numeric:tabular-nums}
+.pick .nm-stats b{font-size:13px;font-variant-numeric:tabular-nums;overflow-wrap:normal}
 .pick .nm-desc{font-size:13px;line-height:1.45;color:var(--muted)}
 .pick .nm-link{color:var(--text);text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
 .pick .nm-link:hover{color:var(--acc)}
@@ -136,7 +136,18 @@
 .plus{background:var(--field);border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:7px 8px;font:700 12px Manrope,sans-serif;cursor:pointer}
 .plus:hover{color:var(--text);border-color:var(--line-hover)}
 .mk.closed .stake,.mk.closed .pick{opacity:.6;cursor:default}
-@media(max-width:560px){.mk .opt{grid-template-columns:1fr}.mk .odds{padding-left:30px}.mk .stake-box{padding-left:30px;justify-content:flex-start}}
+@media(max-width:560px){.mk .opt{grid-template-columns:1fr}.mk .odds{padding-left:30px}.mk .stake-box{padding-left:30px;justify-content:flex-start}
+  /* картка на телефоні: крапка, аватарка і нік в один ряд, решта — на всю ширину */
+  .mk .opt .pick{display:grid;grid-template-columns:auto 44px minmax(0,1fr);column-gap:10px;row-gap:6px;align-items:center}
+  .mk .opt .pick .nm{display:contents}
+  .mk .opt .pick .nm>b{min-width:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:0 8px}
+  .mk .opt .pick .nm-name{margin-left:0}
+  .mk .opt .pick .nm-sub,.mk .opt .pick .nm-stats,.mk .opt .pick .nm-desc{grid-column:1/-1}
+  .mk .opt .pick .dot{margin-top:0}
+  .pick .nm-stats{max-width:none;gap:6px}
+  .pick .nm-stats span{padding:5px 7px}
+  .pick .nm-stats small{white-space:normal;font-size:9px;line-height:1.2;letter-spacing:0;hyphens:manual}
+  .pick .nm-stats b{font-size:12px;overflow-wrap:normal;word-break:normal}}
 .sticky-save{position:sticky;bottom:10px;z-index:3;padding:12px;border-radius:12px;background:color-mix(in srgb,var(--bg-2) 92%,transparent);border:1px solid var(--line);backdrop-filter:blur(6px)}
 
 .board-card{margin-top:28px;padding:clamp(16px,3vw,26px);border:1px solid rgba(217,164,65,.35);border-radius:var(--radius);background:linear-gradient(160deg,rgba(217,164,65,.07),var(--bg-2) 55%)}
