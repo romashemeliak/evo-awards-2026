@@ -104,7 +104,8 @@
 .pick .nm-name{font:500 14px Manrope,sans-serif;color:var(--text);margin-left:8px}
 .pick .nm-sub{font-size:12px;color:var(--acc)}
 .pick .nm-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:2px 0;max-width:420px}
-.pick .nm-stats span{display:flex;flex-direction:column;background:rgba(255,255,255,.04);border-radius:7px;padding:4px 8px;min-width:0}
+.pick .nm-stats span{display:flex;flex-direction:column;justify-content:space-between;background:rgba(255,255,255,.04);border-radius:7px;padding:4px 8px;min-width:0}
+.pick .nm-stats b{margin-top:auto}
 .pick .nm-stats small{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
 .pick .nm-stats b{font-size:13px;font-variant-numeric:tabular-nums;overflow-wrap:normal}
 .pick .nm-desc{font-size:13px;line-height:1.45;color:var(--muted)}
